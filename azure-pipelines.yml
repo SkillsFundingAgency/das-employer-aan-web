@@ -6,7 +6,7 @@ trigger:
 
 variables:
 - name: SolutionBaseName
-  value: __SolutionBaseName__ #PLACEHOLDER
+  value: SFA.DAS.Employer.Aan
 - name: BuildConfiguration
   value: release
 - name: BuildPlatform
