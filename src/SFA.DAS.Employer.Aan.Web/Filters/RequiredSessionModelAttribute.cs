@@ -17,13 +17,15 @@ public class RequiredSessionModelAttribute : ActionFilterAttribute
 
     public string ControllerName { get; set; } = "Home";
 
+    public string[] ControllersToByPass = new[] { nameof(BeforeYouStartController), nameof(TermsAndConditionsController) };
+
     public override void OnActionExecuting(ActionExecutingContext context)
     {
         if (context.ActionDescriptor is not ControllerActionDescriptor controllerActionDescriptor) return;
 
         if (!controllerActionDescriptor.ControllerTypeInfo.FullName!.Contains("Onboarding")) return;
 
-        if (controllerActionDescriptor.ControllerTypeInfo.Name.Equals(nameof(BeforeYouStartController))) return;
+        if (ControllersToByPass.Contains(controllerActionDescriptor.ControllerTypeInfo.Name)) return;
 
         var sessionService = context.HttpContext.RequestServices.GetService<ISessionService>();
 

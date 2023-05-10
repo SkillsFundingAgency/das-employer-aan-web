@@ -7,6 +7,6 @@ public class HomeController : Controller
 {
     public IActionResult Index()
     {
-        return new RedirectToRouteResult(RouteNames.Onboarding.TermsAndConditions, null);
+        return new RedirectToRouteResult(RouteNames.Onboarding.BeforeYouStart, null);
     }
 }
