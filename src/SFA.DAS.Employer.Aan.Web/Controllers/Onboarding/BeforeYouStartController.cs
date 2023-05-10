@@ -18,4 +18,10 @@ public class BeforeYouStartController : Controller
         };
         return View(ViewPath, model);
     }
+
+    [HttpPost]
+    public IActionResult Post()
+    {
+        return RedirectToRoute(RouteNames.Onboarding.TermsAndConditions);
+    }
 }

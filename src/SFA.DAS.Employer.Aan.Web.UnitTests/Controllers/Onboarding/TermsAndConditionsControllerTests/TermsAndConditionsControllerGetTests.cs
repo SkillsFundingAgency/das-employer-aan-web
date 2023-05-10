@@ -6,7 +6,7 @@ using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 using SFA.DAS.Testing.AutoFixture;
 
-namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding;
+namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.TermsAndConditionsControllerTests;
 
 [TestFixture]
 public class TermsAndConditionsControllerGetTests
