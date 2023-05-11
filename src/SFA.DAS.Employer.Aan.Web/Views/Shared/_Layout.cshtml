@@ -64,9 +64,13 @@
 
     @* ReSharper disable once Mvc.PartialViewNotResolved *@
     <partial name="_Footer" model="@footerModel" />
-    <script src="/libs/govuk-frontend/all.js"></script>
-    <script>
+    <script src="libs/jquery/jquery.min.js"></script>
+    <script src="libs/govuk-frontend/all.js"></script>
+    <script src="js/das-all.min.js"></script>
+    <script src="js/app.min.js"></script>
+    <script nws-csp-add-nonce="true">
         window.GOVUKFrontend.initAll();
+        window.DASFrontend.initAll();
     </script>
     @RenderSection("javascript", required: false)
 </body>
