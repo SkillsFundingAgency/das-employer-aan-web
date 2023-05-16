@@ -10,6 +10,7 @@ public static class RouteNames
     public const string SignedOut = "signed-out";
     public const string AccountUnavailable = "account-unavailable";
     public const string StubSignedIn = "stub-signedin-get";
+
     public static class Onboarding
     {
         public const string BeforeYouStart = nameof(BeforeYouStart);

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 using SFA.DAS.Testing.AutoFixture;
 
-namespace SFA.DAS.Employer.Aan.Web.UnitTests.Onboarding.BeforeYouStartControllerTests;
+namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.BeforeYouStartControllerTests;
 
 [TestFixture]
 public class BeforeYouStartControllerGetTests
