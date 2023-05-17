@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using RestEase.HttpClientFactory;
+using SFA.DAS.Employer.Aan.Application.Services;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Infrastructure.Configuration;
 using SFA.DAS.Employer.Aan.Web.Infrastructure.Services;
@@ -16,6 +17,7 @@ public static class AddServiceRegistrationsExtension
         AddOuterApi(services, outerApiConfiguration);
 
         services.AddTransient<ISessionService, SessionService>();
+        services.AddTransient<IProfileService, ProfileService>();
         return services;
     }
 

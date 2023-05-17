@@ -9,4 +9,5 @@ public interface ISessionService
     void Delete(string key);
     void Delete<T>(T model);
     void Clear();
+    bool Contains<T>();
 }
