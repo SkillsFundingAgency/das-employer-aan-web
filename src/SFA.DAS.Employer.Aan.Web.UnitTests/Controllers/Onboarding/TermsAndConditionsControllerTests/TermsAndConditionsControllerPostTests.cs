@@ -13,14 +13,14 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.TermsAndCond
 public class TermsAndConditionsControllerPostTests
 {
     [MoqAutoData]
-    public void Post_SetsTempData(
+    public async Task Post_SetsTempData(
             [Greedy] TermsAndConditionsController sut,
             Mock<ITempDataDictionary> tempDataMock)
     {
         tempDataMock.Setup(t => t.ContainsKey(TempDataKeys.HasSeenTermsAndConditions)).Returns(false);
         sut.TempData = tempDataMock.Object;
 
-        sut.Post();
+        await sut.Post();
 
         tempDataMock.Verify(t => t.Add(TempDataKeys.HasSeenTermsAndConditions, true));
     }

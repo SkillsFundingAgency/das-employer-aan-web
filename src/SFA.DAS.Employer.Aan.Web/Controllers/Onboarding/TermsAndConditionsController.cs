@@ -32,6 +32,8 @@ public class TermsAndConditionsController : Controller
     [HttpPost]
     public async Task<IActionResult> Post()
     {
+        if (!TempData.ContainsKey(TempDataKeys.HasSeenTermsAndConditions)) TempData.Add(TempDataKeys.HasSeenTermsAndConditions, true);
+
         if (!_sessionService.Contains<OnboardingSessionModel>())
         {
             var profiles = await _profileService.GetProfilesByUserType("employer");
