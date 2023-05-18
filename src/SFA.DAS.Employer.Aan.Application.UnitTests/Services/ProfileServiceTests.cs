@@ -6,8 +6,9 @@ using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Testing.AutoFixture;
 
-
 namespace SFA.DAS.Employer.Aan.Application.UnitTests.Services;
+
+[TestFixture]
 public class ProfileServiceTests
 {
     [MoqAutoData]
