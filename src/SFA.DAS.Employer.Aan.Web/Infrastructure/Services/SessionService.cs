@@ -31,4 +31,10 @@ public class SessionService : ISessionService
     public void Delete<T>(T model) => Delete(typeof(T).Name);
 
     public void Clear() => _httpContextAccessor.HttpContext?.Session.Clear();
+
+    public bool Contains<T>()
+    {
+        var result = _httpContextAccessor.HttpContext?.Session.Keys.Any(k => k == typeof(T).Name);
+        return result.GetValueOrDefault();
+    }
 }

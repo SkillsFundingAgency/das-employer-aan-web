@@ -7,4 +7,7 @@ public interface IOuterApiClient
 {
     [Get("/employers/{userRef}")]
     Task<EmployerMember> GetEmployerMember([Path] Guid userRef);
+
+    [Get("/profiles/{userType}")]
+    Task<GetProfilesResult> GetProfilesByUserType([Path("userType")] string userType);
 }
