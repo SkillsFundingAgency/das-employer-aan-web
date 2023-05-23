@@ -45,6 +45,6 @@ public class TermsAndConditionsController : Controller
             _sessionService.Set(sessionModel);
         }
 
-        return RedirectToRoute(RouteNames.Onboarding.Region);
+        return RedirectToRoute(RouteNames.Onboarding.Regions);
     }
 }

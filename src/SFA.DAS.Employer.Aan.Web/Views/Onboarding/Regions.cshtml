@@ -1,0 +1,55 @@
+﻿@using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
+@using SFA.DAS.Employer.Aan.Web.Infrastructure;
+@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
+@model RegionsViewModel
+@{
+    ViewData["Title"] = "Region";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <partial name="_validationSummary" />
+        <form method="post">
+            <div class="govuk-form-group">
+                <fieldset class="govuk-fieldset">
+                    <div esfa-validation-marker-for="@Model.Regions" class="govuk-form-group">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                            <h1 class="govuk-fieldset__heading">
+                                Tell us what areas of the country your organisation works in
+                            </h1>
+                        </legend>
+                        <p>
+                            Your answer should relate to your organisation as a whole and the regions they are operating in. This does not relate to where your organisation has an office or the area you live.
+                        </p>
+                        <div id="regions-hint" class="govuk-hint">
+                            Further information on each region and its network chair can be found on the <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="https://www.apprenticeships.gov.uk/influencers/yaan-regional-networks">regional network page</a>.
+                        </div>
+                        <span asp-validation-for="@Model.Regions" class="govuk-error-message"></span>
+                    
+                        <div id="regions-option" class="govuk-checkboxes" data-module="govuk-checkboxes">
+                            @{
+                                for (int i = 0; i < Model.Regions.Count; i++)
+                                {
+                                    <div class="govuk-checkboxes__item">
+                                        <input class="govuk-checkboxes__input" type="checkbox" asp-for=@Model.Regions[i].IsSelected id="@Model.Regions[i].Id">
+                                        <label class="govuk-label govuk-checkboxes__label" for="@Model.Regions[i].Id">
+                                            @Model.Regions[i].Area
+                                        </label>
+                                        <input type="hidden" asp-for="@Model.Regions[i].Id" />
+                                        <input type="hidden" asp-for="@Model.Regions[i].Area" />
+                                        <input type="hidden" asp-for="@Model.Regions[i].Ordering" />
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="govuk-button-group">
+                <button id="continue-button" type="submit" class="govuk-button" data-module="govuk-button" data-disable-on-submit="true" asp-page-handler="Submit">
+                    Continue
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

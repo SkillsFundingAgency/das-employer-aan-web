@@ -31,6 +31,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\SFA.DAS.Employer.Aan.Domain\SFA.DAS.Employer.Aan.Domain.csproj" />
 		<ProjectReference Include="..\SFA.DAS.Employer.Aan.Web\SFA.DAS.Employer.Aan.Web.csproj" />
 	</ItemGroup>
 

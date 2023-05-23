@@ -14,8 +14,8 @@ public class TermsAndConditionsControllerPostTests
 {
     [MoqAutoData]
     public async Task Post_SetsTempData(
-            [Greedy] TermsAndConditionsController sut,
-            Mock<ITempDataDictionary> tempDataMock)
+        [Greedy] TermsAndConditionsController sut,
+        Mock<ITempDataDictionary> tempDataMock)
     {
         tempDataMock.Setup(t => t.ContainsKey(TempDataKeys.HasSeenTermsAndConditions)).Returns(false);
         sut.TempData = tempDataMock.Object;
@@ -26,7 +26,7 @@ public class TermsAndConditionsControllerPostTests
     }
 
     [MoqAutoData]
-    public async Task Post_RedirectToRouteResult_RedirectsToLineManager(
+    public async Task Post_RedirectToRouteResult_RedirectsToRegion(
         [Greedy] TermsAndConditionsController sut,
         Mock<ITempDataDictionary> tempDataMock)
     {
@@ -35,6 +35,6 @@ public class TermsAndConditionsControllerPostTests
 
         var result = await sut.Post();
 
-        result.As<RedirectToRouteResult>().RouteName.Should().Be(RouteNames.Onboarding.Region);
+        result.As<RedirectToRouteResult>().RouteName.Should().Be(RouteNames.Onboarding.Regions);
     }
 }
