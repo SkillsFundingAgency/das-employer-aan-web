@@ -9,9 +9,9 @@ public class RegionService : IRegionService
 
     public RegionService(IOuterApiClient outerApiClient) => _outerApiClient = outerApiClient;
 
-    public async Task<List<Region>> GetRegions()
+    public async Task<List<Region>> GetRegions(CancellationToken cancellationToken)
     {
-        var result = await _outerApiClient.GetRegions();
+        var result = await _outerApiClient.GetRegions(cancellationToken);
         var sortedList = result.Regions.OrderBy(x => x.Ordering).ToList();
         return sortedList;
     }

@@ -12,7 +12,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.TermsAndCond
 [TestFixture]
 public class TermsAndConditionsControllerPostTests
 {
-    [MoqAutoData]
+    [Test, MoqAutoData]
     public async Task Post_SetsTempData(
         [Greedy] TermsAndConditionsController sut,
         Mock<ITempDataDictionary> tempDataMock)
@@ -25,7 +25,7 @@ public class TermsAndConditionsControllerPostTests
         tempDataMock.Verify(t => t.Add(TempDataKeys.HasSeenTermsAndConditions, true));
     }
 
-    [MoqAutoData]
+    [Test, MoqAutoData]
     public async Task Post_RedirectToRouteResult_RedirectsToRegion(
         [Greedy] TermsAndConditionsController sut,
         Mock<ITempDataDictionary> tempDataMock)

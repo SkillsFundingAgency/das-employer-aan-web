@@ -15,58 +15,59 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.RegionsContr
 [TestFixture]
 public class RegionsControllerGetTests
 {
-    [MoqAutoData]
-    public async Task Get_ReturnsViewResult([Greedy] RegionsController sut)
+    [Test, MoqAutoData]
+    public async Task Get_ReturnsViewResult(
+        [Greedy] RegionsController sut,
+        CancellationToken cancellationToken)
     {
         sut.AddUrlHelperMock();
-        var result = await sut.Get();
+        var result = await sut.Get(cancellationToken);
 
         result.As<ViewResult>().Should().NotBeNull();
     }
 
-    [MoqAutoData]
-    public async Task Get_ViewResult_HasCorrectViewPath([Greedy] RegionsController sut)
+    [Test, MoqAutoData]
+    public async Task Get_ViewResult_HasCorrectViewPath(
+        [Greedy] RegionsController sut,
+        CancellationToken cancellationToken)
     {
         sut.AddUrlHelperMock();
-        var result = await sut.Get();
+        var result = await sut.Get(cancellationToken);
 
         result.As<ViewResult>().ViewName.Should().Be(RegionsController.ViewPath);
     }
 
-    [MoqAutoData]
+    [Test, MoqAutoData]
     public async Task Get_ViewModelHasBackLinkToTermsAndConditions(
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] RegionsController sut,
         OnboardingSessionModel sessionModel,
-        string termsAndConditionsUrl)
+        string termsAndConditionsUrl,
+        CancellationToken cancellationToken)
     {
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.TermsAndConditions, termsAndConditionsUrl);
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
-        var result = await sut.Get();
+        var result = await sut.Get(cancellationToken);
 
         result.As<ViewResult>().Model.As<RegionsViewModel>().BackLink.Should().Be(termsAndConditionsUrl);
     }
 
-    [MoqAutoData]
+    [Test, MoqAutoData]
     public async Task Get_ViewModel_HasSessionData(
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Frozen] Mock<IRegionService> regionsService,
         [Greedy] RegionsController sut,
-        OnboardingSessionModel sessionModel)
+        OnboardingSessionModel sessionModel,
+        List<Region> regionList,
+        CancellationToken cancellationToken)
     {
         sut.AddUrlHelperMock();
 
-        List<Region> regionList = new()
-        {
-            new Region() { Area = "London", Id = 1, Ordering = 1 },
-            new Region() { Area = "Yorkshire", Id = 2, Ordering = 2 }
-        };
-
-        regionsService.Setup(x => x.GetRegions()).Returns(Task.FromResult(regionList));
+        regionsService.Setup(x => x.GetRegions(cancellationToken)).Returns(Task.FromResult(regionList));
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
-        var result = await sut.Get();
+        var result = await sut.Get(cancellationToken);
         result.As<ViewResult>().Model.As<RegionsViewModel>().Regions.Should().Equal(sessionModel.Regions);
     }
 }

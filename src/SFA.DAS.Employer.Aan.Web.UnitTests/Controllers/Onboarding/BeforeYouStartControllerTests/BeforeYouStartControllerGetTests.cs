@@ -9,7 +9,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.BeforeYouSta
 [TestFixture]
 public class BeforeYouStartControllerGetTests
 {
-    [MoqAutoData]
+    [Test, MoqAutoData]
     public void Get_ReturnsViewResult([Greedy] BeforeYouStartController sut)
     {
         var result = sut.Get();
@@ -17,7 +17,7 @@ public class BeforeYouStartControllerGetTests
         result.As<ViewResult>().Should().NotBeNull();
     }
 
-    [MoqAutoData]
+    [Test, MoqAutoData]
     public void Get_ViewResult_HasCorrectViewPath([Greedy] BeforeYouStartController sut)
     {
         var result = sut.Get();

@@ -12,5 +12,5 @@ public interface IOuterApiClient
     Task<GetProfilesResult> GetProfilesByUserType([Path("userType")] string userType);
 
     [Get("/regions")]
-    Task<GetRegionsResult> GetRegions();
+    Task<GetRegionsResult> GetRegions(CancellationToken cancellationToken);
 }

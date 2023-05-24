@@ -17,7 +17,7 @@ public class RequiredSessionModelAttribute : ActionFilterAttribute
 
     public string ControllerName { get; set; } = "Home";
 
-    private static readonly string[] controllersToByPass = new[] { nameof(BeforeYouStartController), nameof(TermsAndConditionsController), nameof(RegionsController) };
+    private static readonly string[] controllersToByPass = new[] { nameof(BeforeYouStartController), nameof(TermsAndConditionsController) };
 
     public string[] ControllersToByPass { get => controllersToByPass; }
 

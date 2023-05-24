@@ -16,7 +16,7 @@ public class TermsAndConditionsController : Controller
     public TermsAndConditionsController(ISessionService sessionService, IProfileService profileService)
     {
         _sessionService = sessionService;
-        this._profileService = profileService;
+        _profileService = profileService;
     }
 
     [HttpGet]

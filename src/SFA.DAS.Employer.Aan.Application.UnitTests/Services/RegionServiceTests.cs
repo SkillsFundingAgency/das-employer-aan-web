@@ -9,13 +9,14 @@ namespace SFA.DAS.Employer.Aan.Application.UnitTests.Services;
 [TestFixture]
 public class RegionServiceTests
 {
-    [MoqAutoData]
+    [Test, MoqAutoData]
     public async Task Service_GetRegions_ReturnsOrderedRegionsList(
-      Mock<IOuterApiClient> outerApiClient)
+        Mock<IOuterApiClient> outerApiClient,
+        CancellationToken cancellationToken)
     {
         var sut = new RegionService(outerApiClient.Object);
 
-        var result = await sut.GetRegions();
+        var result = await sut.GetRegions(cancellationToken);
         result.Should().NotBeNullOrEmpty();
         result.Should().BeInAscendingOrder(x => x.Ordering);
     }

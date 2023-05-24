@@ -11,7 +11,7 @@ namespace SFA.DAS.Employer.Aan.Application.UnitTests.Services;
 [TestFixture]
 public class ProfileServiceTests
 {
-    [MoqAutoData]
+    [Test, MoqAutoData]
     public async Task Service_ProfileData_ReturnsProfiles(
         [Frozen] Mock<IOuterApiClient> _outerApiClient,
         [Greedy] ProfileService sut,

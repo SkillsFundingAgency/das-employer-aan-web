@@ -4,6 +4,7 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
+using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
@@ -24,16 +25,16 @@ public class RegionsController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> Get(CancellationToken cancellationToken)
     {
-        var model = await GetViewModel();
+        var model = await GetViewModel(cancellationToken);
         return View(ViewPath, model);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(RegionsSubmitModel submitmodel)
+    public async Task<IActionResult> Post(RegionsSubmitModel submitmodel, CancellationToken cancellationToken)
     {
-        var model = await GetViewModel();
+        var model = await GetViewModel(cancellationToken);
         ValidationResult result = _validator.Validate(submitmodel);
 
         if (!result.IsValid)
@@ -50,13 +51,13 @@ public class RegionsController : Controller
         return View(ViewPath, model);
     }
 
-    private async Task<RegionsViewModel> GetViewModel()
+    private async Task<RegionsViewModel> GetViewModel(CancellationToken cancellationToken)
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
 
         if (!sessionModel.Regions.Any())
         {
-            var regions = await _regionService.GetRegions();
+            var regions = await _regionService.GetRegions(cancellationToken);
             sessionModel.Regions = regions.Select(x => (RegionModel)x).ToList();
             _sessionService.Set(sessionModel);
         }

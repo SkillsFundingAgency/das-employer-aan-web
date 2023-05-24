@@ -14,12 +14,13 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.RegionsContr
 [TestFixture]
 public class RegionsControllerPostTests
 {
-    [MoqAutoData]
+    [Test, MoqAutoData]
     public async Task Post_SetsSelectedRegionsInOnBoardingSessionModel(
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Frozen] Mock<IValidator<RegionsSubmitModel>> validatorMock,
         [Greedy] RegionsController sut,
-        RegionsSubmitModel submitmodel)
+        RegionsSubmitModel submitmodel,
+        CancellationToken cancellationToken)
     {
         sut.AddUrlHelperMock();
         OnboardingSessionModel sessionModel = new();
@@ -28,14 +29,14 @@ public class RegionsControllerPostTests
         ValidationResult validationResult = new();
         validatorMock.Setup(v => v.Validate(submitmodel)).Returns(validationResult);
 
-        await sut.Post(submitmodel);
+        await sut.Post(submitmodel, cancellationToken);
         sessionServiceMock.Verify(s => s.Set(It.Is<OnboardingSessionModel>(m => m.Regions == submitmodel.Regions)));
     }
 
-    [MoqAutoData]
+    [Test, MoqAutoData]
     public async Task Post_Errors_WhenNoSelectedRegions(
-        [Frozen] Mock<ISessionService> sessionServiceMock,
-        [Greedy] RegionsController sut)
+        [Greedy] RegionsController sut,
+        CancellationToken cancellationToken)
     {
         sut.AddUrlHelperMock();
         RegionsSubmitModel submitmodel = new()
@@ -43,7 +44,7 @@ public class RegionsControllerPostTests
             Regions = null!
         };
 
-        await sut.Post(submitmodel);
+        await sut.Post(submitmodel, cancellationToken);
         sut.ModelState.IsValid.Should().BeFalse();
     }
 }
