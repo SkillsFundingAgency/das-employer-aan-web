@@ -76,4 +76,15 @@ public class OnboardingSessionModelTests
 
         action.Should().Throw<InvalidOperationException>();
     }
+
+    [Test]
+    [AutoData]
+    public void ClearProfileValue_Clears_ProfilesInOnboardingSessionModel(OnboardingSessionModel sut)
+    {
+        var profileModel = sut.ProfileData[0];
+
+        sut.ClearProfileValue(profileModel.Id);
+
+        sut.ProfileData.Find(x => x.Id == profileModel.Id)!.Value.Should().BeNull();
+    }
 }
