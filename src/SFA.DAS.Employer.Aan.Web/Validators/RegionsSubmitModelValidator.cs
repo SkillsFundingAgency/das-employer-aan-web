@@ -10,6 +10,6 @@ public class RegionsSubmitModelValidator : AbstractValidator<RegionsSubmitModel>
     public RegionsSubmitModelValidator()
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
-        RuleFor(x => x.Regions).Must(c => c.Any(p => p.IsSelected)).WithMessage(NoSelectionErrorMessage);
+        RuleFor(x => x.Regions).Must(c => c!.Any(p => p.IsSelected)).WithMessage(NoSelectionErrorMessage);
     }
 }
