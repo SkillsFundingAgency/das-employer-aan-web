@@ -47,7 +47,7 @@ public class RegionsController : Controller
 
         _sessionService.Set(sessionModel);
 
-        return View(ViewPath, model);///TODO:Need to return navigate this to same view inorder to make the back button work, which reloads the page with selections. return RedirectToRoute(RouteNames.Onboarding.Regions);
+        return View(ViewPath, model);
     }
 
     private async Task<RegionsViewModel> GetViewModel()
