@@ -11,8 +11,6 @@ namespace SFA.DAS.Employer.Aan.Web.Filters;
 [ExcludeFromCodeCoverage]
 public class RequiredSessionModelAttribute : ActionFilterAttribute
 {
-    public Type ModelType { get; set; } = typeof(OnboardingSessionModel);
-
     public string ActionName { get; set; } = "Index";
 
     public string ControllerName { get; set; } = "Home";
@@ -31,7 +29,7 @@ public class RequiredSessionModelAttribute : ActionFilterAttribute
 
         var sessionService = context.HttpContext.RequestServices.GetService<ISessionService>();
 
-        var sessionModel = sessionService!.Get(ModelType.Name);
+        var sessionModel = sessionService!.Get<OnboardingSessionModel>();
 
         if (sessionModel == null)
         {

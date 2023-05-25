@@ -28,7 +28,7 @@
                     
                         <div id="Regions" class="govuk-checkboxes" data-module="govuk-checkboxes">
                             @{
-                                for (int i = 0; i < Model.Regions.Count; i++)
+                                for (int i = 0; i < Model.Regions!.Count; i++)
                                 {
                                     <div class="govuk-checkboxes__item">
                                         <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.Regions[i].IsSelected" id="@Model.Regions[i].Id">

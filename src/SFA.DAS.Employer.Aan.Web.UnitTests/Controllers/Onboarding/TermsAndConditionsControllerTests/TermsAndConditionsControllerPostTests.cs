@@ -1,8 +1,6 @@
 ﻿using AutoFixture.NUnit3;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Moq;
 using SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Testing.AutoFixture;
@@ -13,26 +11,9 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.TermsAndCond
 public class TermsAndConditionsControllerPostTests
 {
     [Test, MoqAutoData]
-    public async Task Post_SetsTempData(
-        [Greedy] TermsAndConditionsController sut,
-        Mock<ITempDataDictionary> tempDataMock)
-    {
-        tempDataMock.Setup(t => t.ContainsKey(TempDataKeys.HasSeenTermsAndConditions)).Returns(false);
-        sut.TempData = tempDataMock.Object;
-
-        await sut.Post();
-
-        tempDataMock.Verify(t => t.Add(TempDataKeys.HasSeenTermsAndConditions, true));
-    }
-
-    [Test, MoqAutoData]
     public async Task Post_RedirectToRouteResult_RedirectsToRegion(
-        [Greedy] TermsAndConditionsController sut,
-        Mock<ITempDataDictionary> tempDataMock)
+        [Greedy] TermsAndConditionsController sut)
     {
-        sut.TempData = tempDataMock.Object;
-        tempDataMock.Setup(t => t.ContainsKey(TempDataKeys.HasSeenTermsAndConditions)).Returns(true);
-
         var result = await sut.Post();
 
         result.As<RedirectToRouteResult>().RouteName.Should().Be(RouteNames.Onboarding.Regions);
