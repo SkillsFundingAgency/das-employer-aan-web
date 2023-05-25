@@ -26,12 +26,12 @@
                         </div>
                         <span asp-validation-for="@Model.Regions" class="govuk-error-message"></span>
                     
-                        <div id="regions-option" class="govuk-checkboxes" data-module="govuk-checkboxes">
+                        <div id="Regions" class="govuk-checkboxes" data-module="govuk-checkboxes">
                             @{
                                 for (int i = 0; i < Model.Regions.Count; i++)
                                 {
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" type="checkbox" asp-for=@Model.Regions[i].IsSelected id="@Model.Regions[i].Id">
+                                        <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.Regions[i].IsSelected" id="@Model.Regions[i].Id">
                                         <label class="govuk-label govuk-checkboxes__label" for="@Model.Regions[i].Id">
                                             @Model.Regions[i].Area
                                         </label>
