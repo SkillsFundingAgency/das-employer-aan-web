@@ -31,7 +31,7 @@ public class RequiredSessionModelAttribute : ActionFilterAttribute
         }
     }
 
-    private bool BypassCheck(ControllerActionDescriptor controllerActionDescriptor)
+    private static bool BypassCheck(ControllerActionDescriptor controllerActionDescriptor)
     {
         if (!IsRequestForOnboardingAction(controllerActionDescriptor)) return true;
 

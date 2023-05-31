@@ -1,7 +1,9 @@
-﻿using SFA.DAS.Employer.Aan.Web.Infrastructure.Configuration;
+﻿using System.Diagnostics.CodeAnalysis;
+using SFA.DAS.Employer.Aan.Web.Infrastructure.Configuration;
 
 namespace SFA.DAS.Employer.Aan.Web.AppStart;
 
+[ExcludeFromCodeCoverage]
 public static class AddSessionExtension
 {
     public static IServiceCollection AddSession(this IServiceCollection services, IConfiguration configuration)
