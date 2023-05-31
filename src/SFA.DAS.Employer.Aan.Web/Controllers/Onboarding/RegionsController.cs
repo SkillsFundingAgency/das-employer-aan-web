@@ -48,7 +48,14 @@ public class RegionsController : Controller
 
         _sessionService.Set(sessionModel);
 
-        return View(ViewPath, model);
+        if (sessionModel.Regions.Count(x => x.IsSelected) == 1)
+        {
+            return RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork);
+        }
+        else
+        {
+            return View(ViewPath, model);
+        }
     }
 
     private async Task<RegionsViewModel> GetViewModel(CancellationToken cancellationToken)

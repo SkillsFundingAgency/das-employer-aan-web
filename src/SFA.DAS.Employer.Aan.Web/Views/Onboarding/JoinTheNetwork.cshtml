@@ -1,0 +1,84 @@
+﻿@using SFA.DAS.Employer.Aan.Web.Infrastructure
+@using SFA.DAS.Employer.Aan.Web.Models.Onboarding
+@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
+@model JoinTheNetworkViewModel
+@{
+    ViewData["Title"] = "Reason To Join";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <partial name="_validationSummary" />
+        <form method="post">
+            <div class="govuk-form-group">
+                <fieldset class="govuk-fieldset">
+                    <div esfa-validation-marker-for="@Model.ReasonToJoin" class="govuk-form-group">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                            <h1 class="govuk-fieldset__heading">
+                                Why do you want to join the network?
+                            </h1>
+                        </legend>
+                        <p />
+                        <div id="reasonsToJoin-hint" class="govuk-hint">
+                            Outline your reasons for wanting to become a network ambassador. You can choose multiple options that are relevant to your application.
+                        </div>
+                        <span asp-validation-for="@Model.ReasonToJoin" class="govuk-error-message"></span>
+
+                        <div id="reasonToJoin-option" class="govuk-checkboxes" data-module="govuk-checkboxes" style="padding: 1px 1px 1px 30px;">
+
+                            @{
+                                for (int i = 0; i < Model.ReasonToJoin.Count; i++)
+                                {
+                                    <div class="govuk-checkboxes__item">
+                                        <input class="govuk-checkboxes__input" type="checkbox" asp-for=@Model.ReasonToJoin[i].IsSelected>
+                                        <label class="govuk-label govuk-checkboxes__label">
+                                            @Model.ReasonToJoin[i].Description
+                                        </label>
+                                        <input type="hidden" asp-for="@Model.ReasonToJoin[i].Id" />
+                                        <input type="hidden" asp-for="@Model.ReasonToJoin[i].Ordering" />
+                                    </div>
+                                }
+                            }
+                        </div>
+
+                    </div>
+                    <div esfa-validation-marker-for="@Model.Support" class="govuk-form-group">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                            <h1 class="govuk-fieldset__heading">
+                                What support would you need from the network?
+                            </h1>
+                        </legend>
+                        <p />
+                        <div id="Support-hint" class="govuk-hint">
+                            Outline what support you may need from the network in your role as an ambassador. You can choose multiple options that are relevant to your application.
+                        </div>
+                        <span asp-validation-for="@Model.Support" class="govuk-error-message"></span>
+
+                        <div id="Support-option" class="govuk-checkboxes" data-module="govuk-checkboxes" style="padding: 1px 1px 1px 30px;">
+
+                            @{
+                                for (int i = 0; i < Model.Support.Count; i++)
+                                {
+                                    <div class="govuk-checkboxes__item">
+                                        <input class="govuk-checkboxes__input" type="checkbox" asp-for=@Model.Support[i].IsSelected>
+                                        <label class="govuk-label govuk-checkboxes__label">
+                                            @Model.Support[i].Description
+                                        </label>
+                                        <input type="hidden" asp-for="@Model.Support[i].Id" />
+                                        <input type="hidden" asp-for="@Model.Support[i].Ordering" />
+                                    </div>
+                                }
+                            }
+                        </div>
+
+                    </div>
+                </fieldset>
+            </div>
+            <div class="govuk-button-group">
+                <button id="continue-button" type="submit" class="govuk-button" data-module="govuk-button" data-disable-on-submit="true" asp-page-handler="Submit">
+                    Continue
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
