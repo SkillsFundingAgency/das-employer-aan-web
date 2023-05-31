@@ -11,9 +11,8 @@ namespace SFA.DAS.Employer.Aan.Web.Validators
         public JoinTheNetworkSubmitModelValidator()
         {
             RuleLevelCascadeMode = CascadeMode.Stop;
-            RuleFor(x => x.ReasonToJoin).Must(c => c.Any(p => p.IsSelected)).WithMessage(NoSelectionForReasonToJoinErrorMessage);
-            RuleFor(x => x.Support).Must(c => c.Any(p => p.IsSelected)).WithMessage(NoSelectionForSupportErrorMessage);
+            RuleFor(x => x.ReasonToJoin).Must(c => c!.Exists(p => p.IsSelected)).WithMessage(NoSelectionForReasonToJoinErrorMessage);
+            RuleFor(x => x.Support).Must(c => c!.Exists(p => p.IsSelected)).WithMessage(NoSelectionForSupportErrorMessage);
         }
-
     }
 }

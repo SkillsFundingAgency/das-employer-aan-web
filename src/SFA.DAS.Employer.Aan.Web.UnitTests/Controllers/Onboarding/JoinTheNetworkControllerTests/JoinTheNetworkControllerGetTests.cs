@@ -36,11 +36,11 @@ public class JoinTheNetworkControllerGetTests
     }
 
     [MoqAutoData]
-    public void Get_ViewModel_ReturnsJoinTheNetworkViewModell(
+    public void Get_ViewModel_ReturnsJoinTheNetworkViewModel(
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] JoinTheNetworkController sut)
     {
-        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.TermsAndConditions);//Regions
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.Regions);
 
         OnboardingSessionModel sessionModel = new OnboardingSessionModel();
         sessionModel.ProfileData.Add(new ProfileModel { Id = 101, Category = Category.ReasonToJoin, Value = true.ToString() });
