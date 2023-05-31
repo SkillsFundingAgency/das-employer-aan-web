@@ -32,10 +32,10 @@ public class RegionsController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(RegionsSubmitModel submitmodel, CancellationToken cancellationToken)
+    public async Task<IActionResult> Post(RegionsSubmitModel submitModel, CancellationToken cancellationToken)
     {
         var model = await GetViewModel(cancellationToken);
-        ValidationResult result = _validator.Validate(submitmodel);
+        ValidationResult result = _validator.Validate(submitModel);
 
         if (!result.IsValid)
         {
@@ -44,7 +44,7 @@ public class RegionsController : Controller
         }
 
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
-        sessionModel.Regions = submitmodel.Regions!;
+        sessionModel.Regions = submitModel.Regions!;
 
         _sessionService.Set(sessionModel);
 

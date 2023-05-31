@@ -11,9 +11,9 @@ namespace SFA.DAS.Employer.Aan.Web.Filters;
 [ExcludeFromCodeCoverage]
 public class RequiredSessionModelAttribute : ActionFilterAttribute
 {
-    public string ActionName { get; set; } = "Index";
-
-    public string ControllerName { get; set; } = "Home";
+    const string DefaultActionName = "Index";
+    const string DefaultControllerName = "Home";
+    const string OnboardingFilter = "Onboarding";
 
     private static readonly string[] controllersToByPass = new[] { nameof(BeforeYouStartController), nameof(TermsAndConditionsController) };
 
@@ -23,17 +23,32 @@ public class RequiredSessionModelAttribute : ActionFilterAttribute
     {
         if (context.ActionDescriptor is not ControllerActionDescriptor controllerActionDescriptor) return;
 
-        if (!controllerActionDescriptor.ControllerTypeInfo.FullName!.Contains("Onboarding")) return;
+        if (BypassCheck(controllerActionDescriptor)) return;
 
-        if (ControllersToByPass.Contains(controllerActionDescriptor.ControllerTypeInfo.Name)) return;
-
-        var sessionService = context.HttpContext.RequestServices.GetService<ISessionService>();
-
-        var sessionModel = sessionService!.Get<OnboardingSessionModel>();
-
-        if (sessionModel == null)
+        if (!HasValidSessionModel(context.HttpContext.RequestServices))
         {
-            context.Result = new RedirectToActionResult(ActionName, ControllerName, null);
+            context.Result = RedirectToHome;
         }
     }
+
+    private bool BypassCheck(ControllerActionDescriptor controllerActionDescriptor)
+    {
+        if (!IsRequestForOnboardingAction(controllerActionDescriptor)) return true;
+
+        if (controllersToByPass.Any(c => c == controllerActionDescriptor.ControllerTypeInfo.Name)) return true;
+
+        return false;
+    }
+    private static bool IsRequestForOnboardingAction(ControllerActionDescriptor action) => action.ControllerTypeInfo.FullName!.Contains(OnboardingFilter);
+
+    private static bool HasValidSessionModel(IServiceProvider services)
+    {
+        ISessionService sessionService = services.GetService<ISessionService>()!;
+
+        OnboardingSessionModel sessionModel = sessionService.Get<OnboardingSessionModel>();
+
+        return sessionModel != null && sessionModel.IsValid;
+    }
+
+    private readonly static RedirectToActionResult RedirectToHome = new(DefaultActionName, DefaultControllerName, null);
 }
