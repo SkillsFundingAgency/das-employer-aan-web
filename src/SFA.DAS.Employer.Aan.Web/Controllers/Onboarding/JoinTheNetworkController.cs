@@ -65,7 +65,7 @@ public class JoinTheNetworkController : Controller
 
         return new JoinTheNetworkViewModel
         {
-            BackLink = Url.RouteUrl(@RouteNames.Onboarding.TermsAndConditions)!,//Region
+            BackLink = Url.RouteUrl(@RouteNames.Onboarding.Regions)!,
             ReasonToJoin = sessionModel.ProfileData.Where(x => x.Category == Category.ReasonToJoin).OrderBy(x => x.Ordering).ToList(),
             Support = sessionModel.ProfileData.Where(x => x.Category == Category.Support).OrderBy(x => x.Ordering).ToList()
         };

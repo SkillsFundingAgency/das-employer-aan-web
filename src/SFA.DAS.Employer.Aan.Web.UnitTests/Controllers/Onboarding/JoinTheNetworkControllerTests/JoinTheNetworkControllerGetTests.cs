@@ -60,7 +60,7 @@ public class JoinTheNetworkControllerGetTests
         OnboardingSessionModel sessionModel,
         string regionsUrl)
     {
-        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.TermsAndConditions, regionsUrl);//Regions
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.Regions, regionsUrl);
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
         var result = sut.Get();
