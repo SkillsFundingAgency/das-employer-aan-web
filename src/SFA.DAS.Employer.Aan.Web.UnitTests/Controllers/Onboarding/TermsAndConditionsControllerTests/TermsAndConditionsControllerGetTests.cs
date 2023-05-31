@@ -11,7 +11,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.TermsAndCond
 [TestFixture]
 public class TermsAndConditionsControllerGetTests
 {
-    [MoqAutoData]
+    [Test, MoqAutoData]
     public void Get_ReturnsViewResult([Greedy] TermsAndConditionsController sut)
     {
         sut.AddUrlHelperMock();
@@ -20,7 +20,7 @@ public class TermsAndConditionsControllerGetTests
         result.As<ViewResult>().Should().NotBeNull();
     }
 
-    [MoqAutoData]
+    [Test, MoqAutoData]
     public void Get_ViewResult_HasCorrectViewPath([Greedy] TermsAndConditionsController sut)
     {
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.BeforeYouStart);

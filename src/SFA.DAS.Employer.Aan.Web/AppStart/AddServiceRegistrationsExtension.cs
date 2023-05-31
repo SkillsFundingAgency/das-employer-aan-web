@@ -18,6 +18,7 @@ public static class AddServiceRegistrationsExtension
 
         services.AddTransient<ISessionService, SessionService>();
         services.AddTransient<IProfileService, ProfileService>();
+        services.AddTransient<IRegionService, RegionService>();
         return services;
     }
 

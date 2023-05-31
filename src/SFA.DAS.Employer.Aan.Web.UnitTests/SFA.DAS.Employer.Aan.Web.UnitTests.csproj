@@ -27,10 +27,10 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-    <PackageReference Include="SFA.DAS.Testing.AutoFixture" Version="3.0.169" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\SFA.DAS.Employer.Aan.Domain\SFA.DAS.Employer.Aan.Domain.csproj" />
 		<ProjectReference Include="..\SFA.DAS.Employer.Aan.Web\SFA.DAS.Employer.Aan.Web.csproj" />
 	</ItemGroup>
 

@@ -1,7 +1,9 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Web.AppStart;
 using SFA.DAS.Employer.Aan.Web.Filters;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
+using SFA.DAS.Employer.Aan.Web.Validators;
 using SFA.DAS.Employer.Shared.UI;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,27 +16,26 @@ builder.Services
     .AddApplicationInsightsTelemetry()
     .AddHttpContextAccessor()
     .AddAuthenticationServices()
+    .AddSession(rootConfiguration)
     .AddServiceRegistrations(rootConfiguration)
+    .AddValidatorsFromAssembly(typeof(RegionsSubmitModelValidator).Assembly)
     .AddMaMenuConfiguration(RouteNames.SignOut, rootConfiguration["ResourceEnvironmentName"]);
 
 builder.Services.AddHealthChecks();
-
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(10);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.Cookie.IsEssential = true;
-});
 
 builder.Services
     .Configure<RouteOptions>(options => { options.LowercaseUrls = true; })
     .AddMvc(options =>
     {
-        options.Filters.Add(new RequiredSessionModelAttribute());
-        options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+        options.Filters.Add<RequiredSessionModelAttribute>();
+        options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
     })
     .AddSessionStateTempDataProvider();
+
+#if DEBUG
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+#endif
+
 
 var app = builder.Build();
 
@@ -51,13 +52,15 @@ else
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseCookiePolicy();
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
-app.UseSession();
+app
+    .UseHttpsRedirection()
+    .UseStaticFiles()
+    .UseCookiePolicy()
+    .UseAuthentication()
+    .UseAuthorization()
+    .UseRouting()
+    .UseSession()
+    .UseHealthChecks("/ping");
 
 app.UseEndpoints(endpoints =>
 {

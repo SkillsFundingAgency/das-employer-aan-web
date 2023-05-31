@@ -10,7 +10,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.BeforeYouSta
 [TestFixture]
 public class BeforeYouStartControllerPostTests
 {
-    [MoqAutoData]
+    [Test, MoqAutoData]
     public void Post_RedirectsRouteToTermsAndConditions(
          [Greedy] BeforeYouStartController sut)
     {

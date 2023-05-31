@@ -16,7 +16,7 @@ public class TermsAndConditionsController : Controller
     public TermsAndConditionsController(ISessionService sessionService, IProfileService profileService)
     {
         _sessionService = sessionService;
-        this._profileService = profileService;
+        _profileService = profileService;
     }
 
     [HttpGet]
@@ -32,8 +32,6 @@ public class TermsAndConditionsController : Controller
     [HttpPost]
     public async Task<IActionResult> Post()
     {
-        if (!TempData.ContainsKey(TempDataKeys.HasSeenTermsAndConditions)) TempData.Add(TempDataKeys.HasSeenTermsAndConditions, true);
-
         if (!_sessionService.Contains<OnboardingSessionModel>())
         {
             var profiles = await _profileService.GetProfilesByUserType("employer");
@@ -45,6 +43,6 @@ public class TermsAndConditionsController : Controller
             _sessionService.Set(sessionModel);
         }
 
-        return RedirectToRoute(RouteNames.Onboarding.Region);
+        return RedirectToRoute(RouteNames.Onboarding.Regions);
     }
 }
