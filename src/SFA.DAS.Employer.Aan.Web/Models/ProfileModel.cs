@@ -9,6 +9,7 @@ public class ProfileModel
     public string Description { get; set; } = null!;
     public string Category { get; set; } = null!;
     public int Ordering { get; set; }
+    public bool IsSelected { get; set; } // need to move it to SelectProfileModel
 
     public static implicit operator ProfileModel(Profile profile) => new()
     {

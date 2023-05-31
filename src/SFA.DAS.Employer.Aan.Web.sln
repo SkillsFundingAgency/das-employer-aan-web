@@ -3,19 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Employer.Aan.Web", "SFA.DAS.Employer.Aan.Web\SFA.DAS.Employer.Aan.Web.csproj", "{D4067941-61E4-4B94-B3DE-ED3920EB2A9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Employer.Aan.Web", "SFA.DAS.Employer.Aan.Web\SFA.DAS.Employer.Aan.Web.csproj", "{D4067941-61E4-4B94-B3DE-ED3920EB2A9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Employer.Aan.Application", "SFA.DAS.Employer.Aan.Application\SFA.DAS.Employer.Aan.Application.csproj", "{F403448C-81F2-4DA7-B141-E7EFDD708CAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Employer.Aan.Application", "SFA.DAS.Employer.Aan.Application\SFA.DAS.Employer.Aan.Application.csproj", "{F403448C-81F2-4DA7-B141-E7EFDD708CAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Employer.Aan.Domain", "SFA.DAS.Employer.Aan.Domain\SFA.DAS.Employer.Aan.Domain.csproj", "{BEEABBC1-7A71-4731-948D-1CA4E3E8DEC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Employer.Aan.Domain", "SFA.DAS.Employer.Aan.Domain\SFA.DAS.Employer.Aan.Domain.csproj", "{BEEABBC1-7A71-4731-948D-1CA4E3E8DEC3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2A448296-476B-4C08-A2CE-2FC774DD0BF1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Employer.Aan.Web.UnitTests", "SFA.DAS.Employer.Aan.Web.UnitTests\SFA.DAS.Employer.Aan.Web.UnitTests.csproj", "{A7C75D1F-19E7-4AEE-BB08-BAE89866B659}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Employer.Aan.Web.UnitTests", "SFA.DAS.Employer.Aan.Web.UnitTests\SFA.DAS.Employer.Aan.Web.UnitTests.csproj", "{A7C75D1F-19E7-4AEE-BB08-BAE89866B659}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Employer.Aan.Domain.UnitTests", "SFA.DAS.Employer.Aan.Domain.UnitTests\SFA.DAS.Employer.Aan.Domain.UnitTests.csproj", "{AB47457B-23FC-4ABC-9EE2-AF91745DA0FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Employer.Aan.Domain.UnitTests", "SFA.DAS.Employer.Aan.Domain.UnitTests\SFA.DAS.Employer.Aan.Domain.UnitTests.csproj", "{AB47457B-23FC-4ABC-9EE2-AF91745DA0FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Employer.Aan.Application.UnitTests", "SFA.DAS.Employer.Aan.Application.UnitTests\SFA.DAS.Employer.Aan.Application.UnitTests.csproj", "{B4940593-67C9-4CC4-A6E7-0289DA76FA1E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Employer.Aan.Application.UnitTests", "SFA.DAS.Employer.Aan.Application.UnitTests\SFA.DAS.Employer.Aan.Application.UnitTests.csproj", "{B4940593-67C9-4CC4-A6E7-0289DA76FA1E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
