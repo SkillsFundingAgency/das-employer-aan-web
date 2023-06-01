@@ -11,7 +11,6 @@ using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 
 [Route("onboarding/jointhenetwork", Name = RouteNames.Onboarding.JoinTheNetwork)]
-[Route("onboarding/previousengagement", Name = RouteNames.Onboarding.PreviousEngagement)]
 public class JoinTheNetworkController : Controller
 {
     public const string ViewPath = "~/Views/Onboarding/JoinTheNetwork.cshtml";
