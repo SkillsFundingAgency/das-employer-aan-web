@@ -7,6 +7,6 @@ public class JoinTheNetworkViewModel : JoinTheNetworkSubmitModel, IBackLink
 
 public class JoinTheNetworkSubmitModel
 {
-    public List<ProfileModel>? ReasonToJoin { get; set; } = null!;
-    public List<ProfileModel>? Support { get; set; } = null!;
+    public List<SelectProfileModel>? ReasonToJoin { get; set; } = null!;
+    public List<SelectProfileModel>? Support { get; set; } = null!;
 }

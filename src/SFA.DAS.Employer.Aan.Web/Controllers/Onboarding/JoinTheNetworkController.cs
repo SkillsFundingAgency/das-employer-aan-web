@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Constants;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
+using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 
 [Route("onboarding/jointhenetwork", Name = RouteNames.Onboarding.JoinTheNetwork)]
+[Route("onboarding/previousengagement", Name = RouteNames.Onboarding.PreviousEngagement)]
 public class JoinTheNetworkController : Controller
 {
     public const string ViewPath = "~/Views/Onboarding/JoinTheNetwork.cshtml";
@@ -55,8 +57,7 @@ public class JoinTheNetworkController : Controller
 
         _sessionService.Set(sessionModel);
 
-
-        return View(ViewPath, model);
+        return RedirectToRoute(RouteNames.Onboarding.PreviousEngagement);
     }
 
     private JoinTheNetworkViewModel GetViewModel()
@@ -66,8 +67,8 @@ public class JoinTheNetworkController : Controller
         return new JoinTheNetworkViewModel
         {
             BackLink = Url.RouteUrl(@RouteNames.Onboarding.Regions)!,
-            ReasonToJoin = sessionModel.ProfileData.Where(x => x.Category == Category.ReasonToJoin).OrderBy(x => x.Ordering).ToList(),
-            Support = sessionModel.ProfileData.Where(x => x.Category == Category.Support).OrderBy(x => x.Ordering).ToList()
+            ReasonToJoin = new List<SelectProfileModel>(sessionModel.ProfileData.Where(x => x.Category == Category.ReasonToJoin).OrderBy(x => x.Ordering).Select(x => (SelectProfileModel)x)),
+            Support = new List<SelectProfileModel>(sessionModel.ProfileData.Where(x => x.Category == Category.Support).OrderBy(x => x.Ordering).Select(x => (SelectProfileModel)x))
         };
     }
 }

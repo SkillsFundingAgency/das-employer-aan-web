@@ -37,7 +37,7 @@ public class RegionsControllerPostTests
     }
 
     [Test, MoqAutoData]
-    public async Task Post_RedirectsToJoinTheNetworkIfOnlyOneRegionIsSelected(
+    public async Task Post_SingleRegionSelected_RedirectsToReasonToJoinTheNetworkPage(
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Frozen] Mock<IValidator<RegionsSubmitModel>> validatorMock,
         [Greedy] RegionsController sut,
