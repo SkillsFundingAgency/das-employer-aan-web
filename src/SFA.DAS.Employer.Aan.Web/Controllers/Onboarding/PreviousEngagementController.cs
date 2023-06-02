@@ -36,13 +36,13 @@ public class PreviousEngagementController : Controller
     public IActionResult Post(PreviousEngagementSubmitModel submitmodel)
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
-        var model = GetViewModel(sessionModel);
 
         ValidationResult result = _validator.Validate(submitmodel);
 
         if (!result.IsValid)
         {
-            result.AddToModelState(this.ModelState);
+            var model = GetViewModel(sessionModel);
+            result.AddToModelState(ModelState);
             return View(ViewPath, model);
         }
 
@@ -50,7 +50,7 @@ public class PreviousEngagementController : Controller
 
         _sessionService.Set(sessionModel);
 
-        return View(ViewPath, model);
+        return RedirectToRoute(RouteNames.Onboarding.CheckYourAnswers);
     }
 
     private PreviousEngagementViewModel GetViewModel(OnboardingSessionModel sessionModel)

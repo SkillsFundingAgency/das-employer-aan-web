@@ -11,5 +11,7 @@ public class JoinTheNetworkControllerAttributeTests
     public void Controller_HasCorrectAttributes()
     {
         typeof(JoinTheNetworkController).Should().BeDecoratedWith<RouteAttribute>();
+        typeof(JoinTheNetworkController).Should().BeDecoratedWith<RouteAttribute>().Subject.Template.Should().Be("onboarding/jointhenetwork");
+        typeof(JoinTheNetworkController).Should().BeDecoratedWith<RouteAttribute>().Subject.Name.Should().Be("JoinTheNetwork");
     }
 }

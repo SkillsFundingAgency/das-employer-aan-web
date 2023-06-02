@@ -1,5 +1,6 @@
 ﻿using AutoFixture.NUnit3;
 using FluentAssertions;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using SFA.DAS.Employer.Aan.Domain.Constants;
@@ -31,18 +32,21 @@ public class PreviousEngagementControllerGetTests
         result.As<ViewResult>().Model.As<PreviousEngagementViewModel>().BackLink.Should().Be(joinTheNetworkUrl);
     }
 
-    [MoqAutoData]
-    public void Get_ViewModel_DefaultNullValueSetsHasPreviousEngagementToNull(
-       [Frozen] Mock<ISessionService> sessionServiceMock,
-       [Greedy] PreviousEngagementController sut)
+    [TestCase("true", true)]
+    [TestCase("false", false)]
+    [TestCase(null, null)]
+    public void Get_ViewModel_RestoresHasPreviousEngagementFromSession(string? hasPreviousEngagement_ValueInSession, bool? hasPreviousEngagement_ValueReturnedByModel)
     {
-        OnboardingSessionModel sessionModel = new();
-        sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileDataId.HasPreviousEngagement, Value = null });
-        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.JoinTheNetwork);
+        Mock<ISessionService> sessionServiceMock = new();
+        Mock<IValidator<PreviousEngagementSubmitModel>> validatorMock = new();
+        PreviousEngagementController sut = new PreviousEngagementController(sessionServiceMock.Object, validatorMock.Object);
+        sut.AddUrlHelperMock();
+        OnboardingSessionModel sessionModel = new OnboardingSessionModel();
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
+        sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileDataId.HasPreviousEngagement, Value = hasPreviousEngagement_ValueInSession });
 
         var result = sut.Get();
 
-        result.As<ViewResult>().Model.As<PreviousEngagementViewModel>().HasPreviousEngagement.Should().BeNull();
+        result.As<ViewResult>().Model.As<PreviousEngagementViewModel>().HasPreviousEngagement.Should().Be(hasPreviousEngagement_ValueReturnedByModel);
     }
 }
