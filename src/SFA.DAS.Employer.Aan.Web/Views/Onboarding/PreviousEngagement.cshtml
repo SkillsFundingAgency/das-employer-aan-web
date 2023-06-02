@@ -7,17 +7,17 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <partial name="_validationSummary" />
-        <form method="post" asp-route=" @RouteNames.Onboarding.PreviousEngagement" enctype="multipart/form-data" novalidate>
+        <form method="post" asp-route="@RouteNames.Onboarding.PreviousEngagement" enctype="multipart/form-data" novalidate>
             <div esfa-validation-marker-for="HasPreviousEngagement" class="govuk-form-group">
                 <h1 class="govuk-heading-l">
                     Are you joining because you have engaged with an ambassador in the network?
                 </h1>
                 <span asp-validation-for="HasPreviousEngagement" class="govuk-error-message"></span>
-                <div id="HasPreviousEngagement" class="govuk-radios" data-module="govuk-radios">
+                <div id="HasPreviousEngagement-options" class="govuk-radios" data-module="govuk-radios">
                     <div class="govuk-radios__item">
-                        <input asp-for="HasPreviousEngagement" id="Yes" class="govuk-radios__input" type="radio" value="true"
+                        <input asp-for="HasPreviousEngagement"  class="govuk-radios__input" type="radio" value="true"
                                sfa-validationerror-class="form-control-error">
-                        <label class="govuk-label govuk-radios__label" for="Yes">
+                        <label class="govuk-label govuk-radios__label" for="HasPreviousEngagement">
                             Yes
                         </label>
                     </div>
