@@ -33,11 +33,11 @@ public class JoinTheNetworkController : Controller
     [HttpPost]
     public IActionResult Post(JoinTheNetworkSubmitModel submitModel)
     {
-        var model = GetViewModel();
         ValidationResult result = _validator.Validate(submitModel);
 
         if (!result.IsValid)
         {
+            var model = GetViewModel();
             result.AddToModelState(ModelState);
             return View(ViewPath, model);
         }

@@ -31,7 +31,7 @@ public class JoinTheNetworkControllerPostTests
 
         JoinTheNetworkSubmitModel submitmodel = new()
         {
-            ReasonToJoin = new List<SelectProfileModel> { new ProfileModel { Id = 1, IsSelected = false } }
+            ReasonToJoin = new List<SelectProfileModel> { new SelectProfileModel { Id = 1, IsSelected = false } }
         };
 
         sut.Post(submitmodel);
@@ -54,7 +54,7 @@ public class JoinTheNetworkControllerPostTests
 
         JoinTheNetworkSubmitModel submitmodel = new()
         {
-            Support = new List<SelectProfileModel> { new ProfileModel { Id = 1, IsSelected = false } }
+            Support = new List<SelectProfileModel> { new SelectProfileModel { Id = 1, IsSelected = false } }
         };
 
         sut.Post(submitmodel);
@@ -77,8 +77,8 @@ public class JoinTheNetworkControllerPostTests
 
         JoinTheNetworkSubmitModel submitmodel = new()
         {
-            ReasonToJoin = new List<SelectProfileModel> { new ProfileModel { Id = 1, IsSelected = false } },
-            Support = new List<SelectProfileModel> { new ProfileModel { Id = 2, IsSelected = false } }
+            ReasonToJoin = new List<SelectProfileModel> { new SelectProfileModel { Id = 1, IsSelected = false } },
+            Support = new List<SelectProfileModel> { new SelectProfileModel { Id = 2, IsSelected = false } }
         };
 
         ValidationResult validationResult = new();

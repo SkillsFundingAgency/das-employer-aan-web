@@ -49,8 +49,8 @@ public class JoinTheNetworkControllerGetTests
 
         var result = sut.Get();
 
-        result.As<ViewResult>().Model.As<JoinTheNetworkViewModel>().ReasonToJoin.Should().Contain(x => x.Id == 101 && x.Category == Category.ReasonToJoin);// && x.IsSelected);
-        result.As<ViewResult>().Model.As<JoinTheNetworkViewModel>().Support.Should().Contain(x => x.Id == 202 && x.Category == Category.Support);// && !x.IsSelected);
+        result.As<ViewResult>().Model.As<JoinTheNetworkViewModel>().ReasonToJoin.Should().Contain(x => x.Id == 101 && x.Category == Category.ReasonToJoin && x.IsSelected);
+        result.As<ViewResult>().Model.As<JoinTheNetworkViewModel>().Support.Should().Contain(x => x.Id == 202 && x.Category == Category.Support && !x.IsSelected);
     }
 
     [MoqAutoData]
