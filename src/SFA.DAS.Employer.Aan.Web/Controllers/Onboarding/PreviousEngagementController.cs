@@ -10,6 +10,7 @@ using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 
 [Route("onboarding/previous-engagement", Name = RouteNames.Onboarding.PreviousEngagement)]
+[Route("onboarding/checkyouranswers", Name = RouteNames.Onboarding.CheckYourAnswers)]
 public class PreviousEngagementController : Controller
 {
     public const string ViewPath = "~/Views/Onboarding/PreviousEngagement.cshtml";
