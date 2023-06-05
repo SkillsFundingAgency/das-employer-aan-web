@@ -19,5 +19,6 @@ public static class RouteNames
         public const string PreviousEngagement = nameof(PreviousEngagement);
         public const string JoinTheNetwork = nameof(JoinTheNetwork);
         public const string CheckYourAnswers = nameof(CheckYourAnswers);
+        public const string AreasToEngageLocally = nameof(AreasToEngageLocally);
     }
 }

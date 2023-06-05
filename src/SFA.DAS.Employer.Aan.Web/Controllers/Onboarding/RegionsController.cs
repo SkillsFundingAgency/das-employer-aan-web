@@ -52,6 +52,10 @@ public class RegionsController : Controller
         {
             return RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork);
         }
+        else if (sessionModel.Regions.Count(x => x.IsSelected) >= 2 && sessionModel.Regions.Count(x => x.IsSelected) <= 4)
+        {
+            return RedirectToRoute(RouteNames.Onboarding.AreasToEngageLocally);
+        }
         else
         {
             return View(ViewPath, model);
