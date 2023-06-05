@@ -1,0 +1,52 @@
+﻿@using SFA.DAS.Employer.Aan.Web.Infrastructure
+@using SFA.DAS.Employer.Aan.Web.Models.Onboarding
+@model AreasToEngageLocallyViewModel
+@{
+    ViewData["Title"] = "Areas To Engage Locally";
+}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <partial name="_validationSummary" />
+        <form method="post">
+            <div class="govuk-form-group">
+                <fieldset class="govuk-fieldset">
+                    <div esfa-validation-marker-for="@Model.AreasToEngageLocally" class="govuk-form-group">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                            <h1 class="govuk-fieldset__heading">
+                                What area would you like to engage with locally within the network?
+                            </h1>
+                        </legend>
+                        <p>
+                        </p>
+                        <div id="regions-hint" class="govuk-hint">
+                            You told us that your employer is active in more than one region. Tell us which specific region you want to engage with as ambassador from the options below.
+                        </div>
+                        <span asp-validation-for="@Model.AreasToEngageLocally" class="govuk-error-message"></span>
+
+                        <div id="Regions" class="govuk-checkboxes" data-module="govuk-checkboxes">
+                            @{
+                                foreach (var region in Model.AreasToEngageLocally!)
+                                {
+                                    var regionIdentifier = region.Area!.Trim().Replace(' ', '-');
+                                    var buttonIdentifier = $"region-{regionIdentifier}";
+
+                                    <div class="govuk-radios__item">
+                                        <input class="govuk-radios__input" asp-for=@Model.SelectedAreaToEngageLocallyId type="radio" value=@region.Id>
+                                        <label class="govuk-label govuk-radios__label" for=@buttonIdentifier>
+                                            @region.Area
+                                        </label>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="govuk-button-group">
+                <button id="continue-button" type="submit" class="govuk-button" data-module="govuk-button" data-disable-on-submit="true" asp-page-handler="Submit">
+                    Continue
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
