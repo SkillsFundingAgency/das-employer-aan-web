@@ -36,63 +36,33 @@ public class RegionsControllerPostTests
         sessionServiceMock.Verify(s => s.Set(It.Is<OnboardingSessionModel>(m => m.Regions == submitmodel.Regions)));
     }
 
-    [Test, MoqAutoData]
-    public async Task Post_SingleRegionSelected_RedirectsToReasonToJoinTheNetworkPage(
+    [Test]
+    [MoqInlineAutoData(1, RouteNames.Onboarding.JoinTheNetwork)]
+    [MoqInlineAutoData(2, RouteNames.Onboarding.AreasToEngageLocally)]
+    [MoqInlineAutoData(3, RouteNames.Onboarding.AreasToEngageLocally)]
+    [MoqInlineAutoData(4, RouteNames.Onboarding.AreasToEngageLocally)]
+    public async Task Post_NavigateToAppropriateRouteAccordingiaRegionsSelected(
+        int noOfRegionsSelected,
+        string routeToRedirect,
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Frozen] Mock<IValidator<RegionsSubmitModel>> validatorMock,
-        [Greedy] RegionsController sut,
-        CancellationToken cancellationToken)
+        [Greedy] RegionsController sut)
     {
+        //Arrange        
         sut.AddUrlHelperMock();
-        OnboardingSessionModel sessionModel = new();
-        sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
-        RegionsSubmitModel submitmodel = new();
-        submitmodel.Regions = new List<RegionModel>();
-
-        submitmodel.Regions!.Add(new RegionModel() { Id = 1, IsSelected = true });
-        submitmodel.Regions!.Add(new RegionModel() { Id = 2, IsSelected = false });
+        RegionsSubmitModel submitmodel = new() { Regions = Enumerable.Range(1, noOfRegionsSelected).Select(i => new RegionModel { Id = i, IsSelected = true }).ToList() };
 
         ValidationResult validationResult = new();
         validatorMock.Setup(v => v.Validate(submitmodel)).Returns(validationResult);
 
-        var result = await sut.Post(submitmodel, cancellationToken);
+        //Act
+        var result = await sut.Post(submitmodel, new());
+
+        //Assert
         sessionServiceMock.Verify(s => s.Set(It.Is<OnboardingSessionModel>(m => m.Regions == submitmodel.Regions)));
 
-        result.As<RedirectToRouteResult>().Should().NotBeNull();
-        result.As<RedirectToRouteResult>().RouteName.Should().Be(RouteNames.Onboarding.JoinTheNetwork);
-    }
-
-    [Test, MoqAutoData]
-    public async Task Post_TwoToFourRegionsSelected_RedirectsToAreasToEngageLocallyPage(
-        [Frozen] Mock<ISessionService> sessionServiceMock,
-        [Frozen] Mock<IValidator<RegionsSubmitModel>> validatorMock,
-        [Greedy] RegionsController sut,
-        CancellationToken cancellationToken)
-    {
-        sut.AddUrlHelperMock();
-        OnboardingSessionModel sessionModel = new();
-        sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
-
-        RegionsSubmitModel submitmodel = new();
-        submitmodel.Regions = new List<RegionModel>();
-
-        submitmodel.Regions!.Add(new RegionModel() { Id = 1, IsSelected = false });
-        submitmodel.Regions!.Add(new RegionModel() { Id = 2, IsSelected = false });
-        submitmodel.Regions!.Add(new RegionModel() { Id = 3, IsSelected = true });
-        submitmodel.Regions!.Add(new RegionModel() { Id = 4, IsSelected = true });
-        submitmodel.Regions!.Add(new RegionModel() { Id = 5, IsSelected = true });
-        submitmodel.Regions!.Add(new RegionModel() { Id = 6, IsSelected = true });
-
-
-        ValidationResult validationResult = new();
-        validatorMock.Setup(v => v.Validate(submitmodel)).Returns(validationResult);
-
-        var result = await sut.Post(submitmodel, cancellationToken);
-        sessionServiceMock.Verify(s => s.Set(It.Is<OnboardingSessionModel>(m => m.Regions == submitmodel.Regions)));
-
-        result.As<RedirectToRouteResult>().Should().NotBeNull();
-        result.As<RedirectToRouteResult>().RouteName.Should().Be(RouteNames.Onboarding.AreasToEngageLocally);
+        result.As<RedirectToRouteResult>().RouteName.Should().Be(routeToRedirect);
     }
 
     [Test, MoqAutoData]

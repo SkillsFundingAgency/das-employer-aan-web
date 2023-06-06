@@ -7,5 +7,5 @@ public class RegionsViewModel : RegionsSubmitModel, IBackLink
 
 public class RegionsSubmitModel
 {
-    public List<RegionModel>? Regions { get; set; }
+    public List<RegionModel> Regions { get; set; } = new();
 }
