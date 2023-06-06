@@ -2,9 +2,12 @@
 using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
+using SFA.DAS.Employer.Aan.Web.Infrastructure;
+using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 using SFA.DAS.Testing.AutoFixture;
@@ -31,6 +34,33 @@ public class RegionsControllerPostTests
 
         await sut.Post(submitmodel, cancellationToken);
         sessionServiceMock.Verify(s => s.Set(It.Is<OnboardingSessionModel>(m => m.Regions == submitmodel.Regions)));
+    }
+
+    [Test, MoqAutoData]
+    public async Task Post_SingleRegionSelected_RedirectsToReasonToJoinTheNetworkPage(
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Frozen] Mock<IValidator<RegionsSubmitModel>> validatorMock,
+        [Greedy] RegionsController sut,
+        CancellationToken cancellationToken)
+    {
+        sut.AddUrlHelperMock();
+        OnboardingSessionModel sessionModel = new();
+        sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
+
+        RegionsSubmitModel submitmodel = new();
+        submitmodel.Regions = new List<RegionModel>();
+
+        submitmodel.Regions!.Add(new RegionModel() { Id = 1, IsSelected = true });
+        submitmodel.Regions!.Add(new RegionModel() { Id = 2, IsSelected = false });
+
+        ValidationResult validationResult = new();
+        validatorMock.Setup(v => v.Validate(submitmodel)).Returns(validationResult);
+
+        var result = await sut.Post(submitmodel, cancellationToken);
+        sessionServiceMock.Verify(s => s.Set(It.Is<OnboardingSessionModel>(m => m.Regions == submitmodel.Regions)));
+
+        result.As<RedirectToRouteResult>().Should().NotBeNull();
+        result.As<RedirectToRouteResult>().RouteName.Should().Be(RouteNames.Onboarding.JoinTheNetwork);
     }
 
     [Test, MoqAutoData]

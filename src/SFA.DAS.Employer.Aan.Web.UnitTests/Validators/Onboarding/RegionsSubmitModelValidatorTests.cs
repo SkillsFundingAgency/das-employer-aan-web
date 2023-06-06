@@ -3,7 +3,7 @@ using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Validators;
 
-namespace SFA.DAS.Employer.Aan.Web.UnitTests.Validators;
+namespace SFA.DAS.Employer.Aan.Web.UnitTests.Validators.Onboarding;
 
 public class RegionsSubmitModelValidatorTests
 {
