@@ -41,6 +41,7 @@ public class RegionsControllerPostTests
     [MoqInlineAutoData(2, RouteNames.Onboarding.AreasToEngageLocally)]
     [MoqInlineAutoData(3, RouteNames.Onboarding.AreasToEngageLocally)]
     [MoqInlineAutoData(4, RouteNames.Onboarding.AreasToEngageLocally)]
+    [MoqInlineAutoData(5, RouteNames.Onboarding.Regions)]
     public async Task Post_NavigateToAppropriateRouteAccordingiaRegionsSelected(
         int noOfRegionsSelected,
         string routeToRedirect,

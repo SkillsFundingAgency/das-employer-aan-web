@@ -50,4 +50,19 @@ public class AreasToEngageLocallyControllerGetTests
 
         result.As<ViewResult>().Model.As<AreasToEngageLocallyViewModel>().BackLink.Should().Be(regionsUrl);
     }
+
+    [Test, MoqAutoData]
+    public void Get_ViewModel_HasConfirmedRegionSets_SelectedAreaToEngageLocallyId(
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] AreasToEngageLocallyController sut)
+    {
+        int regionId = 101;
+        sut.AddUrlHelperMock();
+        OnboardingSessionModel sessionModel = new();
+        sessionModel.Regions = new List<RegionModel>() { new RegionModel { Id = regionId, IsConfirmed = true } };
+        sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
+
+        var result = sut.Get();
+        result.As<ViewResult>().Model.As<AreasToEngageLocallyViewModel>().SelectedAreaToEngageLocallyId.Should().Be(regionId);
+    }
 }
