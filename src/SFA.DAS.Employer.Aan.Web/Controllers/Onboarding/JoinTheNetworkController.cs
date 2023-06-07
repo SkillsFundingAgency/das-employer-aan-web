@@ -62,12 +62,25 @@ public class JoinTheNetworkController : Controller
     private JoinTheNetworkViewModel GetViewModel()
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
-
         return new JoinTheNetworkViewModel
         {
-            BackLink = Url.RouteUrl(@RouteNames.Onboarding.Regions)!,
+            BackLink = GetCorrectBackLink(sessionModel),
             ReasonToJoin = new List<SelectProfileModel>(sessionModel.ProfileData.Where(x => x.Category == Category.ReasonToJoin).OrderBy(x => x.Ordering).Select(x => (SelectProfileModel)x)),
             Support = new List<SelectProfileModel>(sessionModel.ProfileData.Where(x => x.Category == Category.Support).OrderBy(x => x.Ordering).Select(x => (SelectProfileModel)x))
         };
+    }
+
+    private string GetCorrectBackLink(OnboardingSessionModel sessionModel)
+    {
+        var noOfRegionsSelected = sessionModel.Regions.Count(x => x.IsSelected);
+
+        if (noOfRegionsSelected == 1)
+        {
+            return Url.RouteUrl(@RouteNames.Onboarding.Regions)!;
+        }
+        else
+        {
+            return Url.RouteUrl(@RouteNames.Onboarding.AreasToEngageLocally)!;
+        }
     }
 }

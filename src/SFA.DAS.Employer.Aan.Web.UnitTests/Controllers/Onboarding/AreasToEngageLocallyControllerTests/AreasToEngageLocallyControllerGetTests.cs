@@ -36,7 +36,7 @@ public class AreasToEngageLocallyControllerGetTests
     }
 
     [Test, MoqAutoData]
-    public void Get_ViewModelHasBackLinkToJoinTheNetworkController(
+    public void Get_ViewModel_HasCorrectBackLink(
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] AreasToEngageLocallyController sut,
         string regionsUrl)
