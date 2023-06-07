@@ -47,6 +47,7 @@ public class AreasToEngageLocallyController : Controller
 
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
 
+        sessionModel.Regions.ForEach(x => x.IsConfirmed = false);
         sessionModel.Regions.Single(x => x.Id == submitModel.SelectedAreaToEngageLocallyId)!.IsConfirmed = true;
 
         _sessionService.Set(sessionModel);
