@@ -23,7 +23,7 @@
                         </div>
                         <span asp-validation-for="@Model.AreasToEngageLocally" class="govuk-error-message"></span>
 
-                        <div id="Regions" class="govuk-checkboxes" data-module="govuk-checkboxes">
+                        <div id="SelectedAreaToEngageLocallyId" class="govuk-checkboxes" data-module="govuk-checkboxes">
                             @{
                                 foreach (var region in Model.AreasToEngageLocally!)
                                 {
@@ -31,7 +31,7 @@
                                     var buttonIdentifier = $"region-{regionIdentifier}";
 
                                     <div class="govuk-radios__item">
-                                        <input class="govuk-radios__input" asp-for=@Model.SelectedAreaToEngageLocallyId type="radio" value=@region.Id>
+                                        <input class="govuk-radios__input" asp-for=@Model.SelectedAreaToEngageLocallyId id=@buttonIdentifier type="radio" value=@region.Id>
                                         <label class="govuk-label govuk-radios__label" for=@buttonIdentifier>
                                             @region.Area
                                         </label>
