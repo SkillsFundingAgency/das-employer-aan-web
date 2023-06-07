@@ -26,9 +26,9 @@ public class AreasToEngageLocallyController : Controller
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
         var model = GetViewModel();
-        if (sessionModel.Regions.Exists(x => x.IsConfirmed))
+        if (sessionModel.Regions.Any(x => x.IsConfirmed))
         {
-            model.SelectedAreaToEngageLocallyId = sessionModel.Regions.Single(x => x.IsConfirmed)!.Id;
+            model.SelectedAreaToEngageLocallyId = sessionModel.Regions.Single(x => x.IsConfirmed).Id;
         }
         return View(ViewPath, model);
     }
