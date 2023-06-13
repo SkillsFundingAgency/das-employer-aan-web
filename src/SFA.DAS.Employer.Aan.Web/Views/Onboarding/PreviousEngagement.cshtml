@@ -8,10 +8,13 @@
     <div class="govuk-grid-column-two-thirds">
         <partial name="_validationSummary" />
         <form method="post" asp-route="@RouteNames.Onboarding.PreviousEngagement" enctype="multipart/form-data" novalidate>
-            <div esfa-validation-marker-for="HasPreviousEngagement" class="govuk-form-group">
-                <h1 class="govuk-heading-l">
-                    Are you joining because you have engaged with an ambassador in the network?
-                </h1>
+            <fieldset class="govuk-fieldset">
+                <div esfa-validation-marker-for="HasPreviousEngagement" class="govuk-form-group">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                        <h1 class="govuk-heading-l">
+                            Are you joining because you have engaged with an ambassador in the network?
+                        </h1>
+                    </legend>
                 <span asp-validation-for="HasPreviousEngagement" class="govuk-error-message"></span>
                 <div id="HasPreviousEngagement-options" class="govuk-radios" data-module="govuk-radios">
                     <div class="govuk-radios__item">
@@ -30,6 +33,7 @@
                     </div>
                 </div>
             </div>
+            </fieldset>
             <div class="govuk-button-group">
                 <button id="continue" type="submit" class="govuk-button" data-module="govuk-button" data-disable-on-submit="true">
                     Continue

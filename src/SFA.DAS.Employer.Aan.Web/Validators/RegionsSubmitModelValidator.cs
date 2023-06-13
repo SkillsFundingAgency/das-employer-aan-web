@@ -9,6 +9,6 @@ public class RegionsSubmitModelValidator : AbstractValidator<RegionsSubmitModel>
 
     public RegionsSubmitModelValidator()
     {
-        RuleFor(x => x.Regions).Must(c => c!.Exists(p => p.IsSelected)).WithMessage(NoSelectionErrorMessage);
+        RuleFor(x => x.Regions).Must(c => c!.Any(p => p.IsSelected)).WithMessage(NoSelectionErrorMessage);
     }
 }

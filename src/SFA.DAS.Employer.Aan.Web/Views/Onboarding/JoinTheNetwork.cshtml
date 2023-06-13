@@ -27,7 +27,7 @@
                         <div id="ReasonToJoin" class="govuk-checkboxes" data-module="govuk-checkboxes" style="padding: 1px 1px 1px 30px;">
 
                             @{
-                                for (int i = 0; i < Model.ReasonToJoin.Count; i++)
+                                for (int i = 0; i < Model.ReasonToJoin!.Count; i++)
                                 {
                                     <div class="govuk-checkboxes__item">
                                         <input class="govuk-checkboxes__input" type="checkbox" asp-for=@Model.ReasonToJoin[i].IsSelected id="@Model.ReasonToJoin[i].Id">
@@ -57,7 +57,7 @@
                         <div id="Support" class="govuk-checkboxes" data-module="govuk-checkboxes" style="padding: 1px 1px 1px 30px;">
 
                             @{
-                                for (int i = 0; i < Model.Support.Count; i++)
+                                for (int i = 0; i < Model.Support!.Count; i++)
                                 {
                                     <div class="govuk-checkboxes__item">
                                         <input class="govuk-checkboxes__input" type="checkbox" asp-for=@Model.Support[i].IsSelected id="@Model.Support[i].Id">

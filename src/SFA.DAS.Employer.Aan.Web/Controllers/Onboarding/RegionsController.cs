@@ -34,11 +34,11 @@ public class RegionsController : Controller
     [HttpPost]
     public async Task<IActionResult> Post(RegionsSubmitModel submitModel, CancellationToken cancellationToken)
     {
-        var model = await GetViewModel(cancellationToken);
         ValidationResult result = _validator.Validate(submitModel);
 
         if (!result.IsValid)
         {
+            var model = await GetViewModel(cancellationToken);
             result.AddToModelState(ModelState);
             return View(ViewPath, model);
         }
@@ -52,9 +52,13 @@ public class RegionsController : Controller
         {
             return RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork);
         }
+        else if (sessionModel.Regions.Count(x => x.IsSelected) >= 2 && sessionModel.Regions.Count(x => x.IsSelected) <= 4)
+        {
+            return RedirectToRoute(RouteNames.Onboarding.AreasToEngageLocally);
+        }
         else
         {
-            return View(ViewPath, model);
+            return RedirectToRoute(RouteNames.Onboarding.Regions);
         }
     }
 

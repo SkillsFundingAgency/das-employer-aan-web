@@ -1,0 +1,72 @@
+﻿using AutoFixture.NUnit3;
+using FluentAssertions;
+using FluentValidation;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
+using SFA.DAS.Employer.Aan.Domain.Interfaces;
+using SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
+using SFA.DAS.Employer.Aan.Web.Infrastructure;
+using SFA.DAS.Employer.Aan.Web.Models;
+using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
+using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
+using SFA.DAS.Testing.AutoFixture;
+
+namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.AreasToEngageLocallyControllerTests;
+
+public class AreasToEngageLocallyControllerPostTests
+{
+    [Test, MoqAutoData]
+    public void Post_SetsSelectedAreasToEngageLocallyToConfirmed_InOnBoardingSessionModel(
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Frozen] Mock<IValidator<AreasToEngageLocallySubmitModel>> validatorMock,
+        [Greedy] AreasToEngageLocallyController sut,
+        AreasToEngageLocallySubmitModel submitmodel)
+    {
+        sut.AddUrlHelperMock();
+        OnboardingSessionModel sessionModel = new();
+        sessionModel.Regions = new List<RegionModel>() { new RegionModel() { Id = (int)submitmodel.SelectedAreaToEngageLocallyId!, IsConfirmed = false } };
+        sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
+
+        ValidationResult validationResult = new();
+        validatorMock.Setup(v => v.Validate(submitmodel)).Returns(validationResult);
+
+        sut.Post(submitmodel);
+        sessionServiceMock.Verify(s => s.Set(It.Is<OnboardingSessionModel>(m => m.Regions.Find(x => x.Id == submitmodel.SelectedAreaToEngageLocallyId)!.IsConfirmed)));
+    }
+
+    [Test, MoqAutoData]
+    public void Post_RedirectsTo_JoinTheNetworkPage(
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Frozen] Mock<IValidator<AreasToEngageLocallySubmitModel>> validatorMock,
+        [Greedy] AreasToEngageLocallyController sut,
+        AreasToEngageLocallySubmitModel submitmodel)
+    {
+        sut.AddUrlHelperMock();
+        OnboardingSessionModel sessionModel = new();
+        sessionModel.Regions = new List<RegionModel>() { new RegionModel() { Id = (int)submitmodel.SelectedAreaToEngageLocallyId!, IsConfirmed = false } };
+        sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
+
+        ValidationResult validationResult = new();
+        validatorMock.Setup(v => v.Validate(submitmodel)).Returns(validationResult);
+
+        var result = sut.Post(submitmodel);
+
+        result.As<RedirectToRouteResult>().Should().NotBeNull();
+        result.As<RedirectToRouteResult>().RouteName.Should().Be(RouteNames.Onboarding.JoinTheNetwork);
+    }
+
+    [Test, MoqAutoData]
+    public void Post_Errors_WhenNoSelectedAreasToEngageLocally(
+        [Greedy] AreasToEngageLocallyController sut)
+    {
+        sut.AddUrlHelperMock();
+        AreasToEngageLocallySubmitModel submitmodel = new()
+        {
+            SelectedAreaToEngageLocallyId = null!
+        };
+
+        sut.Post(submitmodel);
+        sut.ModelState.IsValid.Should().BeFalse();
+    }
+}
