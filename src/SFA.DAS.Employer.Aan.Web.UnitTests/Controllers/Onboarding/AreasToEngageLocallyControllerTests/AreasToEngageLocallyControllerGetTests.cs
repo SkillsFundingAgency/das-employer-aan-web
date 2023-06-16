@@ -36,22 +36,6 @@ public class AreasToEngageLocallyControllerGetTests
     }
 
     [Test, MoqAutoData]
-    public void Get_ViewModel_HasCorrectBackLink(
-        [Frozen] Mock<ISessionService> sessionServiceMock,
-        [Greedy] AreasToEngageLocallyController sut,
-        string regionsUrl)
-    {
-        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.Regions, regionsUrl);
-        OnboardingSessionModel sessionModel = new();
-        sessionModel.Regions = new List<RegionModel>();
-        sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
-
-        var result = sut.Get();
-
-        result.As<ViewResult>().Model.As<AreasToEngageLocallyViewModel>().BackLink.Should().Be(regionsUrl);
-    }
-
-    [Test, MoqAutoData]
     public void Get_ViewModel_HasConfirmedRegionSets_SelectedAreaToEngageLocallyId(
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] AreasToEngageLocallyController sut)
@@ -64,5 +48,54 @@ public class AreasToEngageLocallyControllerGetTests
 
         var result = sut.Get();
         result.As<ViewResult>().Model.As<AreasToEngageLocallyViewModel>().SelectedAreaToEngageLocallyId.Should().Be(regionId);
+    }
+
+    [Test, MoqAutoData]
+    public void Get_ViewModel_HasCorrectBackLinkToRegions(
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] AreasToEngageLocallyController sut,
+        string regionsUrl)
+    {
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.Regions, regionsUrl);
+        OnboardingSessionModel sessionModel = new();
+        sessionModel.Regions = new()
+        {
+            new RegionModel { Id = 1, IsSelected = true, IsConfirmed = false },
+            new RegionModel { Id = 2, IsSelected = true, IsConfirmed = false },
+            new RegionModel { Id = 3, IsSelected = true, IsConfirmed = false },
+            new RegionModel { Id = 4, IsSelected = true, IsConfirmed = false },
+            new RegionModel { Id = 5, IsSelected = false, IsConfirmed = false },
+            new RegionModel { Id = 6, IsSelected = false, IsConfirmed = false }
+        };
+        sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
+
+        var result = sut.Get();
+
+        result.As<ViewResult>().Model.As<AreasToEngageLocallyViewModel>().BackLink.Should().Be(regionsUrl);
+    }
+
+    [Test, MoqAutoData]
+    public void Get_ViewModel_HasCorrectBackLinkToPrimaryEngagementWithinNetwork(
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] AreasToEngageLocallyController sut,
+        string primaryEngagementWithinNetworkUrl)
+    {
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.PrimaryEngagementWithinNetwork, primaryEngagementWithinNetworkUrl);
+        OnboardingSessionModel sessionModel = new();
+        sessionModel.Regions = new()
+        {
+            new RegionModel { Id = 1, IsSelected = true, IsConfirmed = false },
+            new RegionModel { Id = 2, IsSelected = true, IsConfirmed = false },
+            new RegionModel { Id = 3, IsSelected = true, IsConfirmed = false },
+            new RegionModel { Id = 4, IsSelected = true, IsConfirmed = false },
+            new RegionModel { Id = 5, IsSelected = true, IsConfirmed = false },
+            new RegionModel { Id = 6, IsSelected = true, IsConfirmed = false }
+        };
+        sessionModel.IsLocalOrganisation = true;
+        sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
+
+        var result = sut.Get();
+
+        result.As<ViewResult>().Model.As<AreasToEngageLocallyViewModel>().BackLink.Should().Be(primaryEngagementWithinNetworkUrl);
     }
 }
