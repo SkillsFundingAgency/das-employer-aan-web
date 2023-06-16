@@ -82,7 +82,7 @@ public class JoinTheNetworkController : Controller
         {
             return Url.RouteUrl(@RouteNames.Onboarding.AreasToEngageLocally)!;
         }
-        else if (noOfRegionsSelected >= 5 && sessionModel.IsLocalOrganisation.HasValue && (bool)sessionModel.IsLocalOrganisation)
+        else if (noOfRegionsSelected >= 5 && sessionModel.IsLocalOrganisation.GetValueOrDefault())
         {
             return Url.RouteUrl(@RouteNames.Onboarding.AreasToEngageLocally)!;
         }
