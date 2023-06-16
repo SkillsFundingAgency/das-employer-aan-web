@@ -74,15 +74,9 @@ public class AreasToEngageLocallyController : Controller
         {
             return Url.RouteUrl(@RouteNames.Onboarding.Regions)!;
         }
-        else if (noOfRegionsSelected >= 5)
+        else if (noOfRegionsSelected >= 5 && sessionModel.IsLocalOrganisation.HasValue && (bool)sessionModel.IsLocalOrganisation)
         {
-            if (sessionModel.IsLocalOrganisation.HasValue)
-            {
-                if ((bool)sessionModel.IsLocalOrganisation)
-                {
-                    return Url.RouteUrl(@RouteNames.Onboarding.PrimaryEngagementWithinNetwork)!;
-                }
-            }
+            return Url.RouteUrl(@RouteNames.Onboarding.PrimaryEngagementWithinNetwork)!;
         }
         return Url.RouteUrl(@RouteNames.Onboarding.Regions)!;
     }

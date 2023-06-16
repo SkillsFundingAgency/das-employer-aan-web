@@ -54,10 +54,8 @@ public class PrimaryEngagementWithinNetworkController : Controller
         {
             return RedirectToRoute(RouteNames.Onboarding.AreasToEngageLocally);
         }
-        else
-        {
-            return RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork);
-        }
+
+        return RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork);
     }
 
     private PrimaryEngagementWithinNetworkViewModel GetViewModel(OnboardingSessionModel sessionModel)
