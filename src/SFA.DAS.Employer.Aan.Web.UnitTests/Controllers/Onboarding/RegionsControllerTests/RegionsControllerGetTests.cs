@@ -38,7 +38,7 @@ public class RegionsControllerGetTests
     }
 
     [Test, MoqAutoData]
-    public async Task Get_ViewModelHasBackLinkToTermsAndConditions(
+    public async Task Get_ViewModelHasSeenPreviewIsFalse_BackLinkSetsToTermsAndConditions(
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] RegionsController sut,
         OnboardingSessionModel sessionModel,
@@ -46,6 +46,7 @@ public class RegionsControllerGetTests
         CancellationToken cancellationToken)
     {
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.TermsAndConditions, termsAndConditionsUrl);
+        sessionModel.HasSeenPreview = false;
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
         var result = await sut.Get(cancellationToken);
@@ -69,5 +70,22 @@ public class RegionsControllerGetTests
 
         var result = await sut.Get(cancellationToken);
         result.As<ViewResult>().Model.As<RegionsViewModel>().Regions.Should().Equal(sessionModel.Regions);
+    }
+
+    [MoqAutoData]
+    public async Task Get_ViewModelHasSeenPreviewIsTrue_BackLinkSetsToCheckYourAnswers(
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] RegionsController sut,
+        OnboardingSessionModel sessionModel,
+        string checkYourAnswersUrl,
+        CancellationToken cancellationToken)
+    {
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.CheckYourAnswers, checkYourAnswersUrl);
+        sessionModel.HasSeenPreview = true;
+        sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
+
+        var result = await sut.Get(cancellationToken);
+
+        result.As<ViewResult>().Model.As<RegionsViewModel>().BackLink.Should().Be(checkYourAnswersUrl);
     }
 }
