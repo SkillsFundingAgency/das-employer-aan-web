@@ -2,6 +2,7 @@
 
 public class OnboardingSessionModel
 {
+    public bool HasSeenPreview { get; set; }
     public List<ProfileModel> ProfileData { get; set; } = new List<ProfileModel>();
     public bool HasAcceptedTerms { get; set; } = false;
     public bool IsValid => HasAcceptedTerms && ProfileData.Count > 0;

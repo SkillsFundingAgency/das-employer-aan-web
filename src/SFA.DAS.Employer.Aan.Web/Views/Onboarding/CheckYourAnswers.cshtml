@@ -1,0 +1,130 @@
+﻿@using SFA.DAS.Employer.Aan.Web.Infrastructure
+@using SFA.DAS.Employer.Aan.Web.Models.Onboarding
+@model CheckYourAnswersViewModel
+@{
+    ViewData["Title"] = "Check your answers";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">Check the information you have provided before submitting your application</h1>
+        <div class="govuk-hint">
+            Here are the details you have provided.
+        </div>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Region location and preferences
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    <ul class="govuk-list govuk-list--bullet">
+                        @{
+                            foreach (var region in Model.Region!)
+                            {
+                                <li>@region</li>
+                            }
+                        }
+                    </ul>
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                    <a href=@Url.RouteUrl(RouteNames.Onboarding.Regions) class="govuk-link govuk-link--no-visited-state">Change</a>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Reasons for applying</dt>
+                <dd class="govuk-summary-list__value"></dd>
+                <dd class="govuk-summary-list__actions">
+                    <a href=# class="govuk-link govuk-link--no-visited-state">Change</a>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Support needed</dt>
+                <dd class="govuk-summary-list__value"></dd>
+                <dd class="govuk-summary-list__actions">
+                    <a href=# class="govuk-link govuk-link--no-visited-state">Change</a>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Previous engagement with network ambassadors</dt>
+                <dd class="govuk-summary-list__value"></dd>
+                <dd class="govuk-summary-list__actions">
+                    <a href=# class="govuk-link govuk-link--no-visited-state">Change</a>
+                </dd>
+            </div>
+        </dl>
+        <div>
+            <h2 class="govuk-heading-m">
+                Here are your existing details from your account.
+            </h2>
+            <div class="govuk-hint">
+                This information will be included in your application and shared with your regional chair so they can welcome you into network.
+            </div>
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Full name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Email
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Organisation Name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+
+                    </dd>
+                </div>
+            </dl>
+            <h2 class="govuk-heading-m">
+                Here are existing details we hold about your organisation.
+            </h2>
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Number of active apprentices
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Date your organisation began their apprenticeship programme
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Apprenticeship's sector
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+
+                    </dd>
+                </div>
+            </dl>
+            <h2 class="govuk-heading-m">
+                Now send your application
+            </h2>
+            <div class="govuk-hint">
+                By submitting this application you are confirming that all the details you are providing are correct.
+            </div>
+            <div class="govuk-button-group">
+                <button id="continue-button" type="submit" class="govuk-button" data-module="govuk-button" data-disable-on-submit="true" asp-page-handler="Submit">
+                    Accept and submit
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
