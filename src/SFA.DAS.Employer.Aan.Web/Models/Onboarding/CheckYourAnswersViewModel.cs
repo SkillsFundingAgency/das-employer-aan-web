@@ -14,7 +14,7 @@ public class CheckYourAnswersViewModel
         Region = GetRegions(sessionModel);
     }
 
-    private List<string>? GetRegions(OnboardingSessionModel sessionModel)
+    private static List<string>? GetRegions(OnboardingSessionModel sessionModel)
     {
         var locallyPreferredRegion = sessionModel.Regions.Find(x => x.IsConfirmed);
         var regions = sessionModel.Regions.Where(x => x.IsSelected).Select(x => x.Area).ToList()!;
