@@ -44,6 +44,18 @@ public class AndSessionModelIsNotPopulated
         viewModel.Region.Should().BeEmpty();
     }
 
+    [Test]
+    public void ThenSetsReasonsToJoinToNullInViewModel()
+    {
+        viewModel.Reason.Should().BeEmpty();
+    }
+
+    [Test]
+    public void ThenSetsSupportNeedFromNetworkToJoinToNullInViewModel()
+    {
+        viewModel.Support.Should().BeEmpty();
+    }
+
     [TearDown]
     public void Dispose()
     {

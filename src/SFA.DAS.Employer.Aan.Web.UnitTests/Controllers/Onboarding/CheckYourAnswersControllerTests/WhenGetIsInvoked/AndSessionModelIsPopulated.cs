@@ -19,6 +19,7 @@ public class AndSessionModelIsPopulated
     CheckYourAnswersViewModel viewModel;
 
     static readonly string RegionUrl = Guid.NewGuid().ToString();
+    static readonly string ReasonToJoinTheNetworkUrl = Guid.NewGuid().ToString();
     static readonly string LocallyPreferredRegion = Guid.NewGuid().ToString();
     static readonly List<RegionModel> MultipleRegionsSelected = new()
         {
@@ -54,7 +55,8 @@ public class AndSessionModelIsPopulated
         sut = new(sessionServiceMock.Object);
 
         sut.AddUrlHelperMock()
-        .AddUrlForRoute(RouteNames.Onboarding.Regions, RegionUrl);
+        .AddUrlForRoute(RouteNames.Onboarding.Regions, RegionUrl)
+        .AddUrlForRoute(RouteNames.Onboarding.JoinTheNetwork, ReasonToJoinTheNetworkUrl);
 
         sessionModel.Regions = MultipleRegionsSelected;
         sessionModel.ProfileData = ReasonAndSupportProfileValues;
@@ -105,6 +107,7 @@ public class AndSessionModelIsPopulated
     public void ThenSetsReasonToJoinAndSupportNeededInViewModel()
     {
         InvokeControllerGet();
+        viewModel.ReasonChangeLink.Should().Be(ReasonToJoinTheNetworkUrl);
         viewModel.Reason.Should().Equal(ReasonAndSupportProfileValues.Where(x => (x.Category == Category.ReasonToJoin) && x.Value != null).Select(x => x.Description).ToList());
         viewModel.Support.Should().Equal(ReasonAndSupportProfileValues.Where(x => (x.Category == Category.Support) && x.Value != null).Select(x => x.Description).ToList());
     }
