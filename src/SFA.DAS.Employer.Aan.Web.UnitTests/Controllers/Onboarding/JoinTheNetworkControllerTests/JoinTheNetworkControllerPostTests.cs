@@ -2,6 +2,7 @@
 using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
@@ -88,5 +89,37 @@ public class JoinTheNetworkControllerPostTests
 
         sessionServiceMock.Verify(s => s.Set(It.Is<OnboardingSessionModel>(m => m.GetProfileValue(1) == null)));
         sessionServiceMock.Verify(s => s.Set(It.Is<OnboardingSessionModel>(m => m.GetProfileValue(2) == null)));
+    }
+
+    [MoqInlineAutoData(false, RouteNames.Onboarding.PreviousEngagement)]
+    [MoqInlineAutoData(true, RouteNames.Onboarding.CheckYourAnswers)]
+    public void Post_RedirectsTo_JoinTheNetworkPage(
+        bool hasSeenPreview,
+        string navigateRoute,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Frozen] Mock<IValidator<JoinTheNetworkSubmitModel>> validatorMock,
+        [Greedy] JoinTheNetworkController sut,
+        JoinTheNetworkSubmitModel submitmodel)
+    {
+        sut.AddUrlHelperMock();
+        OnboardingSessionModel sessionModel = new();
+        sessionModel.HasSeenPreview = hasSeenPreview;
+        submitmodel.ReasonToJoin!.ForEach(x =>
+        {
+            sessionModel.ProfileData.Add(new ProfileModel { Id = x.Id });
+        });
+        submitmodel.Support!.ForEach(x =>
+        {
+            sessionModel.ProfileData.Add(new ProfileModel { Id = x.Id });
+        });
+        sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
+
+        ValidationResult validationResult = new();
+        validatorMock.Setup(v => v.Validate(submitmodel)).Returns(validationResult);
+
+        var result = sut.Post(submitmodel);
+
+        result.As<RedirectToRouteResult>().Should().NotBeNull();
+        result.As<RedirectToRouteResult>().RouteName.Should().Be(navigateRoute);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using SFA.DAS.Employer.Aan.Domain.Constants;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
@@ -35,6 +36,15 @@ public class AndSessionModelIsPopulated
             new  RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = true, IsConfirmed = false}
         };
 
+    static readonly List<ProfileModel> ReasonAndSupportProfileValues = new List<ProfileModel>() {
+        new ProfileModel { Id = 1, Category = Category.ReasonToJoin, Value = Guid.NewGuid().ToString() },
+        new ProfileModel { Id = 2, Category = Category.ReasonToJoin, Value = Guid.NewGuid().ToString() },
+        new ProfileModel { Id = 3, Category = Category.ReasonToJoin, Value = null },
+        new ProfileModel { Id = 4, Category = Category.Support, Value = Guid.NewGuid().ToString() },
+        new ProfileModel { Id = 5, Category = Category.Support, Value = Guid.NewGuid().ToString() },
+        new ProfileModel { Id = 6, Category = Category.Support, Value = null }
+    };
+
     [SetUp]
     public void Init()
     {
@@ -47,6 +57,7 @@ public class AndSessionModelIsPopulated
         .AddUrlForRoute(RouteNames.Onboarding.Regions, RegionUrl);
 
         sessionModel.Regions = MultipleRegionsSelected;
+        sessionModel.ProfileData = ReasonAndSupportProfileValues;
         InvokeControllerGet();
     }
 
@@ -88,6 +99,14 @@ public class AndSessionModelIsPopulated
         result.Add($"Locally prefers {LocallyPreferredRegion}");
 
         viewModel.Region.Should().Equal(result);
+    }
+
+    [Test]
+    public void ThenSetsReasonToJoinAndSupportNeededInViewModel()
+    {
+        InvokeControllerGet();
+        viewModel.Reason.Should().Equal(ReasonAndSupportProfileValues.Where(x => (x.Category == Category.ReasonToJoin) && x.Value != null).Select(x => x.Description).ToList());
+        viewModel.Support.Should().Equal(ReasonAndSupportProfileValues.Where(x => (x.Category == Category.Support) && x.Value != null).Select(x => x.Description).ToList());
     }
 
     [TearDown]

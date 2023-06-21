@@ -53,45 +53,27 @@ public class JoinTheNetworkControllerGetTests
         result.As<ViewResult>().Model.As<JoinTheNetworkViewModel>().Support.Should().Contain(x => x.Id == 202 && x.Category == Category.Support && !x.IsSelected);
     }
 
-    [MoqAutoData]
+    [MoqInlineAutoData(1, false, RouteNames.Onboarding.Regions)]
+    [MoqInlineAutoData(1, true, RouteNames.Onboarding.CheckYourAnswers)]
+    [MoqInlineAutoData(2, false, RouteNames.Onboarding.AreasToEngageLocally)]
+    [MoqInlineAutoData(2, true, RouteNames.Onboarding.CheckYourAnswers)]
     public void Get_ViewModel_HasCorrectBackLinkToRegions(
+        int noOfRegionsSelected,
+        bool hasSeenPreview,
+        string navigateRoute,
+        string navigateUrl,
         [Frozen] Mock<ISessionService> sessionServiceMock,
-        [Greedy] JoinTheNetworkController sut,
-        string regionsUrl)
+        [Greedy] JoinTheNetworkController sut)
     {
-        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.Regions, regionsUrl);
+        sut.AddUrlHelperMock().AddUrlForRoute(navigateRoute, navigateUrl);
         OnboardingSessionModel sessionModel = new();
-        sessionModel.Regions = new()
-        {
-            new RegionModel { Id = 1, IsSelected = true, IsConfirmed = false }
-        };
+        sessionModel.HasSeenPreview = hasSeenPreview;
+        sessionModel.Regions = Enumerable.Range(1, noOfRegionsSelected).Select(i => new RegionModel { Id = i, IsSelected = true }).ToList();
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
         var result = sut.Get();
 
-        result.As<ViewResult>().Model.As<JoinTheNetworkViewModel>().BackLink.Should().Be(regionsUrl);
-    }
-
-    [MoqAutoData]
-    public void Get_ViewModel_HasCorrectBackLinkToAreasToEngageLocally(
-        [Frozen] Mock<ISessionService> sessionServiceMock,
-        [Greedy] JoinTheNetworkController sut,
-        string areasToEngageLocallyUrl)
-    {
-        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.AreasToEngageLocally, areasToEngageLocallyUrl);
-        OnboardingSessionModel sessionModel = new();
-        sessionModel.Regions = new()
-        {
-            new RegionModel { Id = 1, IsSelected = true, IsConfirmed = false },
-            new RegionModel { Id = 2, IsSelected = true, IsConfirmed = false },
-            new RegionModel { Id = 3, IsSelected = true, IsConfirmed = true }
-        };
-
-        sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
-
-        var result = sut.Get();
-
-        result.As<ViewResult>().Model.As<JoinTheNetworkViewModel>().BackLink.Should().Be(areasToEngageLocallyUrl);
+        result.As<ViewResult>().Model.As<JoinTheNetworkViewModel>().BackLink.Should().Be(navigateUrl);
     }
 
     [MoqAutoData]
