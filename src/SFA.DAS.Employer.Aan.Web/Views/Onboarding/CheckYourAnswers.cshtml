@@ -27,21 +27,39 @@
                     </ul>
                 </dd>
                 <dd class="govuk-summary-list__actions">
-                    <a href=@Url.RouteUrl(RouteNames.Onboarding.Regions) class="govuk-link govuk-link--no-visited-state">Change</a>
+                    <a href=@Model.RegionChangeLink class="govuk-link govuk-link--no-visited-state">Change</a>
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Reasons for applying</dt>
-                <dd class="govuk-summary-list__value"></dd>
+                <dd class="govuk-summary-list__value">
+                    <ul class="govuk-list govuk-list--bullet">
+                        @{
+                            foreach (var reasonToJoin in Model.Reason!)
+                            {
+                                <li>@reasonToJoin</li>
+                            }
+                        }
+                    </ul>
+                </dd>
                 <dd class="govuk-summary-list__actions">
-                    <a href=# class="govuk-link govuk-link--no-visited-state">Change</a>
+                    <a href=@Model.ReasonChangeLink class="govuk-link govuk-link--no-visited-state">Change</a>
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Support needed</dt>
-                <dd class="govuk-summary-list__value"></dd>
+                <dd class="govuk-summary-list__value">
+                    <ul class="govuk-list govuk-list--bullet">
+                        @{
+                            foreach (var neededSupport in Model.Support!)
+                            {
+                                <li>@neededSupport</li>
+                            }
+                        }
+                    </ul>
+                </dd>
                 <dd class="govuk-summary-list__actions">
-                    <a href=# class="govuk-link govuk-link--no-visited-state">Change</a>
+                    <a href=@Model.ReasonChangeLink class="govuk-link govuk-link--no-visited-state">Change</a>
                 </dd>
             </div>
             <div class="govuk-summary-list__row">

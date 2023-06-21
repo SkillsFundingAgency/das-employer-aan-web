@@ -56,7 +56,7 @@ public class JoinTheNetworkController : Controller
 
         _sessionService.Set(sessionModel);
 
-        return RedirectToRoute(RouteNames.Onboarding.PreviousEngagement);
+        return sessionModel.HasSeenPreview ? RedirectToRoute(@RouteNames.Onboarding.CheckYourAnswers)! : RedirectToRoute(RouteNames.Onboarding.PreviousEngagement);
     }
 
     private JoinTheNetworkViewModel GetViewModel()
@@ -76,11 +76,11 @@ public class JoinTheNetworkController : Controller
 
         if (noOfRegionsSelected == 1)
         {
-            return Url.RouteUrl(@RouteNames.Onboarding.Regions)!;
+            return sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers)! : Url.RouteUrl(@RouteNames.Onboarding.Regions)!;
         }
         else if (noOfRegionsSelected >= 2 && noOfRegionsSelected <= 4)
         {
-            return Url.RouteUrl(@RouteNames.Onboarding.AreasToEngageLocally)!;
+            return sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers)! : Url.RouteUrl(@RouteNames.Onboarding.AreasToEngageLocally)!;
         }
         else if (noOfRegionsSelected >= 5 && sessionModel.IsLocalOrganisation.GetValueOrDefault())
         {
