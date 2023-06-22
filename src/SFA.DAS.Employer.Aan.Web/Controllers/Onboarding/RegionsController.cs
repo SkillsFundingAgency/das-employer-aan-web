@@ -58,7 +58,7 @@ public class RegionsController : Controller
         }
         else
         {
-            return RedirectToRoute(RouteNames.Onboarding.Regions);
+            return RedirectToRoute(RouteNames.Onboarding.PrimaryEngagementWithinNetwork);
         }
     }
 

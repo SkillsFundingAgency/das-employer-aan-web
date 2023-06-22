@@ -61,8 +61,23 @@ public class AreasToEngageLocallyController : Controller
 
         return new AreasToEngageLocallyViewModel
         {
-            BackLink = Url.RouteUrl(@RouteNames.Onboarding.Regions)!,
+            BackLink = GetCorrectBackLink(sessionModel),
             AreasToEngageLocally = sessionModel.Regions.Where(x => x.IsSelected).ToList()
         };
+    }
+
+    private string GetCorrectBackLink(OnboardingSessionModel sessionModel)
+    {
+        var noOfRegionsSelected = sessionModel.Regions.Count(x => x.IsSelected);
+
+        if (noOfRegionsSelected >= 2 && noOfRegionsSelected <= 4)
+        {
+            return Url.RouteUrl(@RouteNames.Onboarding.Regions)!;
+        }
+        else if (noOfRegionsSelected >= 5 && sessionModel.IsLocalOrganisation.GetValueOrDefault())
+        {
+            return Url.RouteUrl(@RouteNames.Onboarding.PrimaryEngagementWithinNetwork)!;
+        }
+        return Url.RouteUrl(@RouteNames.Onboarding.Regions)!;
     }
 }

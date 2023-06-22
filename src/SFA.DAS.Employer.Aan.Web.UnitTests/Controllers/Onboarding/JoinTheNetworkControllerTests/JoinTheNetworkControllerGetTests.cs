@@ -93,4 +93,29 @@ public class JoinTheNetworkControllerGetTests
 
         result.As<ViewResult>().Model.As<JoinTheNetworkViewModel>().BackLink.Should().Be(areasToEngageLocallyUrl);
     }
+
+    [MoqAutoData]
+    public void Get_ViewModel_HasCorrectBackLinkToPrimaryEngagementWithinNetwork(
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] JoinTheNetworkController sut,
+        string primaryEngagementWithinNetworkUrl)
+    {
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.PrimaryEngagementWithinNetwork, primaryEngagementWithinNetworkUrl);
+        OnboardingSessionModel sessionModel = new();
+        sessionModel.Regions = new()
+        {
+            new RegionModel { Id = 1, IsSelected = true, IsConfirmed = false },
+            new RegionModel { Id = 2, IsSelected = true, IsConfirmed = false },
+            new RegionModel { Id = 3, IsSelected = true, IsConfirmed = false },
+            new RegionModel { Id = 3, IsSelected = true, IsConfirmed = false },
+            new RegionModel { Id = 3, IsSelected = true, IsConfirmed = false },
+            new RegionModel { Id = 3, IsSelected = true, IsConfirmed = true }
+        };
+
+        sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
+
+        var result = sut.Get();
+
+        result.As<ViewResult>().Model.As<JoinTheNetworkViewModel>().BackLink.Should().Be(primaryEngagementWithinNetworkUrl);
+    }
 }
