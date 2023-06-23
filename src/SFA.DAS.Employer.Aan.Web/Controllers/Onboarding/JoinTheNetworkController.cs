@@ -84,8 +84,8 @@ public class JoinTheNetworkController : Controller
         }
         else if (noOfRegionsSelected >= 5 && sessionModel.IsLocalOrganisation.GetValueOrDefault())
         {
-            return Url.RouteUrl(@RouteNames.Onboarding.AreasToEngageLocally)!;
+            return sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers)! : Url.RouteUrl(@RouteNames.Onboarding.AreasToEngageLocally)!;
         }
-        return Url.RouteUrl(@RouteNames.Onboarding.PrimaryEngagementWithinNetwork)!;
+        return sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers)! : Url.RouteUrl(@RouteNames.Onboarding.PrimaryEngagementWithinNetwork)!;
     }
 }
