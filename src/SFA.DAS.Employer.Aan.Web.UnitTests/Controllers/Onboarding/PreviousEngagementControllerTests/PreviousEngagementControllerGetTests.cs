@@ -17,12 +17,13 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.PreviousEnga
 public class PreviousEngagementControllerGetTests
 {
     [MoqAutoData]
-    public void Get_ViewModel_HasBackLink(
+    public void Get_ViewModel_HasSeenPreviewIsFalse_BackLinkSetsToJoinTheNetwork(
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] PreviousEngagementController sut,
         string joinTheNetworkUrl)
     {
         OnboardingSessionModel sessionModel = new();
+        sessionModel.HasSeenPreview = false;
         sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileDataId.HasPreviousEngagement, Value = "True" });
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.JoinTheNetwork, joinTheNetworkUrl);
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
@@ -30,6 +31,23 @@ public class PreviousEngagementControllerGetTests
         var result = sut.Get();
 
         result.As<ViewResult>().Model.As<PreviousEngagementViewModel>().BackLink.Should().Be(joinTheNetworkUrl);
+    }
+
+    [MoqAutoData]
+    public void Get_ViewModel_HasSeenPreviewIsTrue_BackLinkSetsToJoinTheNetwork(
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] PreviousEngagementController sut,
+        string checkYourAnswersUrl)
+    {
+        OnboardingSessionModel sessionModel = new();
+        sessionModel.HasSeenPreview = true;
+        sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileDataId.HasPreviousEngagement, Value = "True" });
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.CheckYourAnswers, checkYourAnswersUrl);
+        sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
+
+        var result = sut.Get();
+
+        result.As<ViewResult>().Model.As<PreviousEngagementViewModel>().BackLink.Should().Be(checkYourAnswersUrl);
     }
 
     [TestCase("true", true)]

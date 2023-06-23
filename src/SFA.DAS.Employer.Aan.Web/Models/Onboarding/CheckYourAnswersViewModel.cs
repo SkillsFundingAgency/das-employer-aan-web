@@ -12,6 +12,8 @@ public class CheckYourAnswersViewModel
     public string ReasonChangeLink { get; }
     public List<string>? Reason { get; }
     public List<string>? Support { get; }
+    public string PreviousEngagementChangeLink { get; }
+    public string? PreviousEngagement { get; }
 
     public CheckYourAnswersViewModel(IUrlHelper url, OnboardingSessionModel sessionModel)
     {
@@ -21,6 +23,9 @@ public class CheckYourAnswersViewModel
         ReasonChangeLink = url.RouteUrl(@RouteNames.Onboarding.JoinTheNetwork)!;
         Reason = GetReason(sessionModel);
         Support = GetSupport(sessionModel);
+
+        PreviousEngagementChangeLink = url.RouteUrl(@RouteNames.Onboarding.PreviousEngagement)!;
+        PreviousEngagement = GetPreviousEngagementValue(sessionModel.GetProfileValue(ProfileDataId.HasPreviousEngagement))!;
     }
 
     private static List<string>? GetRegions(OnboardingSessionModel sessionModel)
@@ -43,5 +48,15 @@ public class CheckYourAnswersViewModel
     private static List<string>? GetSupport(OnboardingSessionModel sessionModel)
     {
         return sessionModel.ProfileData.Where(x => x.Category == Category.Support && x.Value != null).Select(x => x.Description).ToList()!;
+    }
+
+    public static string? GetPreviousEngagementValue(string? previousEngagementValue)
+    {
+        string? resultValue = null;
+
+        if (bool.TryParse(previousEngagementValue, out var result))
+            resultValue = result ? "Yes" : "No";
+
+        return resultValue;
     }
 }

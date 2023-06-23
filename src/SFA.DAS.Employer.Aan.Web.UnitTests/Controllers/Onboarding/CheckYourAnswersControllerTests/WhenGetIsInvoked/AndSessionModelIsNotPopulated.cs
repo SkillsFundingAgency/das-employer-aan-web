@@ -1,8 +1,10 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using SFA.DAS.Employer.Aan.Domain.Constants;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
+using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 
@@ -19,6 +21,7 @@ public class AndSessionModelIsNotPopulated
     public void Init()
     {
         sessionModel = new();
+        sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileDataId.HasPreviousEngagement, Value = null });
         Mock<ISessionService> sessionServiceMock = new();
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
         sut = new(sessionServiceMock.Object);
@@ -56,6 +59,11 @@ public class AndSessionModelIsNotPopulated
         viewModel.Support.Should().BeEmpty();
     }
 
+    [Test]
+    public void ThenSetsPreviousEngagementToNullInViewModel()
+    {
+        viewModel.PreviousEngagement.Should().BeNull();
+    }
     [TearDown]
     public void Dispose()
     {
