@@ -15,8 +15,8 @@ public class AndSessionModelIsPopulated
 {
     OnboardingSessionModel sessionModel;
     CheckYourAnswersController sut;
-    ViewResult getResult;
-    CheckYourAnswersViewModel viewModel;
+    ViewResult? getResult;
+    CheckYourAnswersViewModel? viewModel;
     Mock<ISessionService> sessionServiceMock;
 
     static readonly string RegionUrl = Guid.NewGuid().ToString();
@@ -79,14 +79,14 @@ public class AndSessionModelIsPopulated
     {
         InvokeControllerGet();
         getResult.Should().NotBeNull();
-        getResult.ViewName.Should().Be(CheckYourAnswersController.ViewPath);
+        getResult!.ViewName.Should().Be(CheckYourAnswersController.ViewPath);
     }
 
     [Test]
     public void ThenSetsRegionChangeLinkInViewModel()
     {
         InvokeControllerGet();
-        viewModel.RegionChangeLink.Should().Be(RegionUrl);
+        viewModel!.RegionChangeLink.Should().Be(RegionUrl);
     }
 
     [Test]
@@ -94,7 +94,7 @@ public class AndSessionModelIsPopulated
     {
         sessionModel.Regions = SingleRegionSelected;
         InvokeControllerGet();
-        viewModel.Region.Should().Equal(SingleRegionSelected.Where(x => x.IsSelected).Select(x => x.Area).ToList());
+        viewModel!.Region.Should().Equal(SingleRegionSelected.Where(x => x.IsSelected).Select(x => x.Area).ToList());
     }
 
     [Test]
@@ -105,14 +105,14 @@ public class AndSessionModelIsPopulated
         var result = MultipleRegionsSelected.Where(x => x.IsSelected).Select(x => x.Area).ToList();
         result.Add($"Locally prefers {LocallyPreferredRegion}");
 
-        viewModel.Region.Should().Equal(result);
+        viewModel!.Region.Should().Equal(result);
     }
 
     [Test]
     public void ThenSetsReasonToJoinAndSupportNeededInViewModel()
     {
         InvokeControllerGet();
-        viewModel.ReasonChangeLink.Should().Be(ReasonToJoinTheNetworkUrl);
+        viewModel!.ReasonChangeLink.Should().Be(ReasonToJoinTheNetworkUrl);
         viewModel.Reason.Should().Equal(ProfileValues.Where(x => (x.Category == Category.ReasonToJoin) && x.Value != null).Select(x => x.Description).ToList());
         viewModel.Support.Should().Equal(ProfileValues.Where(x => (x.Category == Category.Support) && x.Value != null).Select(x => x.Description).ToList());
     }
