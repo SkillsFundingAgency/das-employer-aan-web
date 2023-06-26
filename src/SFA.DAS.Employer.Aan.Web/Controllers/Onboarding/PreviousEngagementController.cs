@@ -10,7 +10,6 @@ using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 
 [Route("onboarding/previous-engagement", Name = RouteNames.Onboarding.PreviousEngagement)]
-[Route("onboarding/checkyouranswers", Name = RouteNames.Onboarding.CheckYourAnswers)]
 public class PreviousEngagementController : Controller
 {
     public const string ViewPath = "~/Views/Onboarding/PreviousEngagement.cshtml";
@@ -60,7 +59,7 @@ public class PreviousEngagementController : Controller
         return new PreviousEngagementViewModel()
         {
             HasPreviousEngagement = bool.TryParse(previousEngagement, out var result) ? result : null,
-            BackLink = Url.RouteUrl(@RouteNames.Onboarding.JoinTheNetwork)!
+            BackLink = sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers)! : Url.RouteUrl(@RouteNames.Onboarding.JoinTheNetwork)!
         };
     }
 }
