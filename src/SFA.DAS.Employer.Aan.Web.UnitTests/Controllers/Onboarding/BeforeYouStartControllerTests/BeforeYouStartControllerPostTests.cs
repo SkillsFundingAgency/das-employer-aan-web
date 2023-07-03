@@ -14,7 +14,7 @@ public class BeforeYouStartControllerPostTests
     public void Post_RedirectsRouteToTermsAndConditions(
          [Greedy] BeforeYouStartController sut)
     {
-        var result = sut.Post();
+        var result = sut.Post(string.Empty);
 
         result.As<RedirectToRouteResult>().RouteName.Should().Be(RouteNames.Onboarding.TermsAndConditions);
     }

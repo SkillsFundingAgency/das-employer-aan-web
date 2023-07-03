@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 
-[Route("onboarding/before-you-start", Name = RouteNames.Onboarding.BeforeYouStart)]
+[Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
+[Route("accounts/{employerAccountId}/onboarding/before-you-start", Name = RouteNames.Onboarding.BeforeYouStart)]
 public class BeforeYouStartController : Controller
 {
     public const string ViewPath = "~/Views/Onboarding/BeforeYouStart.cshtml";
@@ -20,8 +23,8 @@ public class BeforeYouStartController : Controller
     }
 
     [HttpPost]
-    public IActionResult Post()
+    public IActionResult Post([FromRoute] string employerAccountId)
     {
-        return RedirectToRoute(RouteNames.Onboarding.TermsAndConditions);
+        return RedirectToRoute(RouteNames.Onboarding.TermsAndConditions, new { EmployerAccountId = employerAccountId });
     }
 }

@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
+using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 
-[Route("onboarding/terms-and-conditions", Name = RouteNames.Onboarding.TermsAndConditions)]
+[Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
+[Route("accounts/{employerAccountId}/onboarding/terms-and-conditions", Name = RouteNames.Onboarding.TermsAndConditions)]
 public class TermsAndConditionsController : Controller
 {
     public const string ViewPath = "~/Views/Onboarding/TermsAndConditions.cshtml";
@@ -20,11 +23,11 @@ public class TermsAndConditionsController : Controller
     }
 
     [HttpGet]
-    public IActionResult Get()
+    public IActionResult Get([FromRoute] string employerAccountId)
     {
         var model = new TermsAndConditionsViewModel()
         {
-            BackLink = Url.RouteUrl(RouteNames.Onboarding.BeforeYouStart)!
+            BackLink = Url.RouteUrl(RouteNames.Onboarding.BeforeYouStart, new { EmployerAccountId = employerAccountId })!
         };
         return View(ViewPath, model);
     }
