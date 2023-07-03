@@ -15,9 +15,9 @@ builder.Services
     .AddLogging()
     .AddApplicationInsightsTelemetry()
     .AddHttpContextAccessor()
-    .AddAuthenticationServices()
-    .AddSession(rootConfiguration)
     .AddServiceRegistrations(rootConfiguration)
+    .AddAuthenticationServices(rootConfiguration)
+    .AddSession(rootConfiguration)
     .AddValidatorsFromAssembly(typeof(RegionsSubmitModelValidator).Assembly)
     .AddMaMenuConfiguration(RouteNames.SignOut, rootConfiguration["ResourceEnvironmentName"]);
 
@@ -36,6 +36,11 @@ builder.Services
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 #endif
 
+if (!builder.Environment.IsDevelopment())
+{
+    builder.Services.AddDataProtection(rootConfiguration);
+
+}
 
 var app = builder.Build();
 
@@ -46,7 +51,7 @@ if (!app.Environment.IsDevelopment())
 }
 else
 {
-    /// app.UseHealthChecks("/health"); 
+    app.UseHealthChecks("/ping");
     /// app.UseStatusCodePagesWithReExecute("/error/{0}"); 
     /// app.UseExceptionHandler("/error");
     app.UseHsts();
@@ -56,17 +61,15 @@ app
     .UseHttpsRedirection()
     .UseStaticFiles()
     .UseCookiePolicy()
+    .UseRouting()
     .UseAuthentication()
     .UseAuthorization()
-    .UseRouting()
     .UseSession()
-    .UseHealthChecks("/ping");
-
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllerRoute(
-        "default",
-        "{controller=Home}/{action=Index}/{id?}");
-});
+    .UseEndpoints(endpoints =>
+    {
+        endpoints.MapControllerRoute(
+            "default",
+            "{controller=Home}/{action=Index}/{id?}");
+    });
 
 app.Run();
