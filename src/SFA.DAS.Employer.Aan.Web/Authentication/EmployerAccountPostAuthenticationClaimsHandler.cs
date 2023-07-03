@@ -19,13 +19,13 @@ public class EmployerAccountPostAuthenticationClaimsHandler : ICustomClaims
         _outerApiClient = outerApiClient;
     }
 
-    public async Task<IEnumerable<Claim>> GetClaims(TokenValidatedContext ctx)
+    public async Task<IEnumerable<Claim>> GetClaims(TokenValidatedContext tokenValidatedContext)
     {
         var claims = new List<Claim>();
-        var userId = ctx.Principal?.Claims
+        var userId = tokenValidatedContext.Principal?.Claims
                 .First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
                 .Value;
-        var email = ctx.Principal?.Claims
+        var email = tokenValidatedContext.Principal?.Claims
                 .First(c => c.Type.Equals(ClaimTypes.Email))
                 .Value;
 
@@ -46,7 +46,7 @@ public class EmployerAccountPostAuthenticationClaimsHandler : ICustomClaims
         }
 
         claims.Add(new Claim(EmployerClaims.IdamsUserIdClaimTypeIdentifier, result.EmployerUserId));
-        claims.Add(new Claim(EmployerClaims.IdamsUserEmailClaimTypeIdentifier, email));
+        claims.Add(new Claim(EmployerClaims.IdamsUserEmailClaimTypeIdentifier, email!));
 
         result.UserAccountResponse
             .Where(c => c.Role.Equals("owner", StringComparison.CurrentCultureIgnoreCase) || c.Role.Equals("transactor", StringComparison.CurrentCultureIgnoreCase))
