@@ -15,7 +15,5 @@ public class HomeController : Controller
         return claim == null
             ? new RedirectToRouteResult(RouteNames.Onboarding.BeforeYouStart, new { EmployerAccountId = employerAccountId })
             : new RedirectToRouteResult(RouteNames.EventsHub, new { EmployerAccountId = employerAccountId });
-
     }
-
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Web.Authentication;
+using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
@@ -13,11 +14,12 @@ public class BeforeYouStartController : Controller
     public const string ViewPath = "~/Views/Onboarding/BeforeYouStart.cshtml";
 
     [HttpGet]
-    public IActionResult Get()
+    public IActionResult Get([FromRoute] string employerAccountId)
     {
+        var account = User.GetEmployerAccount(employerAccountId);
         var model = new BeforeYouStartViewModel()
         {
-            EmployerName = "Big A Band Store"//TODO: Implement this after authentication
+            EmployerName = account.DasAccountName
         };
         return View(ViewPath, model);
     }

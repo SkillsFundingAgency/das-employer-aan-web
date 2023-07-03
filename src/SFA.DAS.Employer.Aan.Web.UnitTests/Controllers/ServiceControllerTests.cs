@@ -110,7 +110,6 @@ public class ServiceControllerTests
         StubAuthUserDetails model,
         EmployerUserAccountItem employerIdentifier,
         [Frozen] Mock<IConfiguration> configuration,
-        [Frozen] Mock<IStubAuthenticationService> stubAuthService,
         [Greedy] ServiceController sut)
     {
         configuration.Setup(x => x["ResourceEnvironmentName"]).Returns("test");

@@ -10,6 +10,6 @@ public static class UserExtensions
     public static Dictionary<string, EmployerUserAccountItem> GetEmployerAccounts(this ClaimsPrincipal user)
         => JsonConvert.DeserializeObject<Dictionary<string, EmployerUserAccountItem>>(user.FindFirstValue(EmployerClaims.AccountsClaimsTypeIdentifier))!;
 
-    public static EmployerUserAccountItem GetAccount(this ClaimsPrincipal user, string employerAccountId)
-        => GetEmployerAccounts(user)[employerAccountId];
+    public static EmployerUserAccountItem GetEmployerAccount(this ClaimsPrincipal user, string employerAccountId)
+        => GetEmployerAccounts(user)[employerAccountId.ToUpper()];
 }
