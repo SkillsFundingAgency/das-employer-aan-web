@@ -3,4 +3,8 @@
 namespace SFA.DAS.Employer.Aan.Web.Infrastructure.Configuration;
 
 [ExcludeFromCodeCoverage]
-public record ApplicationSettings(string RedisConnectionString, string DataProtectionKeysDatabase);
+public class ApplicationSettings
+{
+    public string? RedisConnectionString { get; set; }
+    public string? DataProtectionKeysDatabase { get; set; }
+}
