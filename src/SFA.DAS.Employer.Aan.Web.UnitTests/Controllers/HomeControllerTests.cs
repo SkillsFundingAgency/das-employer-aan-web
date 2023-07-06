@@ -29,6 +29,6 @@ public class HomeControllerTests
         var result = controller.Index(string.Empty);
 
         result.As<RedirectToRouteResult>().Should().NotBeNull();
-        result.As<RedirectToRouteResult>().RouteName.Should().Be(RouteNames.EventsHub);
+        result.As<RedirectToRouteResult>().RouteName.Should().Be(RouteNames.NetworkHub);
     }
 }

@@ -6,8 +6,8 @@ using SFA.DAS.Employer.Aan.Web.Infrastructure;
 namespace SFA.DAS.Employer.Aan.Web.Controllers;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
-[Route("accounts/{employerAccountId}/events-hub", Name = RouteNames.EventsHub)]
-public class EventsHubController : Controller
+[Route("accounts/{employerAccountId}/network-hub", Name = RouteNames.NetworkHub)]
+public class NetworkHubController : Controller
 {
     public IActionResult Index()
     {

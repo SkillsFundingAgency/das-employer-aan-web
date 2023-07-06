@@ -15,7 +15,7 @@ public static class RouteNames
     public const string AddUserDetails = "add-user-details";
 
     public const string Home = nameof(Home);
-    public const string EventsHub = nameof(EventsHub);
+    public const string NetworkHub = nameof(NetworkHub);
 
     public static class Onboarding
     {

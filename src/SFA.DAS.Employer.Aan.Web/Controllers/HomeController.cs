@@ -14,6 +14,6 @@ public class HomeController : Controller
         var claim = User.FindFirst(EmployerClaims.AanMemberId);
         return claim == null
             ? new RedirectToRouteResult(RouteNames.Onboarding.BeforeYouStart, new { EmployerAccountId = employerAccountId })
-            : new RedirectToRouteResult(RouteNames.EventsHub, new { EmployerAccountId = employerAccountId });
+            : new RedirectToRouteResult(RouteNames.NetworkHub, new { EmployerAccountId = employerAccountId });
     }
 }
