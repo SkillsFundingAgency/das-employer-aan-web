@@ -7,7 +7,7 @@ public interface IOuterApiClient
 {
     [Get("/employers/{userRef}")]
     [AllowAnyStatusCode]
-    Task<Response<EmployerMember>> GetEmployerMember([Path] Guid userRef);
+    Task<Response<EmployerMember>> GetEmployerMember([Path] Guid userRef, CancellationToken cancellationToken);
 
     [Get("/profiles/{userType}")]
     Task<GetProfilesResult> GetProfilesByUserType([Path("userType")] string userType);
