@@ -13,8 +13,8 @@ public static class AddDataProtectionExtensions
         var config = configuration.GetSection(nameof(ApplicationSettings)).Get<ApplicationSettings>();
 
         if (config != null
-            && !string.IsNullOrEmpty(config.DataProtectionKeysDatabase)
-            && !string.IsNullOrEmpty(config.RedisConnectionString))
+            && !string.IsNullOrWhiteSpace(config.DataProtectionKeysDatabase)
+            && !string.IsNullOrWhiteSpace(config.RedisConnectionString))
         {
             var redisConnectionString = config.RedisConnectionString;
             var dataProtectionKeysDatabase = config.DataProtectionKeysDatabase;

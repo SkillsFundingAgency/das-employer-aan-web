@@ -5,7 +5,7 @@ public class PreviousEngagementViewModel : PreviousEngagementSubmitModel, IBackL
     public string BackLink { get; set; } = null!;
 }
 
-public class PreviousEngagementSubmitModel
+public class PreviousEngagementSubmitModel : ViewModelBase
 {
     public bool? HasPreviousEngagement { get; set; }
 }

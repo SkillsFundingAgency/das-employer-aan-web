@@ -10,7 +10,7 @@ public class PrimaryEngagementWithinNetworkControllerAttributeTests
     public void Controller_HasCorrectRouteAttribute()
     {
         typeof(PrimaryEngagementWithinNetworkController).Should().BeDecoratedWith<RouteAttribute>();
-        typeof(PrimaryEngagementWithinNetworkController).Should().BeDecoratedWith<RouteAttribute>().Subject.Template.Should().Be("onboarding/primaryengagementwithinnetwork");
+        typeof(PrimaryEngagementWithinNetworkController).Should().BeDecoratedWith<RouteAttribute>().Subject.Template.Should().EndWith("onboarding/primary-engagement");
         typeof(PrimaryEngagementWithinNetworkController).Should().BeDecoratedWith<RouteAttribute>().Subject.Name.Should().Be("PrimaryEngagementWithinNetwork");
     }
 }

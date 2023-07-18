@@ -14,8 +14,9 @@ public class TermsAndConditionsControllerPostTests
     public async Task Post_RedirectToRouteResult_RedirectsToRegion(
         [Greedy] TermsAndConditionsController sut)
     {
-        var result = await sut.Post();
+        var result = await sut.Post(Guid.NewGuid().ToString());
 
         result.As<RedirectToRouteResult>().RouteName.Should().Be(RouteNames.Onboarding.Regions);
+        result.As<RedirectToRouteResult>().RouteValues!.ContainsKey("employerAccountId").Should().BeTrue();
     }
 }

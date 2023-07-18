@@ -27,6 +27,6 @@ public class BeforeYouStartController : Controller
     [HttpPost]
     public IActionResult Post([FromRoute] string employerAccountId)
     {
-        return RedirectToRoute(RouteNames.Onboarding.TermsAndConditions, new { EmployerAccountId = employerAccountId });
+        return RedirectToRoute(RouteNames.Onboarding.TermsAndConditions, new { employerAccountId });
     }
 }

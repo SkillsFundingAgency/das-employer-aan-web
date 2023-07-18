@@ -4,7 +4,7 @@ using SFA.DAS.Employer.Aan.Web.Infrastructure;
 
 namespace SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
-public class CheckYourAnswersViewModel
+public class CheckYourAnswersViewModel : ViewModelBase
 {
     public string RegionChangeLink { get; }
     public List<string>? Region { get; }
@@ -15,16 +15,16 @@ public class CheckYourAnswersViewModel
     public string PreviousEngagementChangeLink { get; }
     public string? PreviousEngagement { get; }
 
-    public CheckYourAnswersViewModel(IUrlHelper url, OnboardingSessionModel sessionModel)
+    public CheckYourAnswersViewModel(IUrlHelper url, OnboardingSessionModel sessionModel, string employerAccountId)
     {
-        RegionChangeLink = url.RouteUrl(@RouteNames.Onboarding.Regions)!;
+        RegionChangeLink = url.RouteUrl(@RouteNames.Onboarding.Regions, new { EmployerAccountId = employerAccountId })!;
         Region = GetRegions(sessionModel);
 
-        ReasonChangeLink = url.RouteUrl(@RouteNames.Onboarding.JoinTheNetwork)!;
+        ReasonChangeLink = url.RouteUrl(@RouteNames.Onboarding.JoinTheNetwork, new { EmployerAccountId = employerAccountId })!;
         Reason = GetReason(sessionModel);
         Support = GetSupport(sessionModel);
 
-        PreviousEngagementChangeLink = url.RouteUrl(@RouteNames.Onboarding.PreviousEngagement)!;
+        PreviousEngagementChangeLink = url.RouteUrl(@RouteNames.Onboarding.PreviousEngagement, new { EmployerAccountId = employerAccountId })!;
         PreviousEngagement = GetPreviousEngagementValue(sessionModel.GetProfileValue(ProfileDataId.HasPreviousEngagement))!;
     }
 

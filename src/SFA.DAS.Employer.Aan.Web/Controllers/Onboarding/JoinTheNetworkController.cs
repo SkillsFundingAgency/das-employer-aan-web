@@ -10,7 +10,7 @@ using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 
-[Route("onboarding/jointhenetwork", Name = RouteNames.Onboarding.JoinTheNetwork)]
+[Route("accounts/{employerAccountId}/onboarding/reason-to-join", Name = RouteNames.Onboarding.JoinTheNetwork)]
 public class JoinTheNetworkController : Controller
 {
     public const string ViewPath = "~/Views/Onboarding/JoinTheNetwork.cshtml";
@@ -24,9 +24,10 @@ public class JoinTheNetworkController : Controller
     }
 
     [HttpGet]
-    public IActionResult Get()
+    public IActionResult Get([FromRoute] string employerAccountId)
     {
         var model = GetViewModel();
+        model.EmployerAccountId = employerAccountId;
         return View(ViewPath, model);
     }
 
@@ -38,6 +39,7 @@ public class JoinTheNetworkController : Controller
         if (!result.IsValid)
         {
             var model = GetViewModel();
+            model.EmployerAccountId = submitModel.EmployerAccountId;
             result.AddToModelState(ModelState);
             return View(ViewPath, model);
         }
@@ -56,7 +58,9 @@ public class JoinTheNetworkController : Controller
 
         _sessionService.Set(sessionModel);
 
-        return sessionModel.HasSeenPreview ? RedirectToRoute(@RouteNames.Onboarding.CheckYourAnswers)! : RedirectToRoute(RouteNames.Onboarding.PreviousEngagement);
+        return sessionModel.HasSeenPreview
+            ? RedirectToRoute(@RouteNames.Onboarding.CheckYourAnswers, new { submitModel.EmployerAccountId })!
+            : RedirectToRoute(RouteNames.Onboarding.PreviousEngagement, new { submitModel.EmployerAccountId });
     }
 
     private JoinTheNetworkViewModel GetViewModel()

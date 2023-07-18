@@ -8,7 +8,7 @@ using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 
-[Route("onboarding/areas-to-engage-locally", Name = RouteNames.Onboarding.AreasToEngageLocally)]
+[Route("accounts/{employerAccountId}/onboarding/areas-to-engage-locally", Name = RouteNames.Onboarding.AreasToEngageLocally)]
 public class AreasToEngageLocallyController : Controller
 {
     public const string ViewPath = "~/Views/Onboarding/AreasToEngageLocally.cshtml";
@@ -22,10 +22,11 @@ public class AreasToEngageLocallyController : Controller
     }
 
     [HttpGet]
-    public IActionResult Get()
+    public IActionResult Get([FromRoute] string employerAccountId)
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
         var model = GetViewModel();
+        model.EmployerAccountId = employerAccountId;
         if (sessionModel.Regions.Any(x => x.IsConfirmed))
         {
             model.SelectedAreaToEngageLocallyId = sessionModel.Regions.Single(x => x.IsConfirmed).Id;
@@ -41,6 +42,7 @@ public class AreasToEngageLocallyController : Controller
         if (!result.IsValid)
         {
             var model = GetViewModel();
+            model.EmployerAccountId = submitModel.EmployerAccountId;
             result.AddToModelState(ModelState);
             return View(ViewPath, model);
         }
@@ -52,7 +54,7 @@ public class AreasToEngageLocallyController : Controller
 
         _sessionService.Set(sessionModel);
 
-        return RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork);
+        return RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork, new { submitModel.EmployerAccountId });
     }
 
     private AreasToEngageLocallyViewModel GetViewModel()

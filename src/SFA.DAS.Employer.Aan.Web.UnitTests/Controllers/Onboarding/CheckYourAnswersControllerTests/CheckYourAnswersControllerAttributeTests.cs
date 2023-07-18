@@ -12,7 +12,7 @@ public class CheckYourAnswersControllerAttributeTests
     public void Controller_HasCorrectRouteAttribute()
     {
         typeof(CheckYourAnswersController).Should().BeDecoratedWith<RouteAttribute>();
-        typeof(CheckYourAnswersController).Should().BeDecoratedWith<RouteAttribute>().Subject.Template.Should().Be("onboarding/check-your-answers");
+        typeof(CheckYourAnswersController).Should().BeDecoratedWith<RouteAttribute>().Subject.Template.Should().EndWith("onboarding/check-your-answers");
         typeof(CheckYourAnswersController).Should().BeDecoratedWith<RouteAttribute>().Subject.Name.Should().Be(RouteNames.Onboarding.CheckYourAnswers);
     }
 }

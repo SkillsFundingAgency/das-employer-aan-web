@@ -5,7 +5,7 @@ public class PrimaryEngagementWithinNetworkViewModel : PrimaryEngagementWithinNe
     public string BackLink { get; set; } = null!;
 }
 
-public class PrimaryEngagementWithinNetworkSubmitModel
+public class PrimaryEngagementWithinNetworkSubmitModel : ViewModelBase
 {
     public bool? IsLocalOrganisation { get; set; }
 }

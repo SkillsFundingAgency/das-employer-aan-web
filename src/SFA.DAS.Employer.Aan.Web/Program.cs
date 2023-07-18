@@ -39,7 +39,6 @@ builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 if (!builder.Environment.IsDevelopment())
 {
     builder.Services.AddDataProtection(rootConfiguration);
-
 }
 
 var app = builder.Build();

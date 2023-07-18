@@ -5,7 +5,7 @@ using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 
-[Route("onboarding/check-your-answers", Name = RouteNames.Onboarding.CheckYourAnswers)]
+[Route("accounts/{employerAccountId}/onboarding/check-your-answers", Name = RouteNames.Onboarding.CheckYourAnswers)]
 public class CheckYourAnswersController : Controller
 {
     public const string ViewPath = "~/Views/Onboarding/CheckYourAnswers.cshtml";
@@ -17,13 +17,14 @@ public class CheckYourAnswersController : Controller
     }
 
     [HttpGet]
-    public IActionResult Get()
+    public IActionResult Get([FromRoute] string employerAccountId)
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
         sessionModel.HasSeenPreview = true;
         _sessionService.Set(sessionModel);
 
-        CheckYourAnswersViewModel model = new(Url, sessionModel);
+        CheckYourAnswersViewModel model = new(Url, sessionModel, employerAccountId);
+        model.EmployerAccountId = employerAccountId;
         return View(ViewPath, model);
     }
 }

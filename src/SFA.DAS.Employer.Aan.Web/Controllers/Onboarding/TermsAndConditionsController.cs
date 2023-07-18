@@ -27,13 +27,14 @@ public class TermsAndConditionsController : Controller
     {
         var model = new TermsAndConditionsViewModel()
         {
-            BackLink = Url.RouteUrl(RouteNames.Onboarding.BeforeYouStart, new { EmployerAccountId = employerAccountId })!
+            EmployerAccountId = employerAccountId,
+            BackLink = Url.RouteUrl(RouteNames.Onboarding.BeforeYouStart, new { employerAccountId })!
         };
         return View(ViewPath, model);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post()
+    public async Task<IActionResult> Post([FromRoute] string employerAccountId)
     {
         if (!_sessionService.Contains<OnboardingSessionModel>())
         {
@@ -46,6 +47,6 @@ public class TermsAndConditionsController : Controller
             _sessionService.Set(sessionModel);
         }
 
-        return RedirectToRoute(RouteNames.Onboarding.Regions);
+        return RedirectToRoute(RouteNames.Onboarding.Regions, new { EmployerAccountId = employerAccountId });
     }
 }
