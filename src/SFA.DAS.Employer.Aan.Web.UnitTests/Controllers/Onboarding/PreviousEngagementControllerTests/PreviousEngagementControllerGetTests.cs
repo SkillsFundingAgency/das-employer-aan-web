@@ -59,7 +59,8 @@ public class PreviousEngagementControllerGetTests
     {
         Mock<ISessionService> sessionServiceMock = new();
         Mock<IValidator<PreviousEngagementSubmitModel>> validatorMock = new();
-        PreviousEngagementController sut = new PreviousEngagementController(sessionServiceMock.Object, validatorMock.Object);
+        Mock<IOuterApiClient> outerApiClientMock = new();
+        PreviousEngagementController sut = new PreviousEngagementController(sessionServiceMock.Object, validatorMock.Object, outerApiClientMock.Object);
         sut.AddUrlHelperMock();
         OnboardingSessionModel sessionModel = new OnboardingSessionModel();
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);

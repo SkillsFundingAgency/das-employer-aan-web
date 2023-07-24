@@ -15,12 +15,15 @@ public class PreviousEngagementController : Controller
     public const string ViewPath = "~/Views/Onboarding/PreviousEngagement.cshtml";
     private readonly ISessionService _sessionService;
     private readonly IValidator<PreviousEngagementSubmitModel> _validator;
+    private readonly IOuterApiClient _outerApiClient;
 
     public PreviousEngagementController(ISessionService sessionService,
-        IValidator<PreviousEngagementSubmitModel> validator)
+        IValidator<PreviousEngagementSubmitModel> validator,
+        IOuterApiClient outerApiClient)
     {
         _validator = validator;
         _sessionService = sessionService;
+        _outerApiClient = outerApiClient;
     }
 
     [HttpGet]
@@ -49,6 +52,16 @@ public class PreviousEngagementController : Controller
         }
 
         sessionModel.SetProfileValue(ProfileDataId.HasPreviousEngagement, submitModel.HasPreviousEngagement.ToString()!);
+
+        if (!sessionModel.HasSeenPreview)
+        {
+            sessionModel.HasSeenPreview = true;
+
+            var empSummary = _outerApiClient.GetEmployerSummary;
+            sessionModel.EmployerDetails.ActiveApprenticesCount = 0;
+            sessionModel.EmployerDetails.DigitalApprenticeshipProgrammeStartDate = "";
+            sessionModel.EmployerDetails.Sectors = null;
+        }
 
         _sessionService.Set(sessionModel);
 

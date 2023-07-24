@@ -8,12 +8,17 @@ public class CheckYourAnswersViewModel : ViewModelBase
 {
     public string RegionChangeLink { get; }
     public List<string>? Region { get; }
-
     public string ReasonChangeLink { get; }
     public List<string>? Reason { get; }
     public List<string>? Support { get; }
     public string PreviousEngagementChangeLink { get; }
     public string? PreviousEngagement { get; }
+    public string FullName { get; set; } = null!;
+    public string Email { get; set; } = null!;
+    public string OrganisationName { get; set; } = null!;
+    public int ActiveApprenticesCount { get; set; }
+    public string DigitalApprenticeshipProgrammeStartDate { get; set; }
+    public IEnumerable<string> Sectors { get; set; }
 
     public CheckYourAnswersViewModel(IUrlHelper url, OnboardingSessionModel sessionModel, string employerAccountId)
     {
@@ -26,6 +31,10 @@ public class CheckYourAnswersViewModel : ViewModelBase
 
         PreviousEngagementChangeLink = url.RouteUrl(@RouteNames.Onboarding.PreviousEngagement, new { EmployerAccountId = employerAccountId })!;
         PreviousEngagement = GetPreviousEngagementValue(sessionModel.GetProfileValue(ProfileDataId.HasPreviousEngagement))!;
+
+        ActiveApprenticesCount = sessionModel.EmployerDetails.ActiveApprenticesCount;
+        DigitalApprenticeshipProgrammeStartDate = sessionModel.EmployerDetails.DigitalApprenticeshipProgrammeStartDate;
+        Sectors = sessionModel.EmployerDetails.Sectors;
     }
 
     private static List<string>? GetRegions(OnboardingSessionModel sessionModel)

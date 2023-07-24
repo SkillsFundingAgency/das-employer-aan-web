@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
+using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
@@ -24,7 +26,17 @@ public class CheckYourAnswersController : Controller
         _sessionService.Set(sessionModel);
 
         CheckYourAnswersViewModel model = new(Url, sessionModel, employerAccountId);
+        SetEmployerSummary(model, employerAccountId);
         model.EmployerAccountId = employerAccountId;
         return View(ViewPath, model);
+    }
+
+    private void SetEmployerSummary(CheckYourAnswersViewModel viewModel, string employerAccountId)
+    {
+        viewModel.FullName = User.FindFirstValue(EmployerClaims.IdamsUserDisplayNameClaimTypeIdentifier);
+        viewModel.Email = User.FindFirstValue(ClaimTypes.Email);
+
+        var account = User.GetEmployerAccount(employerAccountId);
+        viewModel.OrganisationName = account.DasAccountName;
     }
 }

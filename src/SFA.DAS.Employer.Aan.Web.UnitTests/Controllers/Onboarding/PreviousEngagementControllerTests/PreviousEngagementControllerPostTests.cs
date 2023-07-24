@@ -47,8 +47,9 @@ public class PreviousEngagementControllerPostTests
     {
         Mock<ISessionService> sessionServiceMock = new();
         Mock<IValidator<PreviousEngagementSubmitModel>> validatorMock = new();
+        Mock<IOuterApiClient> outerApiClient = new();
         PreviousEngagementSubmitModel submitmodel = new();
-        PreviousEngagementController sut = new PreviousEngagementController(sessionServiceMock.Object, validatorMock.Object);
+        PreviousEngagementController sut = new PreviousEngagementController(sessionServiceMock.Object, validatorMock.Object, outerApiClient.Object);
         OnboardingSessionModel sessionModel = new();
         ValidationResult validationResult = new();
 

@@ -38,6 +38,6 @@ public class BeforeYouStartControllerGetTests
 
         var result = sut.Get(TestConstants.DefaultAccountId);
 
-        result.As<ViewResult>().Model.As<BeforeYouStartViewModel>().EmployerName.Should().Be(TestConstants.DefaultAccountName);
+        result.As<ViewResult>().Model.As<BeforeYouStartViewModel>().OrganisationName.Should().Be(TestConstants.DefaultAccountName);
     }
 }
