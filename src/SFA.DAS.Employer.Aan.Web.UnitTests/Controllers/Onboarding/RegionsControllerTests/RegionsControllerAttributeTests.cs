@@ -11,7 +11,7 @@ public class RegionsControllerAttributeTests
     public void Controller_HasCorrectRouteAttribute()
     {
         typeof(RegionsController).Should().BeDecoratedWith<RouteAttribute>();
-        typeof(RegionsController).Should().BeDecoratedWith<RouteAttribute>().Subject.Template.Should().Be("onboarding/regions");
+        typeof(RegionsController).Should().BeDecoratedWith<RouteAttribute>().Subject.Template.Should().EndWith("onboarding/regions");
         typeof(RegionsController).Should().BeDecoratedWith<RouteAttribute>().Subject.Name.Should().Be("Regions");
     }
 }

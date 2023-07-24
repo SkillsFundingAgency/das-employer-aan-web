@@ -9,7 +9,7 @@ using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 
-[Route("onboarding/previous-engagement", Name = RouteNames.Onboarding.PreviousEngagement)]
+[Route("accounts/{employerAccountId}/onboarding/previous-engagement", Name = RouteNames.Onboarding.PreviousEngagement)]
 public class PreviousEngagementController : Controller
 {
     public const string ViewPath = "~/Views/Onboarding/PreviousEngagement.cshtml";
@@ -24,33 +24,35 @@ public class PreviousEngagementController : Controller
     }
 
     [HttpGet]
-    public IActionResult Get()
+    public IActionResult Get([FromRoute] string employerAccountId)
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
 
         var model = GetViewModel(sessionModel);
+        model.EmployerAccountId = employerAccountId;
         return View(ViewPath, model);
     }
 
     [HttpPost]
-    public IActionResult Post(PreviousEngagementSubmitModel submitmodel)
+    public IActionResult Post(PreviousEngagementSubmitModel submitModel)
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
 
-        ValidationResult result = _validator.Validate(submitmodel);
+        ValidationResult result = _validator.Validate(submitModel);
 
         if (!result.IsValid)
         {
             var model = GetViewModel(sessionModel);
+            model.EmployerAccountId = submitModel.EmployerAccountId;
             result.AddToModelState(ModelState);
             return View(ViewPath, model);
         }
 
-        sessionModel.SetProfileValue(ProfileDataId.HasPreviousEngagement, submitmodel.HasPreviousEngagement.ToString()!);
+        sessionModel.SetProfileValue(ProfileDataId.HasPreviousEngagement, submitModel.HasPreviousEngagement.ToString()!);
 
         _sessionService.Set(sessionModel);
 
-        return RedirectToRoute(RouteNames.Onboarding.CheckYourAnswers);
+        return RedirectToRoute(RouteNames.Onboarding.CheckYourAnswers, new { submitModel.EmployerAccountId });
     }
 
     private PreviousEngagementViewModel GetViewModel(OnboardingSessionModel sessionModel)

@@ -11,7 +11,7 @@ public class AreasToEngageLocallyControllerAttributeTests
     public void Controller_HasCorrectAttributes()
     {
         typeof(AreasToEngageLocallyController).Should().BeDecoratedWith<RouteAttribute>();
-        typeof(AreasToEngageLocallyController).Should().BeDecoratedWith<RouteAttribute>().Subject.Template.Should().Be("onboarding/areas-to-engage-locally");
+        typeof(AreasToEngageLocallyController).Should().BeDecoratedWith<RouteAttribute>().Subject.Template.Should().EndWith("onboarding/areas-to-engage-locally");
         typeof(AreasToEngageLocallyController).Should().BeDecoratedWith<RouteAttribute>().Subject.Name.Should().Be("AreasToEngageLocally");
     }
 }

@@ -13,11 +13,12 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.CheckYourAns
 
 public class AndSessionModelIsPopulated
 {
-    OnboardingSessionModel sessionModel;
-    CheckYourAnswersController sut;
-    ViewResult? getResult;
-    CheckYourAnswersViewModel? viewModel;
-    Mock<ISessionService> sessionServiceMock;
+    OnboardingSessionModel _sessionModel;
+    CheckYourAnswersController _sut;
+    ViewResult? _getResult;
+    CheckYourAnswersViewModel? _viewModel;
+    Mock<ISessionService> _sessionServiceMock;
+    string _employerAccountId;
 
     static readonly string RegionUrl = Guid.NewGuid().ToString();
     static readonly string ReasonToJoinTheNetworkUrl = Guid.NewGuid().ToString();
@@ -54,67 +55,68 @@ public class AndSessionModelIsPopulated
     [SetUp]
     public void Init()
     {
-        sessionModel = new();
-        sessionServiceMock = new();
-        sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
-        sut = new(sessionServiceMock.Object);
+        _employerAccountId = Guid.NewGuid().ToString();
+        _sessionModel = new();
+        _sessionServiceMock = new();
+        _sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(_sessionModel);
+        _sut = new(_sessionServiceMock.Object);
 
-        sut.AddUrlHelperMock()
+        _sut.AddUrlHelperMock()
         .AddUrlForRoute(RouteNames.Onboarding.Regions, RegionUrl)
         .AddUrlForRoute(RouteNames.Onboarding.JoinTheNetwork, ReasonToJoinTheNetworkUrl)
         .AddUrlForRoute(RouteNames.Onboarding.PreviousEngagement, PreviousEngagementUrl);
 
-        sessionModel.Regions = MultipleRegionsSelected;
-        sessionModel.ProfileData = ProfileValues;
+        _sessionModel.Regions = MultipleRegionsSelected;
+        _sessionModel.ProfileData = ProfileValues;
     }
 
     private void InvokeControllerGet()
     {
-        getResult = sut.Get().As<ViewResult>();
-        viewModel = getResult.Model.As<CheckYourAnswersViewModel>();
+        _getResult = _sut.Get(_employerAccountId).As<ViewResult>();
+        _viewModel = _getResult.Model.As<CheckYourAnswersViewModel>();
     }
 
     [Test]
     public void ThenReturnsViewResults()
     {
         InvokeControllerGet();
-        getResult.Should().NotBeNull();
-        getResult!.ViewName.Should().Be(CheckYourAnswersController.ViewPath);
+        _getResult.Should().NotBeNull();
+        _getResult!.ViewName.Should().Be(CheckYourAnswersController.ViewPath);
     }
 
     [Test]
     public void ThenSetsRegionChangeLinkInViewModel()
     {
         InvokeControllerGet();
-        viewModel!.RegionChangeLink.Should().Be(RegionUrl);
+        _viewModel!.RegionChangeLink.Should().Be(RegionUrl);
     }
 
     [Test]
     public void ThenSetsSingleRegionInViewModel()
     {
-        sessionModel.Regions = SingleRegionSelected;
+        _sessionModel.Regions = SingleRegionSelected;
         InvokeControllerGet();
-        viewModel!.Region.Should().Equal(SingleRegionSelected.Where(x => x.IsSelected).Select(x => x.Area).ToList());
+        _viewModel!.Region.Should().Equal(SingleRegionSelected.Where(x => x.IsSelected).Select(x => x.Area).ToList());
     }
 
     [Test]
     public void ThenSetsLocallyPreferredRegionInViewModel()
     {
-        sessionModel.Regions = MultipleRegionsSelected;
+        _sessionModel.Regions = MultipleRegionsSelected;
         InvokeControllerGet();
         var result = MultipleRegionsSelected.Where(x => x.IsSelected).Select(x => x.Area).ToList();
         result.Add($"Locally prefers {LocallyPreferredRegion}");
 
-        viewModel!.Region.Should().Equal(result);
+        _viewModel!.Region.Should().Equal(result);
     }
 
     [Test]
     public void ThenSetsReasonToJoinAndSupportNeededInViewModel()
     {
         InvokeControllerGet();
-        viewModel!.ReasonChangeLink.Should().Be(ReasonToJoinTheNetworkUrl);
-        viewModel.Reason.Should().Equal(ProfileValues.Where(x => (x.Category == Category.ReasonToJoin) && x.Value != null).Select(x => x.Description).ToList());
-        viewModel.Support.Should().Equal(ProfileValues.Where(x => (x.Category == Category.Support) && x.Value != null).Select(x => x.Description).ToList());
+        _viewModel!.ReasonChangeLink.Should().Be(ReasonToJoinTheNetworkUrl);
+        _viewModel.Reason.Should().Equal(ProfileValues.Where(x => (x.Category == Category.ReasonToJoin) && x.Value != null).Select(x => x.Description).ToList());
+        _viewModel.Support.Should().Equal(ProfileValues.Where(x => (x.Category == Category.Support) && x.Value != null).Select(x => x.Description).ToList());
     }
 
     [TestCase("true")]
@@ -122,21 +124,21 @@ public class AndSessionModelIsPopulated
     [TestCase(null)]
     public void ThenSetsPreviousEngagementInViewModel(string isPreviouslyEngagged)
     {
-        sessionModel.SetProfileValue(ProfileDataId.HasPreviousEngagement, isPreviouslyEngagged);
-        getResult = sut.Get().As<ViewResult>();
-        viewModel = getResult.Model.As<CheckYourAnswersViewModel>();
+        _sessionModel.SetProfileValue(ProfileDataId.HasPreviousEngagement, isPreviouslyEngagged);
+        _getResult = _sut.Get(_employerAccountId).As<ViewResult>();
+        _viewModel = _getResult.Model.As<CheckYourAnswersViewModel>();
 
-        viewModel.PreviousEngagement.Should().Be(CheckYourAnswersViewModel.GetPreviousEngagementValue(isPreviouslyEngagged));
-        viewModel.PreviousEngagementChangeLink.Should().Be(PreviousEngagementUrl);
+        _viewModel.PreviousEngagement.Should().Be(CheckYourAnswersViewModel.GetPreviousEngagementValue(isPreviouslyEngagged));
+        _viewModel.PreviousEngagementChangeLink.Should().Be(PreviousEngagementUrl);
     }
 
     [TearDown]
     public void Dispose()
     {
-        sessionModel = null!;
-        sut = null!;
-        getResult = null!;
-        viewModel = null!;
-        sessionServiceMock = null!;
+        _sessionModel = null!;
+        _sut = null!;
+        _getResult = null!;
+        _viewModel = null!;
+        _sessionServiceMock = null!;
     }
 }

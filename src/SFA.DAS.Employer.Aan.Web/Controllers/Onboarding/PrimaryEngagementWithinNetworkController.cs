@@ -8,7 +8,7 @@ using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 
-[Route("onboarding/primaryengagementwithinnetwork", Name = RouteNames.Onboarding.PrimaryEngagementWithinNetwork)]
+[Route("accounts/{employerAccountId}/onboarding/primary-engagement", Name = RouteNames.Onboarding.PrimaryEngagementWithinNetwork)]
 public class PrimaryEngagementWithinNetworkController : Controller
 {
     public const string ViewPath = "~/Views/Onboarding/PrimaryEngagementWithinNetwork.cshtml";
@@ -24,47 +24,45 @@ public class PrimaryEngagementWithinNetworkController : Controller
     }
 
     [HttpGet]
-    public IActionResult Get()
+    public IActionResult Get([FromRoute] string employerAccountId)
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
-
         var model = GetViewModel(sessionModel);
+        model.EmployerAccountId = employerAccountId;
         return View(ViewPath, model);
     }
 
     [HttpPost]
-    public IActionResult Post(PrimaryEngagementWithinNetworkSubmitModel submitmodel)
+    public IActionResult Post(PrimaryEngagementWithinNetworkSubmitModel submitModel)
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
 
-        ValidationResult result = _validator.Validate(submitmodel);
+        ValidationResult result = _validator.Validate(submitModel);
 
         if (!result.IsValid)
         {
             var model = GetViewModel(sessionModel);
+            model.EmployerAccountId = submitModel.EmployerAccountId;
             result.AddToModelState(ModelState);
             return View(ViewPath, model);
         }
 
-        sessionModel.IsLocalOrganisation = submitmodel.IsLocalOrganisation;
+        sessionModel.IsLocalOrganisation = submitModel.IsLocalOrganisation;
 
         _sessionService.Set(sessionModel);
 
         if ((bool)sessionModel.IsLocalOrganisation!)
         {
-            return RedirectToRoute(RouteNames.Onboarding.AreasToEngageLocally);
+            return RedirectToRoute(RouteNames.Onboarding.AreasToEngageLocally, new { submitModel.EmployerAccountId });
         }
 
-        return RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork);
+        return RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork, new { submitModel.EmployerAccountId });
     }
 
     private PrimaryEngagementWithinNetworkViewModel GetViewModel(OnboardingSessionModel sessionModel)
+    => new()
     {
-
-        return new PrimaryEngagementWithinNetworkViewModel()
-        {
-            IsLocalOrganisation = sessionModel.IsLocalOrganisation,
-            BackLink = Url.RouteUrl(@RouteNames.Onboarding.Regions)!
-        };
-    }
+        IsLocalOrganisation = sessionModel.IsLocalOrganisation,
+        BackLink = Url.RouteUrl(@RouteNames.Onboarding.Regions)!
+    };
 }

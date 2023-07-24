@@ -17,26 +17,30 @@ public class AreasToEngageLocallyControllerGetTests
 {
     [Test, MoqAutoData]
     public void Get_ReturnsViewResult(
+        string employerAccountId,
         [Greedy] AreasToEngageLocallyController sut)
     {
         sut.AddUrlHelperMock();
-        var result = sut.Get();
+        var result = sut.Get(employerAccountId);
 
         result.As<ViewResult>().Should().NotBeNull();
+        result.As<ViewResult>().Model.As<ViewModelBase>().EmployerAccountId.Should().Be(employerAccountId);
     }
 
     [Test, MoqAutoData]
     public void Get_ViewResult_HasCorrectViewPath(
+        string employerAccoundId,
         [Greedy] AreasToEngageLocallyController sut)
     {
         sut.AddUrlHelperMock();
-        var result = sut.Get();
+        var result = sut.Get(employerAccoundId);
 
         result.As<ViewResult>().ViewName.Should().Be(AreasToEngageLocallyController.ViewPath);
     }
 
     [Test, MoqAutoData]
     public void Get_ViewModel_HasConfirmedRegionSets_SelectedAreaToEngageLocallyId(
+        string employerAccoundId,
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] AreasToEngageLocallyController sut)
     {
@@ -46,12 +50,13 @@ public class AreasToEngageLocallyControllerGetTests
         sessionModel.Regions = new List<RegionModel>() { new RegionModel { Id = regionId, IsConfirmed = true } };
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
-        var result = sut.Get();
+        var result = sut.Get(employerAccoundId);
         result.As<ViewResult>().Model.As<AreasToEngageLocallyViewModel>().SelectedAreaToEngageLocallyId.Should().Be(regionId);
     }
 
     [Test, MoqAutoData]
     public void Get_ViewModel_HasCorrectBackLinkToRegions(
+        string employerAccoundId,
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] AreasToEngageLocallyController sut,
         string regionsUrl)
@@ -69,7 +74,7 @@ public class AreasToEngageLocallyControllerGetTests
         };
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
-        var result = sut.Get();
+        var result = sut.Get(employerAccoundId);
 
         result.As<ViewResult>().Model.As<AreasToEngageLocallyViewModel>().BackLink.Should().Be(regionsUrl);
     }
@@ -94,7 +99,7 @@ public class AreasToEngageLocallyControllerGetTests
         sessionModel.IsLocalOrganisation = true;
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
-        var result = sut.Get();
+        var result = sut.Get(Guid.NewGuid().ToString());
 
         result.As<ViewResult>().Model.As<AreasToEngageLocallyViewModel>().BackLink.Should().Be(primaryEngagementWithinNetworkUrl);
     }

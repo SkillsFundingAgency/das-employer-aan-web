@@ -6,6 +6,7 @@ using Moq;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
+using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 using SFA.DAS.Testing.AutoFixture;
@@ -18,6 +19,7 @@ public class PrimaryEngagementWithinNetworkControllerGetTests
     public void Get_ViewModel_HasBackLink(
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] PrimaryEngagementWithinNetworkController sut,
+        string employerAccountId,
         string regionsUrl)
     {
         OnboardingSessionModel sessionModel = new();
@@ -25,9 +27,10 @@ public class PrimaryEngagementWithinNetworkControllerGetTests
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.Regions, regionsUrl);
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
-        var result = sut.Get();
+        var result = sut.Get(employerAccountId);
 
         result.As<ViewResult>().Model.As<PrimaryEngagementWithinNetworkViewModel>().BackLink.Should().Be(regionsUrl);
+        result.As<ViewResult>().Model.As<ViewModelBase>().EmployerAccountId.Should().Be(employerAccountId);
     }
 
     [TestCase(true, true)]
@@ -43,7 +46,7 @@ public class PrimaryEngagementWithinNetworkControllerGetTests
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
         sessionModel.IsLocalOrganisation = isLocalOrganisation_ValueInSession;
 
-        var result = sut.Get();
+        var result = sut.Get(Guid.NewGuid().ToString());
 
         result.As<ViewResult>().Model.As<PrimaryEngagementWithinNetworkViewModel>().IsLocalOrganisation.Should().Be(isLocalOrganisation_ValueReturnedByModel);
     }

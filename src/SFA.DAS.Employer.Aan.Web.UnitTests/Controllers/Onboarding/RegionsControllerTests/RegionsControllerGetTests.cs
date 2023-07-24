@@ -6,6 +6,7 @@ using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
+using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 using SFA.DAS.Testing.AutoFixture;
@@ -18,12 +19,14 @@ public class RegionsControllerGetTests
     [Test, MoqAutoData]
     public async Task Get_ReturnsViewResult(
         [Greedy] RegionsController sut,
+        string employerAccountId,
         CancellationToken cancellationToken)
     {
         sut.AddUrlHelperMock();
-        var result = await sut.Get(cancellationToken);
+        var result = await sut.Get(employerAccountId, cancellationToken);
 
         result.As<ViewResult>().Should().NotBeNull();
+        result.As<ViewResult>().Model.As<ViewModelBase>().EmployerAccountId.Should().Be(employerAccountId);
     }
 
     [Test, MoqAutoData]
@@ -32,7 +35,7 @@ public class RegionsControllerGetTests
         CancellationToken cancellationToken)
     {
         sut.AddUrlHelperMock();
-        var result = await sut.Get(cancellationToken);
+        var result = await sut.Get(Guid.NewGuid().ToString(), cancellationToken);
 
         result.As<ViewResult>().ViewName.Should().Be(RegionsController.ViewPath);
     }
@@ -49,7 +52,7 @@ public class RegionsControllerGetTests
         sessionModel.HasSeenPreview = false;
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
-        var result = await sut.Get(cancellationToken);
+        var result = await sut.Get(Guid.NewGuid().ToString(), cancellationToken);
 
         result.As<ViewResult>().Model.As<RegionsViewModel>().BackLink.Should().Be(termsAndConditionsUrl);
     }
@@ -68,7 +71,7 @@ public class RegionsControllerGetTests
         regionsService.Setup(x => x.GetRegions(cancellationToken)).Returns(Task.FromResult(regionList));
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
-        var result = await sut.Get(cancellationToken);
+        var result = await sut.Get(Guid.NewGuid().ToString(), cancellationToken);
         result.As<ViewResult>().Model.As<RegionsViewModel>().Regions.Should().Equal(sessionModel.Regions);
     }
 
@@ -84,7 +87,7 @@ public class RegionsControllerGetTests
         sessionModel.HasSeenPreview = true;
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
-        var result = await sut.Get(cancellationToken);
+        var result = await sut.Get(Guid.NewGuid().ToString(), cancellationToken);
 
         result.As<ViewResult>().Model.As<RegionsViewModel>().BackLink.Should().Be(checkYourAnswersUrl);
     }

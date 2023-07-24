@@ -10,6 +10,7 @@
     <div class="govuk-grid-column-two-thirds">
         <partial name="_validationSummary" />
         <form method="post">
+            @Html.HiddenFor(m => m.EmployerAccountId);
             <div class="govuk-form-group">
                 <fieldset class="govuk-fieldset">
                     <div esfa-validation-marker-for="@Model.Regions" class="govuk-form-group">
@@ -46,7 +47,7 @@
                 </fieldset>
             </div>
             <div class="govuk-button-group">
-                <button id="continue-button" type="submit" class="govuk-button" data-module="govuk-button" data-disable-on-submit="true" asp-page-handler="Submit">
+                <button id="continue-button" type="submit" class="govuk-button" data-module="govuk-button" data-disable-on-submit="true">
                     Continue
                 </button>
             </div>

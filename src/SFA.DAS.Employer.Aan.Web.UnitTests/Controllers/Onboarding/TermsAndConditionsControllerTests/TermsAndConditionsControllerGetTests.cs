@@ -15,7 +15,7 @@ public class TermsAndConditionsControllerGetTests
     public void Get_ReturnsViewResult([Greedy] TermsAndConditionsController sut)
     {
         sut.AddUrlHelperMock();
-        var result = sut.Get();
+        var result = sut.Get(string.Empty);
 
         result.As<ViewResult>().Should().NotBeNull();
     }
@@ -24,7 +24,7 @@ public class TermsAndConditionsControllerGetTests
     public void Get_ViewResult_HasCorrectViewPath([Greedy] TermsAndConditionsController sut)
     {
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.BeforeYouStart);
-        var result = sut.Get();
+        var result = sut.Get(string.Empty);
 
         result.As<ViewResult>().ViewName.Should().Be(TermsAndConditionsController.ViewPath);
     }

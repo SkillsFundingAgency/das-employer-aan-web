@@ -18,25 +18,31 @@ public class JoinTheNetworkControllerGetTests
 {
 
     [MoqAutoData]
-    public void Get_ReturnsViewResult([Greedy] JoinTheNetworkController sut)
+    public void Get_ReturnsViewResult(
+        string employerAccountId,
+        [Greedy] JoinTheNetworkController sut)
     {
         sut.AddUrlHelperMock();
-        var result = sut.Get();
+        var result = sut.Get(employerAccountId);
 
         result.As<ViewResult>().Should().NotBeNull();
     }
 
     [MoqAutoData]
-    public void Get_ViewResult_HasCorrectViewPath([Greedy] JoinTheNetworkController sut)
+    public void Get_ViewResult_HasCorrectViewPath(
+        string employerAccountId,
+        [Greedy] JoinTheNetworkController sut)
     {
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.JoinTheNetwork);
-        var result = sut.Get();
+        var result = sut.Get(employerAccountId);
 
         result.As<ViewResult>().ViewName.Should().Be(JoinTheNetworkController.ViewPath);
+        result.As<ViewResult>().Model.As<ViewModelBase>().EmployerAccountId.Should().Be(employerAccountId);
     }
 
     [MoqAutoData]
     public void Get_ViewModel_ReturnsJoinTheNetworkViewModel(
+        string employerAccountId,
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] JoinTheNetworkController sut)
     {
@@ -47,7 +53,7 @@ public class JoinTheNetworkControllerGetTests
         sessionModel.ProfileData.Add(new ProfileModel { Id = 202, Category = Category.Support, Value = false.ToString() });
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
-        var result = sut.Get();
+        var result = sut.Get(employerAccountId);
 
         result.As<ViewResult>().Model.As<JoinTheNetworkViewModel>().ReasonToJoin.Should().Contain(x => x.Id == 101 && x.Category == Category.ReasonToJoin && x.IsSelected);
         result.As<ViewResult>().Model.As<JoinTheNetworkViewModel>().Support.Should().Contain(x => x.Id == 202 && x.Category == Category.Support && !x.IsSelected);
@@ -66,6 +72,7 @@ public class JoinTheNetworkControllerGetTests
         bool hasSeenPreview,
         string navigateRoute,
         string navigateUrl,
+        string employerAccountId,
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] JoinTheNetworkController sut)
     {
@@ -75,7 +82,7 @@ public class JoinTheNetworkControllerGetTests
         sessionModel.Regions = Enumerable.Range(1, noOfRegionsSelected).Select(i => new RegionModel { Id = i, IsSelected = true }).ToList();
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
-        var result = sut.Get();
+        var result = sut.Get(employerAccountId);
 
         result.As<ViewResult>().Model.As<JoinTheNetworkViewModel>().BackLink.Should().Be(navigateUrl);
     }
@@ -100,7 +107,7 @@ public class JoinTheNetworkControllerGetTests
         sessionModel.Regions = Enumerable.Range(1, noOfRegionsSelected).Select(i => new RegionModel { Id = i, IsSelected = true }).ToList();
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
-        var result = sut.Get();
+        var result = sut.Get(Guid.NewGuid().ToString());
 
         result.As<ViewResult>().Model.As<JoinTheNetworkViewModel>().BackLink.Should().Be(navigateUrl);
     }
@@ -125,7 +132,7 @@ public class JoinTheNetworkControllerGetTests
 
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
-        var result = sut.Get();
+        var result = sut.Get(Guid.NewGuid().ToString());
 
         result.As<ViewResult>().Model.As<JoinTheNetworkViewModel>().BackLink.Should().Be(primaryEngagementWithinNetworkUrl);
     }

@@ -20,6 +20,7 @@ public class PreviousEngagementControllerGetTests
     public void Get_ViewModel_HasSeenPreviewIsFalse_BackLinkSetsToJoinTheNetwork(
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] PreviousEngagementController sut,
+        string employerAccountId,
         string joinTheNetworkUrl)
     {
         OnboardingSessionModel sessionModel = new();
@@ -28,9 +29,10 @@ public class PreviousEngagementControllerGetTests
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.JoinTheNetwork, joinTheNetworkUrl);
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
-        var result = sut.Get();
+        var result = sut.Get(employerAccountId);
 
         result.As<ViewResult>().Model.As<PreviousEngagementViewModel>().BackLink.Should().Be(joinTheNetworkUrl);
+        result.As<ViewResult>().Model.As<ViewModelBase>().EmployerAccountId.Should().Be(employerAccountId);
     }
 
     [MoqAutoData]
@@ -45,7 +47,7 @@ public class PreviousEngagementControllerGetTests
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.CheckYourAnswers, checkYourAnswersUrl);
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
-        var result = sut.Get();
+        var result = sut.Get(Guid.NewGuid().ToString());
 
         result.As<ViewResult>().Model.As<PreviousEngagementViewModel>().BackLink.Should().Be(checkYourAnswersUrl);
     }
@@ -63,7 +65,7 @@ public class PreviousEngagementControllerGetTests
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
         sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileDataId.HasPreviousEngagement, Value = hasPreviousEngagement_ValueInSession });
 
-        var result = sut.Get();
+        var result = sut.Get(Guid.NewGuid().ToString());
 
         result.As<ViewResult>().Model.As<PreviousEngagementViewModel>().HasPreviousEngagement.Should().Be(hasPreviousEngagement_ValueReturnedByModel);
     }

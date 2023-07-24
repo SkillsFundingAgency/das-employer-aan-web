@@ -7,7 +7,7 @@ public class AreasToEngageLocallyViewModel : AreasToEngageLocallySubmitModel, IB
     public List<RegionModel>? AreasToEngageLocally { get; set; }
 }
 
-public class AreasToEngageLocallySubmitModel
+public class AreasToEngageLocallySubmitModel : ViewModelBase
 {
     public int? SelectedAreaToEngageLocallyId { get; set; }
 }

@@ -12,63 +12,71 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.CheckYourAns
 
 public class AndSessionModelIsNotPopulated
 {
-    ViewResult getResult;
-    CheckYourAnswersViewModel viewModel;
-    CheckYourAnswersController sut;
-    OnboardingSessionModel sessionModel;
+    ViewResult _getResult;
+    CheckYourAnswersViewModel _viewModel;
+    CheckYourAnswersController _sut;
+    OnboardingSessionModel _sessionModel;
+    string _employerAccountId;
 
     [SetUp]
     public void Init()
     {
-        sessionModel = new();
-        sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileDataId.HasPreviousEngagement, Value = null });
+        _employerAccountId = Guid.NewGuid().ToString();
+        _sessionModel = new();
+        _sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileDataId.HasPreviousEngagement, Value = null });
         Mock<ISessionService> sessionServiceMock = new();
-        sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
-        sut = new(sessionServiceMock.Object);
+        sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(_sessionModel);
+        _sut = new(sessionServiceMock.Object);
 
-        sut.AddUrlHelperMock();
+        _sut.AddUrlHelperMock();
 
-        sessionModel.Regions = new();
+        _sessionModel.Regions = new();
 
-        getResult = sut.Get().As<ViewResult>();
-        viewModel = getResult.Model.As<CheckYourAnswersViewModel>();
+        _getResult = _sut.Get(_employerAccountId).As<ViewResult>();
+        _viewModel = _getResult.Model.As<CheckYourAnswersViewModel>();
     }
 
     [Test]
     public void ThenReturnsViewResults()
     {
-        getResult.Should().NotBeNull();
-        getResult.ViewName.Should().Be(CheckYourAnswersController.ViewPath);
+        _getResult.Should().NotBeNull();
+        _getResult.ViewName.Should().Be(CheckYourAnswersController.ViewPath);
+    }
+
+    [Test]
+    public void ThenSetsEmployerAccountIdInTheViewModel()
+    {
+        _viewModel.EmployerAccountId.Should().Be(_employerAccountId);
     }
 
     [Test]
     public void ThenSetsRegionToNullInViewModel()
     {
-        viewModel.Region.Should().BeEmpty();
+        _viewModel.Region.Should().BeEmpty();
     }
 
     [Test]
     public void ThenSetsReasonsToJoinToNullInViewModel()
     {
-        viewModel.Reason.Should().BeEmpty();
+        _viewModel.Reason.Should().BeEmpty();
     }
 
     [Test]
     public void ThenSetsSupportNeedFromNetworkToJoinToNullInViewModel()
     {
-        viewModel.Support.Should().BeEmpty();
+        _viewModel.Support.Should().BeEmpty();
     }
 
     [Test]
     public void ThenSetsPreviousEngagementToNullInViewModel()
     {
-        viewModel.PreviousEngagement.Should().BeNull();
+        _viewModel.PreviousEngagement.Should().BeNull();
     }
     [TearDown]
     public void Dispose()
     {
-        sut = null!;
-        getResult = null!;
-        viewModel = null!;
+        _sut = null!;
+        _getResult = null!;
+        _viewModel = null!;
     }
 }
