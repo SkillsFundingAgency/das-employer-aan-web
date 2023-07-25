@@ -2,6 +2,8 @@
 using SFA.DAS.Aan.SharedUi.Models;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers;
+
+[Route("accounts/{employerAccountId}/events-hub")]
 public class EventsHubController : Controller
 {
     [HttpGet]
