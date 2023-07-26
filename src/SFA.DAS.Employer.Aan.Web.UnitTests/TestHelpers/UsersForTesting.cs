@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using Newtonsoft.Json;
+using System.Text.Json;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 
@@ -15,8 +15,7 @@ public static class UsersForTesting
         EmployerUserAccountItem employerIdentifier = new(employerAccountId.ToString().ToUpper(), "das_account_name", "role");
         var employerAccounts = new Dictionary<string, EmployerUserAccountItem> { { employerIdentifier.EncodedAccountId, employerIdentifier } };
 
-        var accountsClaim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, JsonConvert.SerializeObject(employerAccounts));
-
+        var accountsClaim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, JsonSerializer.Serialize(employerAccounts));
 
         ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity[1]
             {

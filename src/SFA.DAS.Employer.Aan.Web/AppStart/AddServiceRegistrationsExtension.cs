@@ -23,7 +23,7 @@ public static class AddServiceRegistrationsExtension
         var encodingsConfiguration = configuration.GetSection(EncodingConfigKey).Value;
 
         var encodingConfig = JsonSerializer.Deserialize<EncodingConfig>(encodingsConfiguration);
-        services.AddSingleton(encodingConfig);
+        services.AddSingleton(encodingConfig!);
 
         services.AddTransient<ISessionService, SessionService>();
         services.AddTransient<IProfileService, ProfileService>();

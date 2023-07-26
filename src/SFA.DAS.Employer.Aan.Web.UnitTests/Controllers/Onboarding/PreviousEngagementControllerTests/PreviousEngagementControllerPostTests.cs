@@ -25,8 +25,8 @@ public class PreviousEngagementControllerPostTests
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] PreviousEngagementController sut,
         [Frozen] PreviousEngagementSubmitModel submitmodel,
-        CancellationToken cancellationToken,
-        string joinTheNetworkUrl)
+        string joinTheNetworkUrl,
+        CancellationToken cancellationToken)
     {
         OnboardingSessionModel sessionModel = new();
         sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileDataId.HasPreviousEngagement, Value = null });
