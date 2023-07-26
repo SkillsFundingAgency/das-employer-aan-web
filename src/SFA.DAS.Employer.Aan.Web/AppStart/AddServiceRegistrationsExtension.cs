@@ -1,9 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using RestEase.HttpClientFactory;
 using SFA.DAS.Employer.Aan.Application.Services;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Infrastructure.Configuration;
 using SFA.DAS.Employer.Aan.Web.Infrastructure.Services;
+using SFA.DAS.Encoding;
 using SFA.DAS.Http.Configuration;
 
 namespace SFA.DAS.Employer.Aan.Web.AppStart;
@@ -11,14 +13,22 @@ namespace SFA.DAS.Employer.Aan.Web.AppStart;
 [ExcludeFromCodeCoverage]
 public static class AddServiceRegistrationsExtension
 {
+    private const string EncodingConfigKey = "SFA.DAS.Encoding";
+
     public static IServiceCollection AddServiceRegistrations(this IServiceCollection services, IConfigurationRoot configuration)
     {
         var outerApiConfiguration = configuration.GetSection(nameof(EmployerAanOuterApiConfiguration)).Get<EmployerAanOuterApiConfiguration>();
         AddOuterApi(services, outerApiConfiguration);
 
+        var encodingsConfiguration = configuration.GetSection(EncodingConfigKey).Value;
+
+        var encodingConfig = JsonSerializer.Deserialize<EncodingConfig>(encodingsConfiguration);
+        services.AddSingleton(encodingConfig);
+
         services.AddTransient<ISessionService, SessionService>();
         services.AddTransient<IProfileService, ProfileService>();
         services.AddTransient<IRegionService, RegionService>();
+        services.AddTransient<IEncodingService, EncodingService>();
         return services;
     }
 

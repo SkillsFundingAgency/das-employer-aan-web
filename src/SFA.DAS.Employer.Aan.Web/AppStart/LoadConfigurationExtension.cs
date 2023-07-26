@@ -6,6 +6,8 @@ namespace SFA.DAS.Employer.Aan.Web.AppStart;
 [ExcludeFromCodeCoverage]
 public static class LoadConfigurationExtension
 {
+    private const string EncodingConfigKey = "SFA.DAS.Encoding";
+
     public static IConfigurationRoot LoadConfiguration(this IConfiguration config)
     {
         var configBuilder = new ConfigurationBuilder()
@@ -22,6 +24,7 @@ public static class LoadConfigurationExtension
                 options.StorageConnectionString = config["ConfigurationStorageConnectionString"];
                 options.EnvironmentName = config["EnvironmentName"];
                 options.PreFixConfigurationKeys = false;
+                options.ConfigurationKeysRawJsonResult = new[] { EncodingConfigKey };
             });
         }
 

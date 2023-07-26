@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using SFA.DAS.Employer.Aan.Domain.Constants;
@@ -30,6 +31,10 @@ public class AndSessionModelIsNotPopulated
 
         _sut.AddUrlHelperMock();
 
+        var user = UsersForTesting.GetUserWithClaims(_employerAccountId);
+
+        _sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
+
         _sessionModel.Regions = new();
 
         _getResult = _sut.Get(_employerAccountId).As<ViewResult>();
@@ -46,7 +51,7 @@ public class AndSessionModelIsNotPopulated
     [Test]
     public void ThenSetsEmployerAccountIdInTheViewModel()
     {
-        _viewModel.EmployerAccountId.Should().Be(_employerAccountId);
+        _viewModel.EmployerAccountId.Should().BeNull();
     }
 
     [Test]

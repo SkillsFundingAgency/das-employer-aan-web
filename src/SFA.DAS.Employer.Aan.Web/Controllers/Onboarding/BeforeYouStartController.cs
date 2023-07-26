@@ -19,7 +19,7 @@ public class BeforeYouStartController : Controller
         var account = User.GetEmployerAccount(employerAccountId);
         var model = new BeforeYouStartViewModel()
         {
-            EmployerName = account.DasAccountName
+            OrganisationName = account.DasAccountName
         };
         return View(ViewPath, model);
     }

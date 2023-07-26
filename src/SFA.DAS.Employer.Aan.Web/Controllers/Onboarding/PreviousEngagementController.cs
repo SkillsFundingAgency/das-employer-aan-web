@@ -6,6 +6,7 @@ using SFA.DAS.Employer.Aan.Domain.Constants;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
+using SFA.DAS.Encoding;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 
@@ -15,12 +16,18 @@ public class PreviousEngagementController : Controller
     public const string ViewPath = "~/Views/Onboarding/PreviousEngagement.cshtml";
     private readonly ISessionService _sessionService;
     private readonly IValidator<PreviousEngagementSubmitModel> _validator;
+    private readonly IOuterApiClient _outerApiClient;
+    private readonly IEncodingService _encodingService;
 
     public PreviousEngagementController(ISessionService sessionService,
-        IValidator<PreviousEngagementSubmitModel> validator)
+        IValidator<PreviousEngagementSubmitModel> validator,
+        IOuterApiClient outerApiClient,
+        IEncodingService encodingService)
     {
         _validator = validator;
         _sessionService = sessionService;
+        _outerApiClient = outerApiClient;
+        _encodingService = encodingService;
     }
 
     [HttpGet]
@@ -34,7 +41,7 @@ public class PreviousEngagementController : Controller
     }
 
     [HttpPost]
-    public IActionResult Post(PreviousEngagementSubmitModel submitModel)
+    public IActionResult Post(PreviousEngagementSubmitModel submitModel, CancellationToken cancellationToken)
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
 
@@ -49,6 +56,16 @@ public class PreviousEngagementController : Controller
         }
 
         sessionModel.SetProfileValue(ProfileDataId.HasPreviousEngagement, submitModel.HasPreviousEngagement.ToString()!);
+
+        if (!sessionModel.HasSeenPreview)
+        {
+            sessionModel.HasSeenPreview = true;
+            var decodedEmployerAccountId = _encodingService.Decode(submitModel.EmployerAccountId.ToUpper(), EncodingType.AccountId);
+            var empSummary = _outerApiClient.GetEmployerSummary(decodedEmployerAccountId.ToString(), cancellationToken);
+            sessionModel.EmployerDetails.ActiveApprenticesCount = empSummary.Result.ActiveCount;
+            sessionModel.EmployerDetails.DigitalApprenticeshipProgrammeStartDate = empSummary.Result.StartDate.ToString()!;
+            sessionModel.EmployerDetails.Sectors = empSummary.Result.Sectors;
+        }
 
         _sessionService.Set(sessionModel);
 

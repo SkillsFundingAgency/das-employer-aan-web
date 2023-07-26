@@ -10,6 +10,7 @@ using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
+using SFA.DAS.Encoding;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.PreviousEngagementControllerTests;
@@ -59,7 +60,9 @@ public class PreviousEngagementControllerGetTests
     {
         Mock<ISessionService> sessionServiceMock = new();
         Mock<IValidator<PreviousEngagementSubmitModel>> validatorMock = new();
-        PreviousEngagementController sut = new PreviousEngagementController(sessionServiceMock.Object, validatorMock.Object);
+        Mock<IOuterApiClient> outerApiClient = new();
+        Mock<IEncodingService> encodingServiceMock = new();
+        PreviousEngagementController sut = new PreviousEngagementController(sessionServiceMock.Object, validatorMock.Object, outerApiClient.Object, encodingServiceMock.Object);
         sut.AddUrlHelperMock();
         OnboardingSessionModel sessionModel = new OnboardingSessionModel();
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);

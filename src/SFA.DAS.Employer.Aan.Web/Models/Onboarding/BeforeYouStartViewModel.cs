@@ -2,5 +2,5 @@
 
 public class BeforeYouStartViewModel
 {
-    public string EmployerName { get; set; } = null!;
+    public string OrganisationName { get; set; } = null!;
 }

@@ -1,9 +1,12 @@
-﻿using FluentAssertions;
+﻿using System.Security.Claims;
+using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using SFA.DAS.Employer.Aan.Domain.Constants;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
+using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
@@ -19,6 +22,7 @@ public class AndSessionModelIsPopulated
     CheckYourAnswersViewModel? _viewModel;
     Mock<ISessionService> _sessionServiceMock;
     string _employerAccountId;
+    ClaimsPrincipal user;
 
     static readonly string RegionUrl = Guid.NewGuid().ToString();
     static readonly string ReasonToJoinTheNetworkUrl = Guid.NewGuid().ToString();
@@ -41,15 +45,16 @@ public class AndSessionModelIsPopulated
             new  RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = true, IsConfirmed = false}
         };
 
-    static readonly List<ProfileModel> ProfileValues = new List<ProfileModel>() {
-        new ProfileModel { Id = 1, Category = Category.ReasonToJoin, Value = Guid.NewGuid().ToString() },
-        new ProfileModel { Id = 2, Category = Category.ReasonToJoin, Value = Guid.NewGuid().ToString() },
-        new ProfileModel { Id = 3, Category = Category.ReasonToJoin, Value = null },
-        new ProfileModel { Id = 4, Category = Category.Support, Value = Guid.NewGuid().ToString() },
-        new ProfileModel { Id = 5, Category = Category.Support, Value = Guid.NewGuid().ToString() },
-        new ProfileModel { Id = 6, Category = Category.Support, Value = null },
-        new ProfileModel { Id = ProfileDataId.HasPreviousEngagement, Value = IsPreviouslyEngagedWithNetwork }
-    };
+    static readonly List<ProfileModel> ProfileValues = new List<ProfileModel>()
+        {
+            new ProfileModel { Id = 1, Category = Category.ReasonToJoin, Value = Guid.NewGuid().ToString() },
+            new ProfileModel { Id = 2, Category = Category.ReasonToJoin, Value = Guid.NewGuid().ToString() },
+            new ProfileModel { Id = 3, Category = Category.ReasonToJoin, Value = null },
+            new ProfileModel { Id = 4, Category = Category.Support, Value = Guid.NewGuid().ToString() },
+            new ProfileModel { Id = 5, Category = Category.Support, Value = Guid.NewGuid().ToString() },
+            new ProfileModel { Id = 6, Category = Category.Support, Value = null },
+            new ProfileModel { Id = ProfileDataId.HasPreviousEngagement, Value = IsPreviouslyEngagedWithNetwork }
+        };
 
 
     [SetUp]
@@ -65,6 +70,10 @@ public class AndSessionModelIsPopulated
         .AddUrlForRoute(RouteNames.Onboarding.Regions, RegionUrl)
         .AddUrlForRoute(RouteNames.Onboarding.JoinTheNetwork, ReasonToJoinTheNetworkUrl)
         .AddUrlForRoute(RouteNames.Onboarding.PreviousEngagement, PreviousEngagementUrl);
+
+        user = UsersForTesting.GetUserWithClaims(_employerAccountId);
+
+        _sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
         _sessionModel.Regions = MultipleRegionsSelected;
         _sessionModel.ProfileData = ProfileValues;
@@ -130,6 +139,16 @@ public class AndSessionModelIsPopulated
 
         _viewModel.PreviousEngagement.Should().Be(CheckYourAnswersViewModel.GetPreviousEngagementValue(isPreviouslyEngagged));
         _viewModel.PreviousEngagementChangeLink.Should().Be(PreviousEngagementUrl);
+    }
+
+    [Test]
+    public void ThenSetsOrgansationInfoDataInViewModel()
+    {
+        InvokeControllerGet();
+        _viewModel!.FullName.Should().Be(user.FindFirstValue(EmployerClaims.IdamsUserDisplayNameClaimTypeIdentifier));
+        _viewModel!.Email.Should().Be(user.FindFirstValue(ClaimTypes.Email));
+        _viewModel!.OrganisationName.Should().Be(user.GetEmployerAccount(_employerAccountId).DasAccountName);
+
     }
 
     [TearDown]
