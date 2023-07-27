@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
+using SFA.DAS.Employer.Aan.Web.Models;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers;
 
@@ -11,6 +12,10 @@ public class NetworkHubController : Controller
 {
     public IActionResult Index()
     {
-        return View();
+        NetworkHubViewModel model = new()
+        {
+            EventsHubUrl = Url.RouteUrl(@RouteNames.EventsHub)!
+        };
+        return View(model);
     }
 }
