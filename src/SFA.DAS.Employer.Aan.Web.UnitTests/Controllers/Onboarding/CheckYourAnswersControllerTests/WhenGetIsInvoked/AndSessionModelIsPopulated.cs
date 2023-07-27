@@ -148,7 +148,6 @@ public class AndSessionModelIsPopulated
         _viewModel!.FullName.Should().Be(user.FindFirstValue(EmployerClaims.IdamsUserDisplayNameClaimTypeIdentifier));
         _viewModel!.Email.Should().Be(user.FindFirstValue(ClaimTypes.Email));
         _viewModel!.OrganisationName.Should().Be(user.GetEmployerAccount(_employerAccountId).DasAccountName);
-
     }
 
     [TearDown]

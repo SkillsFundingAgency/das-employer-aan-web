@@ -49,7 +49,7 @@ public class AndSessionModelIsNotPopulated
     }
 
     [Test]
-    public void ThenSetsEmployerAccountIdInTheViewModel()
+    public void ThenSetsEmployerAccountIdToNullInTheViewModel()
     {
         _viewModel.EmployerAccountId.Should().BeNull();
     }
