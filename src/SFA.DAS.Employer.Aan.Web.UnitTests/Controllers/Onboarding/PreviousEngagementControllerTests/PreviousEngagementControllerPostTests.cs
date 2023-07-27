@@ -78,7 +78,7 @@ public class PreviousEngagementControllerPostTests
         sessionModel.ProfileData.FirstOrDefault(p => p.Id == ProfileDataId.HasPreviousEngagement)?.Value.Should().Be(submitmodel.HasPreviousEngagement.ToString());
         sessionModel.EmployerDetails.ActiveApprenticesCount.Should().Be(employerMemberSummary.ActiveCount);
         sessionModel.EmployerDetails.Sectors.Should().Equal(employerMemberSummary.Sectors);
-        sessionModel.EmployerDetails.DigitalApprenticeshipProgrammeStartDate.Should().Be(employerMemberSummary.StartDate.ToString());
+        sessionModel.EmployerDetails.DigitalApprenticeshipProgrammeStartDate.Should().Be(employerMemberSummary.StartDate.GetValueOrDefault().Date.ToString("dd-MM-yyyy"));
         sut.ModelState.IsValid.Should().BeTrue();
     }
 }

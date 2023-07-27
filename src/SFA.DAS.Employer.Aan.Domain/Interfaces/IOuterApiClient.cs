@@ -18,6 +18,6 @@ public interface IOuterApiClient
     [Get("/employeraccounts/{userId}")]
     Task<EmployerUserAccounts> GetUserAccounts([Path] string userId, [Query] string email, CancellationToken cancellationToken);
 
-    [Get("/employer/{employerAccountId}/summary")]
+    [Get("/employers/{employerAccountId}/summary")]
     Task<EmployerMemberSummary> GetEmployerSummary([Path] string employerAccountId, CancellationToken cancellationToken);
 }

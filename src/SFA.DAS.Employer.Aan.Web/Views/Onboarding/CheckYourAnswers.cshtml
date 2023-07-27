@@ -114,7 +114,7 @@
                         Number of active apprentices
                     </dt>
                     <dd class="govuk-summary-list__value">
-
+                        @Model.ActiveApprenticesCount
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -122,7 +122,7 @@
                         Date your organisation began their apprenticeship programme
                     </dt>
                     <dd class="govuk-summary-list__value">
-
+                        @Model.DigitalApprenticeshipProgrammeStartDate
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -130,7 +130,14 @@
                         Apprenticeship's sector
                     </dt>
                     <dd class="govuk-summary-list__value">
-
+                        <ul class="govuk-list govuk-list--bullet">
+                            @{
+                                foreach (var sector in Model.Sectors)
+                                {
+                                    <li>@sector</li>
+                                }
+                            }
+                        </ul>
                     </dd>
                 </div>
             </dl>

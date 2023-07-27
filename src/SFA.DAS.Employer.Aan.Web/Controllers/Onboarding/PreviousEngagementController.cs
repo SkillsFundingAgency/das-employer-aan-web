@@ -63,7 +63,7 @@ public class PreviousEngagementController : Controller
             var decodedEmployerAccountId = _encodingService.Decode(submitModel.EmployerAccountId.ToUpper(), EncodingType.AccountId);
             var empSummary = _outerApiClient.GetEmployerSummary(decodedEmployerAccountId.ToString(), cancellationToken);
             sessionModel.EmployerDetails.ActiveApprenticesCount = empSummary.Result.ActiveCount;
-            sessionModel.EmployerDetails.DigitalApprenticeshipProgrammeStartDate = empSummary.Result.StartDate.ToString()!;
+            sessionModel.EmployerDetails.DigitalApprenticeshipProgrammeStartDate = empSummary.Result.StartDate.GetValueOrDefault().Date.ToString("dd-MM-yyyy")!;
             sessionModel.EmployerDetails.Sectors = empSummary.Result.Sectors;
         }
 
