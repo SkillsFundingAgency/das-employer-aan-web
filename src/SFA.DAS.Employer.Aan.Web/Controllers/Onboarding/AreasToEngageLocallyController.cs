@@ -25,7 +25,7 @@ public class AreasToEngageLocallyController : Controller
     public IActionResult Get([FromRoute] string employerAccountId)
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
-        var model = GetViewModel();
+        var model = GetViewModel(employerAccountId);
         model.EmployerAccountId = employerAccountId;
         if (sessionModel.Regions.Any(x => x.IsConfirmed))
         {
@@ -41,7 +41,7 @@ public class AreasToEngageLocallyController : Controller
 
         if (!result.IsValid)
         {
-            var model = GetViewModel();
+            var model = GetViewModel(submitModel.EmployerAccountId);
             model.EmployerAccountId = submitModel.EmployerAccountId;
             result.AddToModelState(ModelState);
             return View(ViewPath, model);
@@ -57,29 +57,29 @@ public class AreasToEngageLocallyController : Controller
         return RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork, new { submitModel.EmployerAccountId });
     }
 
-    private AreasToEngageLocallyViewModel GetViewModel()
+    private AreasToEngageLocallyViewModel GetViewModel(string employerAccountId)
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
 
         return new AreasToEngageLocallyViewModel
         {
-            BackLink = GetCorrectBackLink(sessionModel),
+            BackLink = GetCorrectBackLink(sessionModel, employerAccountId),
             AreasToEngageLocally = sessionModel.Regions.Where(x => x.IsSelected).ToList()
         };
     }
 
-    private string GetCorrectBackLink(OnboardingSessionModel sessionModel)
+    private string GetCorrectBackLink(OnboardingSessionModel sessionModel, string employerAccountId)
     {
         var noOfRegionsSelected = sessionModel.Regions.Count(x => x.IsSelected);
 
         if (noOfRegionsSelected >= 2 && noOfRegionsSelected <= 4)
         {
-            return Url.RouteUrl(@RouteNames.Onboarding.Regions)!;
+            return Url.RouteUrl(@RouteNames.Onboarding.Regions, new { employerAccountId })!;
         }
         else if (noOfRegionsSelected >= 5 && sessionModel.IsLocalOrganisation.GetValueOrDefault())
         {
-            return Url.RouteUrl(@RouteNames.Onboarding.PrimaryEngagementWithinNetwork)!;
+            return Url.RouteUrl(@RouteNames.Onboarding.PrimaryEngagementWithinNetwork, new { employerAccountId })!;
         }
-        return Url.RouteUrl(@RouteNames.Onboarding.Regions)!;
+        return Url.RouteUrl(@RouteNames.Onboarding.Regions, new { employerAccountId })!;
     }
 }

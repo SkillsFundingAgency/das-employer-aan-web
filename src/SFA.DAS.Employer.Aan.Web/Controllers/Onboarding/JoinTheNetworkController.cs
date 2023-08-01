@@ -26,7 +26,7 @@ public class JoinTheNetworkController : Controller
     [HttpGet]
     public IActionResult Get([FromRoute] string employerAccountId)
     {
-        var model = GetViewModel();
+        var model = GetViewModel(employerAccountId);
         model.EmployerAccountId = employerAccountId;
         return View(ViewPath, model);
     }
@@ -38,7 +38,7 @@ public class JoinTheNetworkController : Controller
 
         if (!result.IsValid)
         {
-            var model = GetViewModel();
+            var model = GetViewModel(submitModel.EmployerAccountId);
             model.EmployerAccountId = submitModel.EmployerAccountId;
             result.AddToModelState(ModelState);
             return View(ViewPath, model);
@@ -63,33 +63,33 @@ public class JoinTheNetworkController : Controller
             : RedirectToRoute(RouteNames.Onboarding.PreviousEngagement, new { submitModel.EmployerAccountId });
     }
 
-    private JoinTheNetworkViewModel GetViewModel()
+    private JoinTheNetworkViewModel GetViewModel(string employerAccountId)
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
         return new JoinTheNetworkViewModel
         {
-            BackLink = GetCorrectBackLink(sessionModel),
+            BackLink = GetCorrectBackLink(sessionModel, employerAccountId),
             ReasonToJoin = new List<SelectProfileModel>(sessionModel.ProfileData.Where(x => x.Category == Category.ReasonToJoin).OrderBy(x => x.Ordering).Select(x => (SelectProfileModel)x)),
             Support = new List<SelectProfileModel>(sessionModel.ProfileData.Where(x => x.Category == Category.Support).OrderBy(x => x.Ordering).Select(x => (SelectProfileModel)x))
         };
     }
 
-    private string GetCorrectBackLink(OnboardingSessionModel sessionModel)
+    private string GetCorrectBackLink(OnboardingSessionModel sessionModel, string employerAccountId)
     {
         var noOfRegionsSelected = sessionModel.Regions.Count(x => x.IsSelected);
 
         if (noOfRegionsSelected == 1)
         {
-            return sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers)! : Url.RouteUrl(@RouteNames.Onboarding.Regions)!;
+            return sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId })! : Url.RouteUrl(@RouteNames.Onboarding.Regions, new { employerAccountId })!;
         }
         else if (noOfRegionsSelected >= 2 && noOfRegionsSelected <= 4)
         {
-            return sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers)! : Url.RouteUrl(@RouteNames.Onboarding.AreasToEngageLocally)!;
+            return sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId })! : Url.RouteUrl(@RouteNames.Onboarding.AreasToEngageLocally, new { employerAccountId })!;
         }
         else if (noOfRegionsSelected >= 5 && sessionModel.IsLocalOrganisation.GetValueOrDefault())
         {
-            return sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers)! : Url.RouteUrl(@RouteNames.Onboarding.AreasToEngageLocally)!;
+            return sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId })! : Url.RouteUrl(@RouteNames.Onboarding.AreasToEngageLocally, new { employerAccountId })!;
         }
-        return sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers)! : Url.RouteUrl(@RouteNames.Onboarding.PrimaryEngagementWithinNetwork)!;
+        return sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId })! : Url.RouteUrl(@RouteNames.Onboarding.PrimaryEngagementWithinNetwork, new { employerAccountId })!;
     }
 }

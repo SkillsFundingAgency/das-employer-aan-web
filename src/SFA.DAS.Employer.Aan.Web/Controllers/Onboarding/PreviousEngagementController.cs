@@ -35,7 +35,7 @@ public class PreviousEngagementController : Controller
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
 
-        var model = GetViewModel(sessionModel);
+        var model = GetViewModel(sessionModel, employerAccountId);
         model.EmployerAccountId = employerAccountId;
         return View(ViewPath, model);
     }
@@ -49,7 +49,7 @@ public class PreviousEngagementController : Controller
 
         if (!result.IsValid)
         {
-            var model = GetViewModel(sessionModel);
+            var model = GetViewModel(sessionModel, submitModel.EmployerAccountId);
             model.EmployerAccountId = submitModel.EmployerAccountId;
             result.AddToModelState(ModelState);
             return View(ViewPath, model);
@@ -72,13 +72,13 @@ public class PreviousEngagementController : Controller
         return RedirectToRoute(RouteNames.Onboarding.CheckYourAnswers, new { submitModel.EmployerAccountId });
     }
 
-    private PreviousEngagementViewModel GetViewModel(OnboardingSessionModel sessionModel)
+    private PreviousEngagementViewModel GetViewModel(OnboardingSessionModel sessionModel, string employerAccountId)
     {
         var previousEngagement = sessionModel.GetProfileValue(ProfileDataId.HasPreviousEngagement);
         return new PreviousEngagementViewModel()
         {
             HasPreviousEngagement = bool.TryParse(previousEngagement, out var result) ? result : null,
-            BackLink = sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers)! : Url.RouteUrl(@RouteNames.Onboarding.JoinTheNetwork)!
+            BackLink = sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId })! : Url.RouteUrl(@RouteNames.Onboarding.JoinTheNetwork, new { employerAccountId })!
         };
     }
 }
