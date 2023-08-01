@@ -27,7 +27,7 @@ public class RegionsController : Controller
     [HttpGet]
     public async Task<IActionResult> Get([FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
-        var model = await GetViewModel(cancellationToken);
+        var model = await GetViewModel(employerAccountId, cancellationToken);
         model.EmployerAccountId = employerAccountId;
         return View(ViewPath, model);
     }
@@ -39,21 +39,24 @@ public class RegionsController : Controller
 
         if (!result.IsValid)
         {
-            var model = await GetViewModel(cancellationToken);
+            var model = await GetViewModel(submitModel.EmployerAccountId, cancellationToken);
             model.EmployerAccountId = submitModel.EmployerAccountId;
             result.AddToModelState(ModelState);
             return View(ViewPath, model);
         }
 
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
-        sessionModel.Regions = submitModel.Regions!;
 
+        sessionModel.Regions = submitModel.Regions!;
+        sessionModel.IsLocalOrganisation = null;
 
         _sessionService.Set(sessionModel);
 
         if (sessionModel.Regions.Count(x => x.IsSelected) == 1)
         {
-            return RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork, new { submitModel.EmployerAccountId });
+            return sessionModel.HasSeenPreview
+            ? RedirectToRoute(@RouteNames.Onboarding.CheckYourAnswers, new { submitModel.EmployerAccountId })!
+            : RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork, new { submitModel.EmployerAccountId });
         }
         else if (sessionModel.Regions.Count(x => x.IsSelected) >= 2 && sessionModel.Regions.Count(x => x.IsSelected) <= 4)
         {
@@ -65,7 +68,7 @@ public class RegionsController : Controller
         }
     }
 
-    private async Task<RegionsViewModel> GetViewModel(CancellationToken cancellationToken)
+    private async Task<RegionsViewModel> GetViewModel(string employerAccountId, CancellationToken cancellationToken)
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
 
@@ -78,7 +81,7 @@ public class RegionsController : Controller
 
         return new RegionsViewModel
         {
-            BackLink = sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers)! : Url.RouteUrl(@RouteNames.Onboarding.TermsAndConditions)!,
+            BackLink = sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId })! : Url.RouteUrl(@RouteNames.Onboarding.TermsAndConditions, new { employerAccountId })!,
             Regions = sessionModel.Regions
         };
     }
