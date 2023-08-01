@@ -27,7 +27,7 @@ public class RegionsController : Controller
     [HttpGet]
     public async Task<IActionResult> Get([FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
-        var model = await GetViewModel(cancellationToken, employerAccountId);
+        var model = await GetViewModel(employerAccountId, cancellationToken);
         model.EmployerAccountId = employerAccountId;
         return View(ViewPath, model);
     }
@@ -39,7 +39,7 @@ public class RegionsController : Controller
 
         if (!result.IsValid)
         {
-            var model = await GetViewModel(cancellationToken, submitModel.EmployerAccountId);
+            var model = await GetViewModel(submitModel.EmployerAccountId, cancellationToken);
             model.EmployerAccountId = submitModel.EmployerAccountId;
             result.AddToModelState(ModelState);
             return View(ViewPath, model);
@@ -64,7 +64,7 @@ public class RegionsController : Controller
         }
     }
 
-    private async Task<RegionsViewModel> GetViewModel(CancellationToken cancellationToken, string employerAccountId)
+    private async Task<RegionsViewModel> GetViewModel(string employerAccountId, CancellationToken cancellationToken)
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
 
