@@ -35,8 +35,11 @@ public class AreasToEngageLocallyControllerPostTests
         sessionServiceMock.Verify(s => s.Set(It.Is<OnboardingSessionModel>(m => m.Regions.Find(x => x.Id == submitmodel.SelectedAreaToEngageLocallyId)!.IsConfirmed)));
     }
 
-    [Test, MoqAutoData]
-    public void Post_RedirectsTo_JoinTheNetworkPage(
+    [MoqInlineAutoData(false, RouteNames.Onboarding.JoinTheNetwork)]
+    [MoqInlineAutoData(true, RouteNames.Onboarding.CheckYourAnswers)]
+    public void Post_RedirectsTo_CorrectRoute(
+        bool hasSeenPreview,
+        string navigateRoute,
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Frozen] Mock<IValidator<AreasToEngageLocallySubmitModel>> validatorMock,
         [Greedy] AreasToEngageLocallyController sut,
@@ -44,6 +47,7 @@ public class AreasToEngageLocallyControllerPostTests
     {
         sut.AddUrlHelperMock();
         OnboardingSessionModel sessionModel = new();
+        sessionModel.HasSeenPreview = hasSeenPreview;
         sessionModel.Regions = new List<RegionModel>() { new RegionModel() { Id = (int)submitmodel.SelectedAreaToEngageLocallyId!, IsConfirmed = false } };
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
@@ -53,7 +57,7 @@ public class AreasToEngageLocallyControllerPostTests
         var result = sut.Post(submitmodel);
 
         result.As<RedirectToRouteResult>().Should().NotBeNull();
-        result.As<RedirectToRouteResult>().RouteName.Should().Be(RouteNames.Onboarding.JoinTheNetwork);
+        result.As<RedirectToRouteResult>().RouteName.Should().Be(navigateRoute);
     }
 
     [Test, MoqAutoData]

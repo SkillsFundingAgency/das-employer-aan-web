@@ -46,14 +46,17 @@ public class RegionsController : Controller
         }
 
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
-        sessionModel.Regions = submitModel.Regions!;
 
+        sessionModel.Regions = submitModel.Regions!;
+        sessionModel.IsLocalOrganisation = null;
 
         _sessionService.Set(sessionModel);
 
         if (sessionModel.Regions.Count(x => x.IsSelected) == 1)
         {
-            return RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork, new { submitModel.EmployerAccountId });
+            return sessionModel.HasSeenPreview
+            ? RedirectToRoute(@RouteNames.Onboarding.CheckYourAnswers, new { submitModel.EmployerAccountId })!
+            : RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork, new { submitModel.EmployerAccountId });
         }
         else if (sessionModel.Regions.Count(x => x.IsSelected) >= 2 && sessionModel.Regions.Count(x => x.IsSelected) <= 4)
         {

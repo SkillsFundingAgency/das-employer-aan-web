@@ -25,9 +25,7 @@ public class AreasToEngageLocallyController : Controller
     public IActionResult Get([FromRoute] string employerAccountId)
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
-        sessionModel.IsLocalOrganisation = null;
-        _sessionService.Set(sessionModel);
-         var model = GetViewModel();
+        var model = GetViewModel(employerAccountId);
         model.EmployerAccountId = employerAccountId;
         if (sessionModel.Regions.Any(x => x.IsConfirmed))
         {
@@ -57,7 +55,9 @@ public class AreasToEngageLocallyController : Controller
 
         _sessionService.Set(sessionModel);
 
-        return RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork, new { submitModel.EmployerAccountId });
+        return sessionModel.HasSeenPreview
+            ? RedirectToRoute(@RouteNames.Onboarding.CheckYourAnswers, new { submitModel.EmployerAccountId })!
+            : RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork, new { submitModel.EmployerAccountId });
     }
 
     private AreasToEngageLocallyViewModel GetViewModel(string employerAccountId)

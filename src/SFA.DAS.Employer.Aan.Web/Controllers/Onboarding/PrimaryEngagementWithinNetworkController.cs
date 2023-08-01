@@ -56,7 +56,9 @@ public class PrimaryEngagementWithinNetworkController : Controller
             return RedirectToRoute(RouteNames.Onboarding.AreasToEngageLocally, new { submitModel.EmployerAccountId });
         }
 
-        return RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork, new { submitModel.EmployerAccountId });
+        return sessionModel.HasSeenPreview
+            ? RedirectToRoute(@RouteNames.Onboarding.CheckYourAnswers, new { submitModel.EmployerAccountId })!
+            : RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork, new { submitModel.EmployerAccountId });
     }
 
     private PrimaryEngagementWithinNetworkViewModel GetViewModel(OnboardingSessionModel sessionModel, string employerAccountId)
