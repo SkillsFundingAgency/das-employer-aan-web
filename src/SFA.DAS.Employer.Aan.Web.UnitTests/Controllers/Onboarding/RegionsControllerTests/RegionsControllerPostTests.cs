@@ -37,17 +37,20 @@ public class RegionsControllerPostTests
     }
 
     [Test]
-    [MoqInlineAutoData(1, RouteNames.Onboarding.JoinTheNetwork)]
-    [MoqInlineAutoData(2, RouteNames.Onboarding.AreasToEngageLocally)]
-    [MoqInlineAutoData(3, RouteNames.Onboarding.AreasToEngageLocally)]
-    [MoqInlineAutoData(4, RouteNames.Onboarding.AreasToEngageLocally)]
-    [MoqInlineAutoData(5, RouteNames.Onboarding.PrimaryEngagementWithinNetwork)]
-    [MoqInlineAutoData(6, RouteNames.Onboarding.PrimaryEngagementWithinNetwork)]
+    [MoqInlineAutoData(1, false, RouteNames.Onboarding.JoinTheNetwork)]
+    [MoqInlineAutoData(1, true, RouteNames.Onboarding.CheckYourAnswers)]
+    [MoqInlineAutoData(2, true, RouteNames.Onboarding.AreasToEngageLocally)]
+    [MoqInlineAutoData(3, true, RouteNames.Onboarding.AreasToEngageLocally)]
+    [MoqInlineAutoData(4, true, RouteNames.Onboarding.AreasToEngageLocally)]
+    [MoqInlineAutoData(5, true, RouteNames.Onboarding.PrimaryEngagementWithinNetwork)]
+    [MoqInlineAutoData(6, true, RouteNames.Onboarding.PrimaryEngagementWithinNetwork)]
     public async Task Post_NavigateToAppropriateRouteAccordingiaRegionsSelected(
         int noOfRegionsSelected,
+        bool hasSeenPreview,
         string routeToRedirect,
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Frozen] Mock<IValidator<RegionsSubmitModel>> validatorMock,
+        [Frozen] OnboardingSessionModel sessionModel,
         [Greedy] RegionsController sut)
     {
         //Arrange        
@@ -57,6 +60,9 @@ public class RegionsControllerPostTests
 
         ValidationResult validationResult = new();
         validatorMock.Setup(v => v.Validate(submitmodel)).Returns(validationResult);
+
+        sessionModel.HasSeenPreview = hasSeenPreview;
+        sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
         //Act
         var result = await sut.Post(submitmodel, new());
