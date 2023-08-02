@@ -46,6 +46,10 @@ public class CheckYourAnswersViewModel : ViewModelBase
         {
             regions.Add($"Locally prefers {locallyPreferredRegion.Area}");
         }
+        if (sessionModel.IsLocalOrganisation.HasValue && !sessionModel.IsLocalOrganisation.GetValueOrDefault())
+        {
+            regions.Add("Prefers to engage as multi-regional");
+        }
         return regions!;
     }
 
