@@ -25,7 +25,9 @@ public class AreasToEngageLocallyController : Controller
     public IActionResult Get([FromRoute] string employerAccountId)
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
-        var model = GetViewModel(employerAccountId);
+        sessionModel.IsLocalOrganisation = null;
+        _sessionService.Set(sessionModel);
+         var model = GetViewModel();
         model.EmployerAccountId = employerAccountId;
         if (sessionModel.Regions.Any(x => x.IsConfirmed))
         {
@@ -48,6 +50,7 @@ public class AreasToEngageLocallyController : Controller
         }
 
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
+
 
         sessionModel.Regions.ForEach(x => x.IsConfirmed = false);
         sessionModel.Regions.Single(x => x.Id == submitModel.SelectedAreaToEngageLocallyId)!.IsConfirmed = true;

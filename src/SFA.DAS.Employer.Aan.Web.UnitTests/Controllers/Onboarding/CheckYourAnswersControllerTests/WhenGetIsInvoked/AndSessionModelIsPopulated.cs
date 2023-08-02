@@ -29,7 +29,7 @@ public class AndSessionModelIsPopulated
     static readonly string? IsPreviouslyEngagedWithNetwork = "true";
     static readonly string PreviousEngagementUrl = Guid.NewGuid().ToString();
     static readonly string LocallyPreferredRegion = Guid.NewGuid().ToString();
-    static readonly List<RegionModel> MultipleRegionsSelected = new()
+    static readonly List<RegionModel> LocalOrganisationMultipleRegions = new()
         {
             new  RegionModel() { Area = LocallyPreferredRegion, IsSelected = true, IsConfirmed = true},
             new  RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = true, IsConfirmed = false},
@@ -37,12 +37,21 @@ public class AndSessionModelIsPopulated
             new  RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = true, IsConfirmed = false}
         };
 
-    static readonly List<RegionModel> SingleRegionSelected = new()
+    static readonly List<RegionModel> MultiOrganisationRegions = new()
         {
             new  RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = true, IsConfirmed = false},
             new  RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = true, IsConfirmed = false},
             new  RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = true, IsConfirmed = false},
             new  RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = true, IsConfirmed = false}
+        };
+
+    static readonly string OnlySelectedRegion = Guid.NewGuid().ToString();
+    static readonly List<RegionModel> SingleRegionSelected = new()
+        {
+            new  RegionModel() { Area = OnlySelectedRegion, IsSelected = true, IsConfirmed = false},
+            new  RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = false, IsConfirmed = false},
+            new  RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = false, IsConfirmed = false},
+            new  RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = false, IsConfirmed = false}
         };
 
     static readonly List<ProfileModel> ProfileValues = new List<ProfileModel>()
@@ -75,7 +84,7 @@ public class AndSessionModelIsPopulated
 
         _sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
-        _sessionModel.Regions = MultipleRegionsSelected;
+        _sessionModel.Regions = LocalOrganisationMultipleRegions;
         _sessionModel.ProfileData = ProfileValues;
     }
 
@@ -105,16 +114,28 @@ public class AndSessionModelIsPopulated
     {
         _sessionModel.Regions = SingleRegionSelected;
         InvokeControllerGet();
-        _viewModel!.Region.Should().Equal(SingleRegionSelected.Where(x => x.IsSelected).Select(x => x.Area).ToList());
+        _viewModel!.Region.Should().Equal(OnlySelectedRegion);
     }
 
     [Test]
     public void ThenSetsLocallyPreferredRegionInViewModel()
     {
-        _sessionModel.Regions = MultipleRegionsSelected;
+        _sessionModel.Regions = LocalOrganisationMultipleRegions;
         InvokeControllerGet();
-        var result = MultipleRegionsSelected.Where(x => x.IsSelected).Select(x => x.Area).ToList();
+        var result = LocalOrganisationMultipleRegions.Where(x => x.IsSelected).Select(x => x.Area).ToList();
         result.Add($"Locally prefers {LocallyPreferredRegion}");
+
+        _viewModel!.Region.Should().Equal(result);
+    }
+
+    [Test]
+    public void ThenSetsMultiRegionalOrganisationInViewModel()
+    {
+        _sessionModel.Regions = MultiOrganisationRegions;
+        _sessionModel.IsLocalOrganisation = false;
+        InvokeControllerGet();
+        var result = MultiOrganisationRegions.Where(x => x.IsSelected).Select(x => x.Area).ToList();
+        result.Add($"Prefers to engage as multi-regional");
 
         _viewModel!.Region.Should().Equal(result);
     }
