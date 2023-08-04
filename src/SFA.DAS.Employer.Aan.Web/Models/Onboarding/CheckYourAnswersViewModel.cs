@@ -22,6 +22,8 @@ public class CheckYourAnswersViewModel : ViewModelBase
 
     public CheckYourAnswersViewModel(IUrlHelper url, OnboardingSessionModel sessionModel, string employerAccountId)
     {
+        EmployerAccountId = employerAccountId;
+
         RegionChangeLink = url.RouteUrl(@RouteNames.Onboarding.Regions, new { EmployerAccountId = employerAccountId })!;
         Region = GetRegions(sessionModel);
 

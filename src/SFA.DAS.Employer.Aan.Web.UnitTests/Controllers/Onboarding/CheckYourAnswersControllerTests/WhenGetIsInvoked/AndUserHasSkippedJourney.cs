@@ -11,7 +11,7 @@ using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.CheckYourAnswersControllerTests.WhenGetIsInvoked;
 
-public class AndSessionModelIsNotPopulated
+public class AndUserHasSkippedJourney
 {
     ViewResult _getResult;
     CheckYourAnswersViewModel _viewModel;
@@ -49,9 +49,9 @@ public class AndSessionModelIsNotPopulated
     }
 
     [Test]
-    public void ThenSetsEmployerAccountIdToNullInTheViewModel()
+    public void ThenSetsEmployerAccountIdInTheViewModel()
     {
-        _viewModel.EmployerAccountId.Should().BeNull();
+        _viewModel.EmployerAccountId.Should().Be(_employerAccountId);
     }
 
     [Test]
