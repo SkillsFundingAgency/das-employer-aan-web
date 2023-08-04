@@ -36,15 +36,19 @@ public class RegionsControllerPostTests
         sessionServiceMock.Verify(s => s.Set(It.Is<OnboardingSessionModel>(m => m.Regions == submitmodel.Regions)));
     }
 
-    [Test]
     [MoqInlineAutoData(1, false, RouteNames.Onboarding.JoinTheNetwork)]
     [MoqInlineAutoData(1, true, RouteNames.Onboarding.CheckYourAnswers)]
     [MoqInlineAutoData(2, true, RouteNames.Onboarding.AreasToEngageLocally)]
+    [MoqInlineAutoData(2, false, RouteNames.Onboarding.AreasToEngageLocally)]
     [MoqInlineAutoData(3, true, RouteNames.Onboarding.AreasToEngageLocally)]
+    [MoqInlineAutoData(3, false, RouteNames.Onboarding.AreasToEngageLocally)]
     [MoqInlineAutoData(4, true, RouteNames.Onboarding.AreasToEngageLocally)]
+    [MoqInlineAutoData(4, false, RouteNames.Onboarding.AreasToEngageLocally)]
     [MoqInlineAutoData(5, true, RouteNames.Onboarding.PrimaryEngagementWithinNetwork)]
+    [MoqInlineAutoData(5, false, RouteNames.Onboarding.PrimaryEngagementWithinNetwork)]
     [MoqInlineAutoData(6, true, RouteNames.Onboarding.PrimaryEngagementWithinNetwork)]
-    public async Task Post_NavigateToAppropriateRouteAccordingiaRegionsSelected(
+    [MoqInlineAutoData(6, false, RouteNames.Onboarding.PrimaryEngagementWithinNetwork)]
+    public async Task Post_NavigateToAppropriateRouteAccordingToRegionsSelected(
         int noOfRegionsSelected,
         bool hasSeenPreview,
         string routeToRedirect,
