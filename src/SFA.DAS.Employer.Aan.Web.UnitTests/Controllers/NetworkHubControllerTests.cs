@@ -9,6 +9,7 @@ public class NetworkHubControllerTests
 {
     private IActionResult _result = null!;
     static readonly string EventsHubUrl = Guid.NewGuid().ToString();
+    string accountId = Guid.NewGuid().ToString();
 
     [SetUp]
     public void WhenGettingNetworkHub()
@@ -16,7 +17,7 @@ public class NetworkHubControllerTests
         NetworkHubController sut = new();
         sut.AddUrlHelperMock().AddUrlForRoute("EventsHub", EventsHubUrl);
 
-        _result = sut.Index();
+        _result = sut.Index(accountId);
     }
 
     [Test]

@@ -10,11 +10,11 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers;
 [Route("accounts/{employerAccountId}/network-hub", Name = RouteNames.NetworkHub)]
 public class NetworkHubController : Controller
 {
-    public IActionResult Index()
+    public IActionResult Index([FromRoute] string employerAccountId)
     {
         NetworkHubViewModel model = new()
         {
-            EventsHubUrl = Url.RouteUrl(@RouteNames.EventsHub)!
+            EventsHubUrl = Url.RouteUrl(@RouteNames.EventsHub, new { employerAccountId })!
         };
         return View(model);
     }
