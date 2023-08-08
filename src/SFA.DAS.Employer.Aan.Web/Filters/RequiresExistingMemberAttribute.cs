@@ -17,7 +17,8 @@ public class RequiresExistingMemberAttribute : ApplicationFilterAttribute
 
         if (!IsValidRequest(context, controllerActionDescriptor))
         {
-            context.Result = RedirectToHome;
+            context.RouteData.Values.TryGetValue("employerAccountId", out object? accountId);
+            context.Result = RedirectToHome(new { EmployerAccountId = accountId });
         }
     }
 

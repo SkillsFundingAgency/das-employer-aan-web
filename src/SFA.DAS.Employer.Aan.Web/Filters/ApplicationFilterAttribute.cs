@@ -12,7 +12,7 @@ public abstract class ApplicationFilterAttribute : ActionFilterAttribute
     const string DefaultControllerName = "Home";
     const string OnboardingFilter = "Onboarding";
 
-    protected readonly static RedirectToActionResult RedirectToHome = new(DefaultActionName, DefaultControllerName, null);
+    protected static RedirectToActionResult RedirectToHome(object? routeValues) => new(DefaultActionName, DefaultControllerName, routeValues);
 
     protected static bool IsRequestForOnboardingAction(ControllerActionDescriptor action) => action.ControllerTypeInfo.FullName!.Contains(OnboardingFilter);
 }
