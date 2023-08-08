@@ -27,7 +27,7 @@ public class RegionsController : Controller
     [HttpGet]
     public async Task<IActionResult> Get([FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
-        var model = await GetViewModel(cancellationToken);
+        var model = await GetViewModel(employerAccountId, cancellationToken);
         model.EmployerAccountId = employerAccountId;
         return View(ViewPath, model);
     }
@@ -39,32 +39,33 @@ public class RegionsController : Controller
 
         if (!result.IsValid)
         {
-            var model = await GetViewModel(cancellationToken);
+            var model = await GetViewModel(submitModel.EmployerAccountId, cancellationToken);
             model.EmployerAccountId = submitModel.EmployerAccountId;
             result.AddToModelState(ModelState);
             return View(ViewPath, model);
         }
 
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
+
         sessionModel.Regions = submitModel.Regions!;
+        sessionModel.IsLocalOrganisation = null;
 
         _sessionService.Set(sessionModel);
 
-        if (sessionModel.Regions.Count(x => x.IsSelected) == 1)
-        {
-            return RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork, new { submitModel.EmployerAccountId });
-        }
-        else if (sessionModel.Regions.Count(x => x.IsSelected) >= 2 && sessionModel.Regions.Count(x => x.IsSelected) <= 4)
-        {
-            return RedirectToRoute(RouteNames.Onboarding.AreasToEngageLocally, new { submitModel.EmployerAccountId });
-        }
-        else
-        {
-            return RedirectToRoute(RouteNames.Onboarding.PrimaryEngagementWithinNetwork, new { submitModel.EmployerAccountId });
-        }
+        return RedirectAccordingly(sessionModel.Regions.Count(x => x.IsSelected), sessionModel.HasSeenPreview, submitModel.EmployerAccountId);
     }
 
-    private async Task<RegionsViewModel> GetViewModel(CancellationToken cancellationToken)
+    private IActionResult RedirectAccordingly(int selectedRegionCount, bool hasSeenPreview, string employerAccountId) =>
+        selectedRegionCount switch
+        {
+            1 => hasSeenPreview
+                    ? RedirectToRoute(RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId })!
+                    : RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork, new { employerAccountId }),
+            (>= 2) and (<= 4) => RedirectToRoute(RouteNames.Onboarding.AreasToEngageLocally, new { employerAccountId })!,
+            _ => RedirectToRoute(RouteNames.Onboarding.PrimaryEngagementWithinNetwork, new { employerAccountId })
+        };
+
+    private async Task<RegionsViewModel> GetViewModel(string employerAccountId, CancellationToken cancellationToken)
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
 
@@ -77,7 +78,7 @@ public class RegionsController : Controller
 
         return new RegionsViewModel
         {
-            BackLink = sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers)! : Url.RouteUrl(@RouteNames.Onboarding.TermsAndConditions)!,
+            BackLink = sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId })! : Url.RouteUrl(@RouteNames.Onboarding.TermsAndConditions, new { employerAccountId })!,
             Regions = sessionModel.Regions
         };
     }

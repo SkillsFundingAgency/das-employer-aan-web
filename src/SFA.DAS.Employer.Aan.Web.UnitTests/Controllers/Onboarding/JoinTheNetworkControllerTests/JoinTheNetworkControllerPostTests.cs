@@ -93,7 +93,7 @@ public class JoinTheNetworkControllerPostTests
 
     [MoqInlineAutoData(false, RouteNames.Onboarding.PreviousEngagement)]
     [MoqInlineAutoData(true, RouteNames.Onboarding.CheckYourAnswers)]
-    public void Post_RedirectsTo_JoinTheNetworkPage(
+    public void Post_RedirectsTo_CorrectRoute(
         bool hasSeenPreview,
         string navigateRoute,
         [Frozen] Mock<ISessionService> sessionServiceMock,

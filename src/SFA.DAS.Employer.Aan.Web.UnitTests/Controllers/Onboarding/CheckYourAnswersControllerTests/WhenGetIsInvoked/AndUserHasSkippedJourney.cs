@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using SFA.DAS.Employer.Aan.Domain.Constants;
@@ -10,7 +11,7 @@ using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.CheckYourAnswersControllerTests.WhenGetIsInvoked;
 
-public class AndSessionModelIsNotPopulated
+public class AndUserHasSkippedJourney
 {
     ViewResult _getResult;
     CheckYourAnswersViewModel _viewModel;
@@ -29,6 +30,10 @@ public class AndSessionModelIsNotPopulated
         _sut = new(sessionServiceMock.Object);
 
         _sut.AddUrlHelperMock();
+
+        var user = UsersForTesting.GetUserWithClaims(_employerAccountId);
+
+        _sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
         _sessionModel.Regions = new();
 

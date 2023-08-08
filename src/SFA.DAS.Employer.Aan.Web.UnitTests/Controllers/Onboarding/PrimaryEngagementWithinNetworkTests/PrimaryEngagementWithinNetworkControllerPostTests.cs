@@ -68,4 +68,33 @@ public class PrimaryEngagementWithinNetworkControllerPostTests
         sessionModel.ProfileData.FirstOrDefault(p => p.Id == ProfileDataId.HasPreviousEngagement)?.Value.Should().Be(submitmodel.IsLocalOrganisation.ToString());
         sut.ModelState.IsValid.Should().BeTrue();
     }
+
+    [MoqInlineAutoData(false, false, RouteNames.Onboarding.JoinTheNetwork)]
+    [MoqInlineAutoData(true, false, RouteNames.Onboarding.CheckYourAnswers)]
+    [MoqInlineAutoData(true, true, RouteNames.Onboarding.AreasToEngageLocally)]
+    [MoqInlineAutoData(false, true, RouteNames.Onboarding.AreasToEngageLocally)]
+    public void Post_RedirectsTo_CorrectRoute(
+        bool hasSeenPreview,
+        bool? isLocalOrganisation,
+        string navigateRoute,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Frozen] Mock<IValidator<PrimaryEngagementWithinNetworkSubmitModel>> validatorMock,
+        [Greedy] PrimaryEngagementWithinNetworkController sut,
+        PrimaryEngagementWithinNetworkSubmitModel submitmodel)
+    {
+        sut.AddUrlHelperMock();
+        OnboardingSessionModel sessionModel = new();
+        sessionModel.HasSeenPreview = hasSeenPreview;
+        submitmodel.IsLocalOrganisation = isLocalOrganisation;
+
+        sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
+
+        ValidationResult validationResult = new();
+        validatorMock.Setup(v => v.Validate(submitmodel)).Returns(validationResult);
+
+        var result = sut.Post(submitmodel);
+
+        result.As<RedirectToRouteResult>().Should().NotBeNull();
+        result.As<RedirectToRouteResult>().RouteName.Should().Be(navigateRoute);
+    }
 }

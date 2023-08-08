@@ -6,15 +6,19 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using SFA.DAS.Employer.Aan.Domain.Constants;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
+using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
+using SFA.DAS.Encoding;
 using SFA.DAS.Testing.AutoFixture;
+
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.PreviousEngagementControllerTests;
 
+[TestFixture]
 public class PreviousEngagementControllerPostTests
 {
     [MoqAutoData]
@@ -22,7 +26,8 @@ public class PreviousEngagementControllerPostTests
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] PreviousEngagementController sut,
         [Frozen] PreviousEngagementSubmitModel submitmodel,
-        string joinTheNetworkUrl)
+        string joinTheNetworkUrl,
+        CancellationToken cancellationToken)
     {
         OnboardingSessionModel sessionModel = new();
         sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileDataId.HasPreviousEngagement, Value = null });
@@ -32,7 +37,7 @@ public class PreviousEngagementControllerPostTests
 
         sut.ModelState.AddModelError("key", "message");
 
-        var result = sut.Post(submitmodel);
+        var result = sut.Post(submitmodel, cancellationToken);
 
         sut.ModelState.IsValid.Should().BeFalse();
 
@@ -41,31 +46,79 @@ public class PreviousEngagementControllerPostTests
         result.As<ViewResult>().Model.As<PreviousEngagementViewModel>().BackLink.Should().Be(joinTheNetworkUrl);
     }
 
-    [TestCase("true")]
-    [TestCase("false")]
-    public void Post_ModelStateIsValid_UpdatesSessionModel(string? hasPreviousEngagementValue)
+    [MoqInlineAutoData(true)]
+    [MoqInlineAutoData(false)]
+    public void Post_ModelStateIsValid_UpdatesSessionModel(
+        bool hasPreviousEngagementValue,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Frozen] Mock<IValidator<PreviousEngagementSubmitModel>> validatorMock,
+        [Frozen] PreviousEngagementSubmitModel submitmodel,
+        [Frozen] OnboardingSessionModel sessionModel,
+        [Greedy] PreviousEngagementController sut,
+        CancellationToken cancellationToken)
     {
-        Mock<ISessionService> sessionServiceMock = new();
-        Mock<IValidator<PreviousEngagementSubmitModel>> validatorMock = new();
-        PreviousEngagementSubmitModel submitmodel = new();
-        PreviousEngagementController sut = new PreviousEngagementController(sessionServiceMock.Object, validatorMock.Object);
-        OnboardingSessionModel sessionModel = new();
-        ValidationResult validationResult = new();
-
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.JoinTheNetwork);
 
         submitmodel.HasPreviousEngagement = Convert.ToBoolean(hasPreviousEngagementValue);
         sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileDataId.HasPreviousEngagement, Value = null });
 
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
+
+        ValidationResult validationResult = new();
         validatorMock.Setup(v => v.Validate(submitmodel)).Returns(validationResult);
 
-        sessionServiceMock.Object.Set(sessionModel);
-
-        sut.Post(submitmodel);
+        sut.Post(submitmodel, cancellationToken);
 
         sessionServiceMock.Verify(s => s.Set(sessionModel));
         sessionModel.ProfileData.FirstOrDefault(p => p.Id == ProfileDataId.HasPreviousEngagement)?.Value.Should().Be(submitmodel.HasPreviousEngagement.ToString());
+        sut.ModelState.IsValid.Should().BeTrue();
+    }
+
+    [MoqInlineAutoData(true)]
+    [MoqInlineAutoData(false)]
+    public void Post_HasSeenPreview_InvokesAPIs(
+        bool hasSeenPreview,
+        [Frozen] Mock<IOuterApiClient> outerApiClient,
+        [Frozen] Mock<IEncodingService> encodingServiceMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Frozen] Mock<IValidator<PreviousEngagementSubmitModel>> validatorMock,
+        [Frozen] PreviousEngagementSubmitModel submitmodel,
+        [Frozen] OnboardingSessionModel sessionModel,
+        [Frozen] EmployerMemberSummary employerMemberSummary,
+        [Frozen] long decodeEmployerAccountId,
+        CancellationToken cancellationToken)
+    {
+        PreviousEngagementController sut = new PreviousEngagementController(sessionServiceMock.Object, validatorMock.Object, outerApiClient.Object, encodingServiceMock.Object);
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.JoinTheNetwork);
+
+        sessionModel.HasSeenPreview = hasSeenPreview;
+        sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileDataId.HasPreviousEngagement, Value = null });
+
+        sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
+
+        ValidationResult validationResult = new();
+        validatorMock.Setup(v => v.Validate(submitmodel)).Returns(validationResult);
+
+        encodingServiceMock.Setup(o => o.Decode(It.IsAny<string>(), It.IsAny<EncodingType>())).Returns(decodeEmployerAccountId);
+        outerApiClient.Setup(o => o.GetEmployerSummary(decodeEmployerAccountId.ToString(), cancellationToken)).ReturnsAsync(employerMemberSummary);
+
+        sut.Post(submitmodel, cancellationToken);
+
+        if (hasSeenPreview)
+        {
+            outerApiClient.Verify(s => s.GetEmployerSummary(It.IsAny<string>(), cancellationToken), Times.Never);
+            encodingServiceMock.Verify(s => s.Decode(It.IsAny<string>(), It.IsAny<EncodingType>()), Times.Never);
+        }
+        else
+        {
+            outerApiClient.Verify(s => s.GetEmployerSummary(It.IsAny<string>(), cancellationToken), Times.Once);
+            encodingServiceMock.Verify(s => s.Decode(It.IsAny<string>(), It.IsAny<EncodingType>()), Times.Once);
+
+            sessionModel.EmployerDetails.ActiveApprenticesCount.Should().Be(employerMemberSummary.ActiveCount);
+            sessionModel.EmployerDetails.Sectors.Should().Equal(employerMemberSummary.Sectors);
+            sessionModel.EmployerDetails.DigitalApprenticeshipProgrammeStartDate.Should().Be(employerMemberSummary.StartDate.GetValueOrDefault().Date.ToString("dd-MM-yyyy"));
+        }
+
         sut.ModelState.IsValid.Should().BeTrue();
     }
 }

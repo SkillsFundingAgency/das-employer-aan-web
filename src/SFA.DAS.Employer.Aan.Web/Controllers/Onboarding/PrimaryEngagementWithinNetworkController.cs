@@ -27,7 +27,7 @@ public class PrimaryEngagementWithinNetworkController : Controller
     public IActionResult Get([FromRoute] string employerAccountId)
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
-        var model = GetViewModel(sessionModel);
+        var model = GetViewModel(sessionModel, employerAccountId);
         model.EmployerAccountId = employerAccountId;
         return View(ViewPath, model);
     }
@@ -41,7 +41,7 @@ public class PrimaryEngagementWithinNetworkController : Controller
 
         if (!result.IsValid)
         {
-            var model = GetViewModel(sessionModel);
+            var model = GetViewModel(sessionModel, submitModel.EmployerAccountId);
             model.EmployerAccountId = submitModel.EmployerAccountId;
             result.AddToModelState(ModelState);
             return View(ViewPath, model);
@@ -56,13 +56,15 @@ public class PrimaryEngagementWithinNetworkController : Controller
             return RedirectToRoute(RouteNames.Onboarding.AreasToEngageLocally, new { submitModel.EmployerAccountId });
         }
 
-        return RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork, new { submitModel.EmployerAccountId });
+        return sessionModel.HasSeenPreview
+            ? RedirectToRoute(@RouteNames.Onboarding.CheckYourAnswers, new { submitModel.EmployerAccountId })!
+            : RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork, new { submitModel.EmployerAccountId });
     }
 
-    private PrimaryEngagementWithinNetworkViewModel GetViewModel(OnboardingSessionModel sessionModel)
+    private PrimaryEngagementWithinNetworkViewModel GetViewModel(OnboardingSessionModel sessionModel, string employerAccountId)
     => new()
     {
         IsLocalOrganisation = sessionModel.IsLocalOrganisation,
-        BackLink = Url.RouteUrl(@RouteNames.Onboarding.Regions)!
+        BackLink = Url.RouteUrl(@RouteNames.Onboarding.Regions, new { employerAccountId })!
     };
 }
