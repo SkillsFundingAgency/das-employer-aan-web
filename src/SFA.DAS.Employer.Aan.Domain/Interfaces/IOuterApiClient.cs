@@ -1,4 +1,5 @@
 ﻿using RestEase;
+using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 
 namespace SFA.DAS.Employer.Aan.Domain.Interfaces;
@@ -20,4 +21,7 @@ public interface IOuterApiClient
 
     [Get("/employers/{employerAccountId}/summary")]
     Task<EmployerMemberSummary> GetEmployerSummary([Path] string employerAccountId, CancellationToken cancellationToken);
+
+    [Post("/employers")]
+    Task<CreateEmployerMemberResponse> PostEmployerMember([Body] CreateEmployerMemberRequest request, CancellationToken cancellationToken);
 }
