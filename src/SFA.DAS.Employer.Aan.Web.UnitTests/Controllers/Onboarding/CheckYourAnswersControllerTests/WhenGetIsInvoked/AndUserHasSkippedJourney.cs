@@ -17,6 +17,8 @@ public class AndUserHasSkippedJourney
     CheckYourAnswersViewModel _viewModel;
     CheckYourAnswersController _sut;
     OnboardingSessionModel _sessionModel;
+    Mock<ISessionService> _sessionServiceMock;
+    Mock<IOuterApiClient> _outerApiClientMock;
     string _employerAccountId;
 
     [SetUp]
@@ -25,9 +27,10 @@ public class AndUserHasSkippedJourney
         _employerAccountId = Guid.NewGuid().ToString();
         _sessionModel = new();
         _sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileDataId.HasPreviousEngagement, Value = null });
-        Mock<ISessionService> sessionServiceMock = new();
-        sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(_sessionModel);
-        _sut = new(sessionServiceMock.Object);
+        _sessionServiceMock = new();
+        _sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(_sessionModel);
+        _outerApiClientMock = new();
+        _sut = new(_sessionServiceMock.Object, _outerApiClientMock.Object);
 
         _sut.AddUrlHelperMock();
 

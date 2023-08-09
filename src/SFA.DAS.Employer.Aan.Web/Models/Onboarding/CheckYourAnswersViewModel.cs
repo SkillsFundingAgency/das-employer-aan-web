@@ -37,6 +37,10 @@ public class CheckYourAnswersViewModel : ViewModelBase
         ActiveApprenticesCount = sessionModel.EmployerDetails.ActiveApprenticesCount;
         DigitalApprenticeshipProgrammeStartDate = sessionModel.EmployerDetails.DigitalApprenticeshipProgrammeStartDate;
         Sectors = sessionModel.EmployerDetails.Sectors;
+
+        FullName = sessionModel.EmployerDetails.FullName;
+        Email = sessionModel.EmployerDetails.Email;
+        OrganisationName = sessionModel.EmployerDetails.OrganisationName;
     }
 
     private static List<string>? GetRegions(OnboardingSessionModel sessionModel)

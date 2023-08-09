@@ -16,6 +16,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.CheckYourAns
 
 public class AndSessionModelIsPopulated
 {
+    Mock<IOuterApiClient> _outerApiClientMock;
     OnboardingSessionModel _sessionModel;
     CheckYourAnswersController _sut;
     ViewResult? _getResult;
@@ -73,7 +74,8 @@ public class AndSessionModelIsPopulated
         _sessionModel = new();
         _sessionServiceMock = new();
         _sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(_sessionModel);
-        _sut = new(_sessionServiceMock.Object);
+        _outerApiClientMock = new();
+        _sut = new(_sessionServiceMock.Object, _outerApiClientMock.Object);
 
         _sut.AddUrlHelperMock()
         .AddUrlForRoute(RouteNames.Onboarding.Regions, RegionUrl)
@@ -81,6 +83,10 @@ public class AndSessionModelIsPopulated
         .AddUrlForRoute(RouteNames.Onboarding.PreviousEngagement, PreviousEngagementUrl);
 
         user = UsersForTesting.GetUserWithClaims(_employerAccountId);
+        _sessionModel.EmployerDetails.FullName = user.GetIdamsUserDisplayName();
+        _sessionModel.EmployerDetails.Email = user.GetEmail();
+        var account = user.GetEmployerAccount(_employerAccountId);
+        _sessionModel.EmployerDetails.OrganisationName = account.DasAccountName;
 
         _sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
@@ -166,8 +172,8 @@ public class AndSessionModelIsPopulated
     public void ThenSetsOrgansationInfoDataInViewModel()
     {
         InvokeControllerGet();
-        _viewModel!.FullName.Should().Be(user.FindFirstValue(EmployerClaims.IdamsUserDisplayNameClaimTypeIdentifier));
-        _viewModel!.Email.Should().Be(user.FindFirstValue(ClaimTypes.Email));
+        _viewModel!.FullName.Should().Be(user.GetIdamsUserDisplayName());
+        _viewModel!.Email.Should().Be(user.GetEmail());
         _viewModel!.OrganisationName.Should().Be(user.GetEmployerAccount(_employerAccountId).DasAccountName);
     }
 

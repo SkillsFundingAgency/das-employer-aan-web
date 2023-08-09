@@ -25,4 +25,8 @@ public interface IOuterApiClient
     
     [Get("/attendances")]
     Task<GetAttendancesResponse> GetAttendances([Header(RequestHeaders.RequestedByMemberIdHeader)] Guid requestedByMemberId, string fromDate, string toDate, CancellationToken cancellationToken);
+    
+     [Post("/employers")]
+    Task<CreateEmployerMemberResponse> PostEmployerMember([Body] CreateEmployerMemberRequest request, CancellationToken cancellationToken);
+
 }

@@ -19,4 +19,8 @@ public class EmployerDetailsModel
     public int ActiveApprenticesCount { get; set; }
     public string DigitalApprenticeshipProgrammeStartDate { get; set; } = null!;
     public IEnumerable<string> Sectors { get; set; } = Enumerable.Empty<string>();
+    public string FullName { get; set; } = null!;
+    public string Email { get; set; } = null!;
+    public string OrganisationName { get; set; } = null!;
+    public long AccountId { get; set; }
 }
