@@ -1,7 +1,10 @@
 ﻿using RestEase;
+<<<<<<< HEAD
 using SFA.DAS.Aan.SharedUi.Constants;
 using SFA.DAS.Aan.SharedUi.OuterApi.Responses;
+=======
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
+>>>>>>> 08dbc20 (CSP-551 Implemented Application Submitted workflow)
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 
 namespace SFA.DAS.Employer.Aan.Domain.Interfaces;
@@ -23,11 +26,13 @@ public interface IOuterApiClient
 
     [Get("/employers/{employerAccountId}/summary")]
     Task<EmployerMemberSummary> GetEmployerSummary([Path] string employerAccountId, CancellationToken cancellationToken);
-
+<<<<<<< HEAD
+    
     [Get("/attendances")]
     Task<GetAttendancesResponse> GetAttendances([Header(RequestHeaders.RequestedByMemberIdHeader)] Guid requestedByMemberId, string fromDate, string toDate, CancellationToken cancellationToken);
+=======
 
     [Post("/employers")]
     Task<CreateEmployerMemberResponse> PostEmployerMember([Body] CreateEmployerMemberRequest request, CancellationToken cancellationToken);
-
+>>>>>>> 08dbc20 (CSP-551 Implemented Application Submitted workflow)
 }
