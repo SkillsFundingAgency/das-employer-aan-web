@@ -27,6 +27,7 @@ builder.Services
     .Configure<RouteOptions>(options => { options.LowercaseUrls = true; })
     .AddMvc(options =>
     {
+        options.Filters.Add<RequiresExistingMemberAttribute>();
         options.Filters.Add<RequiredSessionModelAttribute>();
         options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
     })

@@ -7,7 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="RestEase" Version="1.6.1" />
+    <PackageReference Include="RestEase" Version="1.6.4" />
+    <PackageReference Include="SFA.DAS.Aan.SharedUi" Version="0.1.52-prerelease-38" />
   </ItemGroup>
 
 </Project>
