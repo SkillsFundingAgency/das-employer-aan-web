@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.Aan.Web.Extensions;
@@ -35,8 +34,7 @@ public class CheckYourAnswersController : Controller
 
     private CheckYourAnswersViewModel GetViewModel(OnboardingSessionModel sessionModel, string employerAccountId)
     {
-        var viewModel = new CheckYourAnswersViewModel(Url, sessionModel, employerAccountId);
-        return viewModel;
+        return new CheckYourAnswersViewModel(Url, sessionModel, employerAccountId);
     }
 
     [HttpPost]
@@ -64,7 +62,7 @@ public class CheckYourAnswersController : Controller
         request.Email = source.EmployerDetails.Email;
         request.FirstName = User.GetGivenName();
         request.LastName = User.GetFamilyName();
-        request.UserRef = Guid.Parse(User.FindFirstValue(EmployerClaims.IdamsUserIdClaimTypeIdentifier));
+        request.UserRef = User.GetIdamsUserId();
         request.AccountId = source.EmployerDetails.AccountId;
 
         return request;

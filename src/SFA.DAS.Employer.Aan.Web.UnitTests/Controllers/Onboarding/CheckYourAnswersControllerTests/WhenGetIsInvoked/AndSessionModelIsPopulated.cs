@@ -169,12 +169,15 @@ public class AndSessionModelIsPopulated
     }
 
     [Test]
-    public void ThenSetsOrgansationInfoDataInViewModel()
+    public void ThenSetsEmployersDetailsInViewModel()
     {
         InvokeControllerGet();
-        _viewModel!.FullName.Should().Be(user.GetIdamsUserDisplayName());
-        _viewModel!.Email.Should().Be(user.GetEmail());
-        _viewModel!.OrganisationName.Should().Be(user.GetEmployerAccount(_employerAccountId).DasAccountName);
+        _viewModel!.FullName.Should().Be(_sessionModel.EmployerDetails.FullName);
+        _viewModel!.Email.Should().Be(_sessionModel.EmployerDetails.Email);
+        _viewModel!.OrganisationName.Should().Be(_sessionModel.EmployerDetails.OrganisationName);
+        _viewModel!.ActiveApprenticesCount.Should().Be(_sessionModel.EmployerDetails.ActiveApprenticesCount);
+        _viewModel!.DigitalApprenticeshipProgrammeStartDate.Should().Be(_sessionModel.EmployerDetails.DigitalApprenticeshipProgrammeStartDate);
+        _viewModel!.Sectors.Should().BeEquivalentTo(_sessionModel.EmployerDetails.Sectors);
     }
 
     [TearDown]

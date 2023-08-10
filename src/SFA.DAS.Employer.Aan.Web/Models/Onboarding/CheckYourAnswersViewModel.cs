@@ -13,9 +13,9 @@ public class CheckYourAnswersViewModel : ViewModelBase
     public List<string>? Support { get; }
     public string PreviousEngagementChangeLink { get; }
     public string? PreviousEngagement { get; }
-    public string FullName { get; set; } = null!;
-    public string Email { get; set; } = null!;
-    public string OrganisationName { get; set; } = null!;
+    public string FullName { get; set; }
+    public string Email { get; set; }
+    public string OrganisationName { get; set; }
     public int ActiveApprenticesCount { get; set; }
     public string DigitalApprenticeshipProgrammeStartDate { get; set; }
     public IEnumerable<string> Sectors { get; set; }

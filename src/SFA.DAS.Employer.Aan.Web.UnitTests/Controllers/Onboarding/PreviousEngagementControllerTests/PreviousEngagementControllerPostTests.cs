@@ -97,7 +97,7 @@ public class PreviousEngagementControllerPostTests
         [Frozen] PreviousEngagementSubmitModel submitmodel,
         [Frozen] OnboardingSessionModel sessionModel,
         [Frozen] EmployerMemberSummary employerMemberSummary,
-        [Frozen] long decodedEmployerAccountId,
+        long decodedEmployerAccountId,
         CancellationToken cancellationToken)
     {
         PreviousEngagementController sut = new PreviousEngagementController(sessionServiceMock.Object, validatorMock.Object, outerApiClient.Object, encodingServiceMock.Object);
