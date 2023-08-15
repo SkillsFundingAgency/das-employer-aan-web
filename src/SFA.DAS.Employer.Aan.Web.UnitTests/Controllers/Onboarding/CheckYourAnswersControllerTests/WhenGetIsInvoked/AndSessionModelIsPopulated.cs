@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using FluentAssertions;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -17,6 +18,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.CheckYourAns
 public class AndSessionModelIsPopulated
 {
     Mock<IOuterApiClient> _outerApiClientMock;
+    Mock<IValidator<CheckYourAnswersSubmitModel>> _validatorMock;
     OnboardingSessionModel _sessionModel;
     CheckYourAnswersController _sut;
     ViewResult? _getResult;
@@ -75,7 +77,8 @@ public class AndSessionModelIsPopulated
         _sessionServiceMock = new();
         _sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(_sessionModel);
         _outerApiClientMock = new();
-        _sut = new(_sessionServiceMock.Object, _outerApiClientMock.Object);
+        _validatorMock = new();
+        _sut = new(_sessionServiceMock.Object, _outerApiClientMock.Object, _validatorMock.Object);
 
         _sut.AddUrlHelperMock()
         .AddUrlForRoute(RouteNames.Onboarding.Regions, RegionUrl)

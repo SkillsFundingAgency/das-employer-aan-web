@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.Aan.Web.Extensions;
@@ -14,11 +17,13 @@ public class CheckYourAnswersController : Controller
     public const string ApplicationSubmittedViewPath = "~/Views/Onboarding/ApplicationSubmitted.cshtml";
     private readonly ISessionService _sessionService;
     private readonly IOuterApiClient _outerApiClient;
+    private readonly IValidator<CheckYourAnswersSubmitModel> _validator;
 
-    public CheckYourAnswersController(ISessionService sessionService, IOuterApiClient outerApiClient)
+    public CheckYourAnswersController(ISessionService sessionService, IOuterApiClient outerApiClient, IValidator<CheckYourAnswersSubmitModel> validator)
     {
         _sessionService = sessionService;
         _outerApiClient = outerApiClient;
+        _validator = validator;
     }
 
     [HttpGet]
@@ -38,12 +43,21 @@ public class CheckYourAnswersController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromRoute] string employerAccountId, CancellationToken cancellationToken)
+    public async Task<IActionResult> Post([FromRoute] string employerAccountId, CheckYourAnswersSubmitModel submitModel, CancellationToken cancellationToken)
     {
         var onBoardingSessionModel = _sessionService.Get<OnboardingSessionModel>();
-        var result = await _outerApiClient.PostEmployerMember(GenerateCreateEmployerMemberRequest(onBoardingSessionModel, employerAccountId), cancellationToken);
 
-        User.AddAanMemberIdClaim(result.MemberId);
+        ValidationResult result = _validator.Validate(submitModel);
+        if (!result.IsValid)
+        {
+            var sessionModel = _sessionService.Get<OnboardingSessionModel>();
+            var model = GetViewModel(sessionModel, employerAccountId);
+            result.AddToModelState(ModelState);
+            return View(ViewPath, model);
+        }
+        var response = await _outerApiClient.PostEmployerMember(GenerateCreateEmployerMemberRequest(onBoardingSessionModel, employerAccountId), cancellationToken);
+
+        User.AddAanMemberIdClaim(response.MemberId);
 
         return View(ApplicationSubmittedViewPath);
     }

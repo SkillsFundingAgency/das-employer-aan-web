@@ -1,6 +1,8 @@
 ﻿using System.Security.Claims;
 using AutoFixture.NUnit3;
 using FluentAssertions;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +26,8 @@ public class CheckYourAnswersControllerPostTests
     public async Task Post_CallsOuterApiToCreateEmployerMemberAndNavigatesToApplicationSubmitted(
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Frozen] Mock<IOuterApiClient> outerApiClientMock,
+        [Frozen] Mock<IValidator<CheckYourAnswersSubmitModel>> validatorMock,
+        [Frozen] CheckYourAnswersSubmitModel submitmodel,
         OnboardingSessionModel onboardingSessionModel,
         string employerAccountId,
         CancellationToken cancellationToken)
@@ -48,12 +52,15 @@ public class CheckYourAnswersControllerPostTests
             .Setup(_ => _.GetService(typeof(ITempDataDictionaryFactory)))
             .Returns(new Mock<ITempDataDictionaryFactory>().Object);
 
-        CheckYourAnswersController sut = new CheckYourAnswersController(sessionServiceMock.Object, outerApiClientMock.Object);
+        ValidationResult validationResult = new();
+        validatorMock.Setup(v => v.Validate(submitmodel)).Returns(validationResult);
+
+        CheckYourAnswersController sut = new CheckYourAnswersController(sessionServiceMock.Object, outerApiClientMock.Object, validatorMock.Object);
 
         sut.ControllerContext = new() { HttpContext = new DefaultHttpContext() { User = user, RequestServices = serviceProviderMock.Object } };
 
         //Act
-        var result = await sut.Post(employerAccountId, cancellationToken);
+        var result = await sut.Post(employerAccountId, submitmodel, cancellationToken);
 
         //Assert
         outerApiClientMock.Verify(o => o.PostEmployerMember(It.Is<CreateEmployerMemberRequest>(r =>

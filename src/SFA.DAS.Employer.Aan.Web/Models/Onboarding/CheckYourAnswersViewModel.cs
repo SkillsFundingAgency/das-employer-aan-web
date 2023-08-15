@@ -4,7 +4,11 @@ using SFA.DAS.Employer.Aan.Web.Infrastructure;
 
 namespace SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
-public class CheckYourAnswersViewModel : ViewModelBase
+public class CheckYourAnswersSubmitModel : ViewModelBase
+{
+    public bool? IsLocalOrganisationSet { get; set; }
+}
+public class CheckYourAnswersViewModel : CheckYourAnswersSubmitModel
 {
     public string RegionChangeLink { get; }
     public List<string>? Region { get; }
@@ -41,6 +45,11 @@ public class CheckYourAnswersViewModel : ViewModelBase
         FullName = sessionModel.EmployerDetails.FullName;
         Email = sessionModel.EmployerDetails.Email;
         OrganisationName = sessionModel.EmployerDetails.OrganisationName;
+
+        if (sessionModel.Regions.Any(x => x.IsConfirmed))
+            IsLocalOrganisationSet = true;
+        else
+            IsLocalOrganisationSet = sessionModel.IsLocalOrganisation;
     }
 
     private static List<string>? GetRegions(OnboardingSessionModel sessionModel)

@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -19,6 +20,7 @@ public class AndUserHasSkippedJourney
     OnboardingSessionModel _sessionModel;
     Mock<ISessionService> _sessionServiceMock;
     Mock<IOuterApiClient> _outerApiClientMock;
+    Mock<IValidator<CheckYourAnswersSubmitModel>> _validatorMock;
     string _employerAccountId;
 
     [SetUp]
@@ -30,7 +32,8 @@ public class AndUserHasSkippedJourney
         _sessionServiceMock = new();
         _sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(_sessionModel);
         _outerApiClientMock = new();
-        _sut = new(_sessionServiceMock.Object, _outerApiClientMock.Object);
+        _validatorMock = new();
+        _sut = new(_sessionServiceMock.Object, _outerApiClientMock.Object, _validatorMock.Object);
 
         _sut.AddUrlHelperMock();
 
