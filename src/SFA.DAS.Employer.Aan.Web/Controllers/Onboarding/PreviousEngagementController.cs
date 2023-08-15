@@ -69,8 +69,6 @@ public class PreviousEngagementController : Controller
                 sessionModel.EmployerDetails.DigitalApprenticeshipProgrammeStartDate = empSummary.Result.StartDate.GetValueOrDefault().Date.ToString("dd-MM-yyyy")!;
             }
             sessionModel.EmployerDetails.Sectors = empSummary.Result.Sectors;
-            sessionModel.EmployerDetails.FullName = User.GetIdamsUserDisplayName();
-            sessionModel.EmployerDetails.Email = User.GetEmail();
             var account = User.GetEmployerAccount(decodedEmployerAccountId.ToString());
             if (account != null) sessionModel.EmployerDetails.OrganisationName = account.DasAccountName;
             sessionModel.EmployerDetails.AccountId = decodedEmployerAccountId;

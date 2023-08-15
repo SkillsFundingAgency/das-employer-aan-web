@@ -17,8 +17,8 @@ public class CheckYourAnswersViewModel : CheckYourAnswersSubmitModel
     public List<string>? Support { get; }
     public string PreviousEngagementChangeLink { get; }
     public string? PreviousEngagement { get; }
-    public string FullName { get; set; }
-    public string Email { get; set; }
+    public string FullName { get; set; } = null!;
+    public string Email { get; set; } = null!;
     public string OrganisationName { get; set; }
     public int ActiveApprenticesCount { get; set; }
     public string DigitalApprenticeshipProgrammeStartDate { get; set; }
@@ -42,8 +42,6 @@ public class CheckYourAnswersViewModel : CheckYourAnswersSubmitModel
         DigitalApprenticeshipProgrammeStartDate = sessionModel.EmployerDetails.DigitalApprenticeshipProgrammeStartDate;
         Sectors = sessionModel.EmployerDetails.Sectors;
 
-        FullName = sessionModel.EmployerDetails.FullName;
-        Email = sessionModel.EmployerDetails.Email;
         OrganisationName = sessionModel.EmployerDetails.OrganisationName;
 
         if (sessionModel.Regions.Any(x => x.IsConfirmed))

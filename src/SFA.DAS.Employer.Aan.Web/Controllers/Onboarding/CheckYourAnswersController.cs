@@ -39,7 +39,10 @@ public class CheckYourAnswersController : Controller
 
     private CheckYourAnswersViewModel GetViewModel(OnboardingSessionModel sessionModel, string employerAccountId)
     {
-        return new CheckYourAnswersViewModel(Url, sessionModel, employerAccountId);
+        var viewModel = new CheckYourAnswersViewModel(Url, sessionModel, employerAccountId);
+        viewModel.FullName = User.GetIdamsUserDisplayName();
+        viewModel.Email = User.GetEmail();
+        return viewModel;
     }
 
     [HttpPost]
@@ -73,7 +76,7 @@ public class CheckYourAnswersController : Controller
             RegionId = source.IsLocalOrganisation.GetValueOrDefault() ? source.Regions.Find(x => x.IsConfirmed)!.Id : null
         };
         request.ProfileValues.AddRange(source.ProfileData.Where(p => !string.IsNullOrWhiteSpace(p.Value)).Select(p => new ProfileValue(p.Id, p.Value!)));
-        request.Email = source.EmployerDetails.Email;
+        request.Email = User.GetEmail();
         request.FirstName = User.GetGivenName();
         request.LastName = User.GetFamilyName();
         request.UserRef = User.GetIdamsUserId();

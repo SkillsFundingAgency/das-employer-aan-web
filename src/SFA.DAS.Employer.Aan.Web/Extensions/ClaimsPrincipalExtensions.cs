@@ -13,7 +13,6 @@ public static class ClaimsPrincipalExtensions
     {
         public const string AanMemberId = "http://das/employer/identity/claims/aan_member_id";
         public const string StagedEmployer = "is_staged_employer";
-        public const string Email = "email";
         //This is defined in the login service, so it should be exact match
         public const string EmployerId = "employer_id";
     }
@@ -45,5 +44,5 @@ public static class ClaimsPrincipalExtensions
     public static string GetIdamsUserDisplayName(this ClaimsPrincipal principal) => principal.FindFirstValue(EmployerClaims.IdamsUserDisplayNameClaimTypeIdentifier);
     public static string GetGivenName(this ClaimsPrincipal principal) => principal.FindFirstValue(EmployerClaims.GivenName);
     public static string GetFamilyName(this ClaimsPrincipal principal) => principal.FindFirstValue(EmployerClaims.FamilyName);
-    public static string GetEmail(this ClaimsPrincipal principal) => principal.FindFirstValue(ClaimTypes.Email);
+    public static string GetEmail(this ClaimsPrincipal principal) => principal.FindFirstValue(EmployerClaims.IdamsUserEmailClaimTypeIdentifier);
 }

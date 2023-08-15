@@ -86,8 +86,6 @@ public class AndSessionModelIsPopulated
         .AddUrlForRoute(RouteNames.Onboarding.PreviousEngagement, PreviousEngagementUrl);
 
         user = UsersForTesting.GetUserWithClaims(_employerAccountId);
-        _sessionModel.EmployerDetails.FullName = user.GetIdamsUserDisplayName();
-        _sessionModel.EmployerDetails.Email = user.GetEmail();
         var account = user.GetEmployerAccount(_employerAccountId);
         _sessionModel.EmployerDetails.OrganisationName = account.DasAccountName;
 
@@ -175,8 +173,6 @@ public class AndSessionModelIsPopulated
     public void ThenSetsEmployersDetailsInViewModel()
     {
         InvokeControllerGet();
-        _viewModel!.FullName.Should().Be(_sessionModel.EmployerDetails.FullName);
-        _viewModel!.Email.Should().Be(_sessionModel.EmployerDetails.Email);
         _viewModel!.OrganisationName.Should().Be(_sessionModel.EmployerDetails.OrganisationName);
         _viewModel!.ActiveApprenticesCount.Should().Be(_sessionModel.EmployerDetails.ActiveApprenticesCount);
         _viewModel!.DigitalApprenticeshipProgrammeStartDate.Should().Be(_sessionModel.EmployerDetails.DigitalApprenticeshipProgrammeStartDate);

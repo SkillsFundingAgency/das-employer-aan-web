@@ -69,7 +69,7 @@ public class CheckYourAnswersControllerPostTests
             && r.AccountId == onboardingSessionModel.EmployerDetails.AccountId
             && r.UserRef == user.GetIdamsUserId()
             && r.RegionId == (onboardingSessionModel.IsLocalOrganisation.GetValueOrDefault() ? onboardingSessionModel.Regions.Find(x => x.IsConfirmed)!.Id : null)
-            && r.Email == onboardingSessionModel.EmployerDetails.Email
+            && r.Email == user.GetEmail()
             && r.FirstName == user.GetGivenName()
             && r.LastName == user.GetFamilyName()
         ), cancellationToken));
