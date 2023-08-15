@@ -48,24 +48,24 @@ public class CheckYourAnswersController : Controller
     [HttpPost]
     public async Task<IActionResult> Post([FromRoute] string employerAccountId, CheckYourAnswersSubmitModel submitModel, CancellationToken cancellationToken)
     {
-        var onBoardingSessionModel = _sessionService.Get<OnboardingSessionModel>();
+        var sessionModel = _sessionService.Get<OnboardingSessionModel>();
+        submitModel.IsRegionConfirmationDone = sessionModel.Regions.Exists(x => x.IsConfirmed) || sessionModel.IsMultiRegionalOrganisation.GetValueOrDefault();
 
         ValidationResult result = _validator.Validate(submitModel);
         if (!result.IsValid)
         {
-            var sessionModel = _sessionService.Get<OnboardingSessionModel>();
             var model = GetViewModel(sessionModel, employerAccountId);
             result.AddToModelState(ModelState);
             return View(ViewPath, model);
         }
-        var response = await _outerApiClient.PostEmployerMember(GenerateCreateEmployerMemberRequest(onBoardingSessionModel, employerAccountId), cancellationToken);
+        var response = await _outerApiClient.PostEmployerMember(PopulateCreateEmployerMemberRequest(sessionModel, employerAccountId), cancellationToken);
 
         User.AddAanMemberIdClaim(response.MemberId);
 
         return View(ApplicationSubmittedViewPath);
     }
 
-    private CreateEmployerMemberRequest GenerateCreateEmployerMemberRequest(OnboardingSessionModel source, string employerAccountId)
+    private CreateEmployerMemberRequest PopulateCreateEmployerMemberRequest(OnboardingSessionModel source, string employerAccountId)
     {
         var account = User.GetEmployerAccount(employerAccountId);
 
@@ -73,7 +73,7 @@ public class CheckYourAnswersController : Controller
         {
             JoinedDate = DateTime.UtcNow,
             OrganisationName = account.DasAccountName,
-            RegionId = source.IsLocalOrganisation.GetValueOrDefault() ? source.Regions.Find(x => x.IsConfirmed)!.Id : null
+            RegionId = source.IsMultiRegionalOrganisation.GetValueOrDefault() ? null : source.Regions.Find(x => x.IsConfirmed)!.Id
         };
         request.ProfileValues.AddRange(source.ProfileData.Where(p => !string.IsNullOrWhiteSpace(p.Value)).Select(p => new ProfileValue(p.Id, p.Value!)));
         request.Email = User.GetEmail();

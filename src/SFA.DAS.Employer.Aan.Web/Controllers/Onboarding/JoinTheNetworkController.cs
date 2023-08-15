@@ -86,7 +86,7 @@ public class JoinTheNetworkController : Controller
         {
             return sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId })! : Url.RouteUrl(@RouteNames.Onboarding.AreasToEngageLocally, new { employerAccountId })!;
         }
-        else if (noOfRegionsSelected >= 5 && sessionModel.IsLocalOrganisation.GetValueOrDefault())
+        else if (noOfRegionsSelected >= 5 && !sessionModel.IsMultiRegionalOrganisation.GetValueOrDefault())
         {
             return sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId })! : Url.RouteUrl(@RouteNames.Onboarding.AreasToEngageLocally, new { employerAccountId })!;
         }

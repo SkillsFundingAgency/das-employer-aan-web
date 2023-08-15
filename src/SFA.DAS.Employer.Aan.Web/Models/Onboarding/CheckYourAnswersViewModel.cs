@@ -6,7 +6,7 @@ namespace SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
 public class CheckYourAnswersSubmitModel : ViewModelBase
 {
-    public bool? IsLocalOrganisationSet { get; set; }
+    public bool IsRegionConfirmationDone { get; set; }
 }
 public class CheckYourAnswersViewModel : CheckYourAnswersSubmitModel
 {
@@ -44,10 +44,7 @@ public class CheckYourAnswersViewModel : CheckYourAnswersSubmitModel
 
         OrganisationName = sessionModel.EmployerDetails.OrganisationName;
 
-        if (sessionModel.Regions.Any(x => x.IsConfirmed))
-            IsLocalOrganisationSet = true;
-        else
-            IsLocalOrganisationSet = sessionModel.IsLocalOrganisation;
+        IsRegionConfirmationDone = sessionModel.Regions.Exists(x => x.IsConfirmed) || sessionModel.IsMultiRegionalOrganisation.GetValueOrDefault();
     }
 
     private static List<string>? GetRegions(OnboardingSessionModel sessionModel)
@@ -59,7 +56,7 @@ public class CheckYourAnswersViewModel : CheckYourAnswersSubmitModel
         {
             regions.Add($"Locally prefers {locallyPreferredRegion.Area}");
         }
-        if (sessionModel.IsLocalOrganisation.HasValue && !sessionModel.IsLocalOrganisation.GetValueOrDefault())
+        if (sessionModel.IsMultiRegionalOrganisation.HasValue && sessionModel.IsMultiRegionalOrganisation.GetValueOrDefault())
         {
             regions.Add("Prefers to engage as multi-regional");
         }

@@ -7,5 +7,5 @@ public class PrimaryEngagementWithinNetworkViewModel : PrimaryEngagementWithinNe
 
 public class PrimaryEngagementWithinNetworkSubmitModel : ViewModelBase
 {
-    public bool? IsLocalOrganisation { get; set; }
+    public bool? IsMultiRegionalOrganisation { get; set; }
 }

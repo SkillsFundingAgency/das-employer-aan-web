@@ -139,7 +139,7 @@ public class AndSessionModelIsPopulated
     public void ThenSetsMultiRegionalOrganisationInViewModel()
     {
         _sessionModel.Regions = MultiOrganisationRegions;
-        _sessionModel.IsLocalOrganisation = false;
+        _sessionModel.IsMultiRegionalOrganisation = true;
         InvokeControllerGet();
         var result = MultiOrganisationRegions.Where(x => x.IsSelected).Select(x => x.Area).ToList();
         result.Add($"Prefers to engage as multi-regional");

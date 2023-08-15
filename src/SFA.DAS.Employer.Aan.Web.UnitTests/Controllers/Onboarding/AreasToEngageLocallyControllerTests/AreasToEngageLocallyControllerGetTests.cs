@@ -96,7 +96,7 @@ public class AreasToEngageLocallyControllerGetTests
             new RegionModel { Id = 5, IsSelected = true, IsConfirmed = false },
             new RegionModel { Id = 6, IsSelected = true, IsConfirmed = false }
         };
-        sessionModel.IsLocalOrganisation = true;
+        sessionModel.IsMultiRegionalOrganisation = false;
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
         var result = sut.Get(Guid.NewGuid().ToString());

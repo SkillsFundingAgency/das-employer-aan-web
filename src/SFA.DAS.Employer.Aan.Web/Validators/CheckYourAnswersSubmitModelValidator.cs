@@ -9,8 +9,8 @@ public class CheckYourAnswersSubmitModelValidator : AbstractValidator<CheckYourA
 
     public CheckYourAnswersSubmitModelValidator()
     {
-        RuleFor(m => m.IsLocalOrganisationSet)
-            .NotNull()
+        RuleFor(m => m.IsRegionConfirmationDone)
+            .Equal(true)
             .WithMessage(NoSelectionForAreasToEngageLocallyErrorMessage);
     }
 }

@@ -87,14 +87,14 @@ public class JoinTheNetworkControllerGetTests
         result.As<ViewResult>().Model.As<JoinTheNetworkViewModel>().BackLink.Should().Be(navigateUrl);
     }
 
-    [MoqInlineAutoData(5, false, true, RouteNames.Onboarding.AreasToEngageLocally)]
-    [MoqInlineAutoData(5, false, false, RouteNames.Onboarding.PrimaryEngagementWithinNetwork)]
-    [MoqInlineAutoData(5, true, true, RouteNames.Onboarding.CheckYourAnswers)]
+    [MoqInlineAutoData(5, false, false, RouteNames.Onboarding.AreasToEngageLocally)]
+    [MoqInlineAutoData(5, false, true, RouteNames.Onboarding.PrimaryEngagementWithinNetwork)]
     [MoqInlineAutoData(5, true, false, RouteNames.Onboarding.CheckYourAnswers)]
+    [MoqInlineAutoData(5, true, true, RouteNames.Onboarding.CheckYourAnswers)]
     public void Get_ViewModel_HasCorrectBackLinkToRegionsWhenMoreThanFourRegionsSelected(
         int noOfRegionsSelected,
         bool hasSeenPreview,
-        bool isLocalOrganisation,
+        bool isMultiRegionalOrganisation,
         string navigateRoute,
         string navigateUrl,
         [Frozen] Mock<ISessionService> sessionServiceMock,
@@ -102,7 +102,7 @@ public class JoinTheNetworkControllerGetTests
     {
         sut.AddUrlHelperMock().AddUrlForRoute(navigateRoute, navigateUrl);
         OnboardingSessionModel sessionModel = new();
-        sessionModel.IsLocalOrganisation = isLocalOrganisation;
+        sessionModel.IsMultiRegionalOrganisation = isMultiRegionalOrganisation;
         sessionModel.HasSeenPreview = hasSeenPreview;
         sessionModel.Regions = Enumerable.Range(1, noOfRegionsSelected).Select(i => new RegionModel { Id = i, IsSelected = true }).ToList();
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
@@ -120,6 +120,7 @@ public class JoinTheNetworkControllerGetTests
     {
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.PrimaryEngagementWithinNetwork, primaryEngagementWithinNetworkUrl);
         OnboardingSessionModel sessionModel = new();
+        sessionModel.IsMultiRegionalOrganisation = true;
         sessionModel.Regions = new()
         {
             new RegionModel { Id = 1, IsSelected = true, IsConfirmed = false },
