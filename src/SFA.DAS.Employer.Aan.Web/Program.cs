@@ -51,13 +51,13 @@ if (!app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseHealthChecks("/ping");
     /// app.UseStatusCodePagesWithReExecute("/error/{0}"); 
     /// app.UseExceptionHandler("/error");
     app.UseHsts();
 }
 
 app
+    .UseHealthChecks("/ping")
     .UseHttpsRedirection()
     .UseStaticFiles()
     .UseCookiePolicy()
