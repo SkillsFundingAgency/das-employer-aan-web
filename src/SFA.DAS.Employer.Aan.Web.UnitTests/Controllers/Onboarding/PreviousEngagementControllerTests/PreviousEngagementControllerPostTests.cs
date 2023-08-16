@@ -73,7 +73,7 @@ public class PreviousEngagementControllerPostTests
         ValidationResult validationResult = new();
         validatorMock.Setup(v => v.Validate(submitmodel)).Returns(validationResult);
 
-        var user = UsersForTesting.GetUserWithClaims(decodedEmployerAccountId.ToString());
+        var user = UsersForTesting.GetUserWithClaims(submitmodel.EmployerAccountId);
         sut.ControllerContext = new() { HttpContext = new DefaultHttpContext() { User = user } };
 
         encodingServiceMock.Setup(o => o.Decode(It.IsAny<string>(), It.IsAny<EncodingType>())).Returns(decodedEmployerAccountId);
@@ -114,7 +114,7 @@ public class PreviousEngagementControllerPostTests
         encodingServiceMock.Setup(o => o.Decode(It.IsAny<string>(), It.IsAny<EncodingType>())).Returns(decodedEmployerAccountId);
         outerApiClient.Setup(o => o.GetEmployerSummary(decodedEmployerAccountId.ToString(), cancellationToken)).ReturnsAsync(employerMemberSummary);
 
-        var user = UsersForTesting.GetUserWithClaims(decodedEmployerAccountId.ToString());
+        var user = UsersForTesting.GetUserWithClaims(submitmodel.EmployerAccountId);
         sut.ControllerContext = new() { HttpContext = new DefaultHttpContext() { User = user } };
 
         sut.Post(submitmodel, cancellationToken);
@@ -132,7 +132,7 @@ public class PreviousEngagementControllerPostTests
             sessionModel.EmployerDetails.ActiveApprenticesCount.Should().Be(employerMemberSummary.ActiveCount);
             sessionModel.EmployerDetails.Sectors.Should().Equal(employerMemberSummary.Sectors);
             sessionModel.EmployerDetails.DigitalApprenticeshipProgrammeStartDate.Should().Be(employerMemberSummary.StartDate.GetValueOrDefault().Date.ToString("dd-MM-yyyy"));
-            var account = user.GetEmployerAccount(decodedEmployerAccountId.ToString());
+            var account = user.GetEmployerAccount(submitmodel.EmployerAccountId);
             sessionModel.EmployerDetails.OrganisationName.Should().Be(account.DasAccountName);
         }
 
