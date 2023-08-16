@@ -69,12 +69,10 @@ public class CheckYourAnswersController : Controller
     {
         var account = User.GetEmployerAccount(employerAccountId);
 
-        CreateEmployerMemberRequest request = new()
-        {
-            JoinedDate = DateTime.UtcNow,
-            OrganisationName = account.DasAccountName,
-            RegionId = source.IsMultiRegionalOrganisation.GetValueOrDefault() ? null : source.Regions.Find(x => x.IsConfirmed)!.Id
-        };
+        CreateEmployerMemberRequest request = new();
+        request.JoinedDate = DateTime.UtcNow;
+        request.OrganisationName = account.DasAccountName;
+        request.RegionId = source.IsMultiRegionalOrganisation.GetValueOrDefault() ? null : source.Regions.Find(x => x.IsConfirmed)!.Id;
         request.ProfileValues.AddRange(source.ProfileData.Where(p => !string.IsNullOrWhiteSpace(p.Value)).Select(p => new ProfileValue(p.Id, p.Value!)));
         request.Email = User.GetEmail();
         request.FirstName = User.GetGivenName();
