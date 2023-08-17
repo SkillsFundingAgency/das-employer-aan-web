@@ -20,6 +20,7 @@ public class EventsHubControllerTests
     private Mock<IOuterApiClient> _outerApiClientMock = null!;
     private EventsHubController _sut = null!;
     private CancellationToken _cancellationToken;
+    string accountId = Guid.NewGuid().ToString();
 
     [SetUp]
     public async Task WhenGetEventsHub()
@@ -39,7 +40,7 @@ public class EventsHubControllerTests
         _sut.AddUrlHelperMock().AddUrlForRoute(SharedRouteNames.NetworkEvents, AllNetworksUrl);
         _sut.AddContextWithClaim(ClaimsPrincipalExtensions.ClaimTypes.AanMemberId, memberId.ToString());
 
-        _result = await _sut.Index(null, null, _cancellationToken);
+        _result = await _sut.Index(accountId, null, null, _cancellationToken);
     }
 
     [Test]
@@ -57,14 +58,14 @@ public class EventsHubControllerTests
     [Test]
     public void InvalidValue_ThenThrowsArgumentOutOfRangeException()
     {
-        Func<Task> action = () => _sut.Index(13, null, _cancellationToken);
+        Func<Task> action = () => _sut.Index(accountId, 13, null, _cancellationToken);
         action.Should().ThrowAsync<ArgumentOutOfRangeException>();
     }
 
     [Test]
     public async Task OnlyMonthGiven_AssumesCurrentYear()
     {
-        var result = await _sut.Index(DateTime.Today.Month, null, _cancellationToken);
+        var result = await _sut.Index(accountId, DateTime.Today.Month, null, _cancellationToken);
 
         result.As<ViewResult>().Model.As<EventsHubViewModel>().Calendar.FirstDayOfCurrentMonth.Should().Be(new DateOnly(DateTime.Today.Year, DateTime.Today.Month, 1));
     }
@@ -72,7 +73,7 @@ public class EventsHubControllerTests
     [Test]
     public async Task OnlyYearGiven_AssumesCurrentMonth()
     {
-        var result = await _sut.Index(null, DateTime.Today.Year, _cancellationToken);
+        var result = await _sut.Index(accountId, null, DateTime.Today.Year, _cancellationToken);
 
         result.As<ViewResult>().Model.As<EventsHubViewModel>().Calendar.FirstDayOfCurrentMonth.Should().Be(new DateOnly(DateTime.Today.Year, DateTime.Today.Month, 1));
     }

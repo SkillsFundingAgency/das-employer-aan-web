@@ -19,7 +19,7 @@ public class EventsHubController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index([FromQuery] int? month, [FromQuery] int? year, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index([FromRoute] string employerAccountId, [FromQuery] int? month, [FromQuery] int? year, CancellationToken cancellationToken)
     {
         month = month ?? DateTime.Today.Month;
         year = year ?? DateTime.Today.Year;
@@ -30,7 +30,10 @@ public class EventsHubController : Controller
 
         var response = await _apiClient.GetAttendances(User.GetAanMemberId(), firstDayOfTheMonth.ToApiString(), lastDayOfTheMonth.ToApiString(), cancellationToken);
 
-        EventsHubViewModel model = new(firstDayOfTheMonth, Url, GetAppointments(response.Attendances));
+        EventsHubViewModel model = new(firstDayOfTheMonth, Url, GetAppointments(response.Attendances))
+        {
+            AllNetworksUrl = Url.RouteUrl(@RouteNames.NetworkEvents, new { employerAccountId })!
+        };
         return View(model);
     }
 
