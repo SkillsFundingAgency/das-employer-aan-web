@@ -45,19 +45,19 @@ if (!builder.Environment.IsDevelopment())
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
 else
 {
-    app.UseHealthChecks("/ping");
     /// app.UseStatusCodePagesWithReExecute("/error/{0}"); 
     /// app.UseExceptionHandler("/error");
     app.UseHsts();
 }
 
 app
+    .UseHealthChecks("/ping")
     .UseHttpsRedirection()
     .UseStaticFiles()
     .UseCookiePolicy()

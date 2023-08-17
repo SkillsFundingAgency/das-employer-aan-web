@@ -2,12 +2,14 @@
 using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using SFA.DAS.Employer.Aan.Domain.Constants;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
+using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
@@ -51,9 +53,13 @@ public class PreviousEngagementControllerPostTests
     public void Post_ModelStateIsValid_UpdatesSessionModel(
         bool hasPreviousEngagementValue,
         [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Frozen] Mock<IEncodingService> encodingServiceMock,
+        [Frozen] Mock<IOuterApiClient> outerApiClient,
         [Frozen] Mock<IValidator<PreviousEngagementSubmitModel>> validatorMock,
         [Frozen] PreviousEngagementSubmitModel submitmodel,
         [Frozen] OnboardingSessionModel sessionModel,
+        [Frozen] EmployerMemberSummary employerMemberSummary,
+        [Frozen] long decodedEmployerAccountId,
         [Greedy] PreviousEngagementController sut,
         CancellationToken cancellationToken)
     {
@@ -66,6 +72,12 @@ public class PreviousEngagementControllerPostTests
 
         ValidationResult validationResult = new();
         validatorMock.Setup(v => v.Validate(submitmodel)).Returns(validationResult);
+
+        var user = UsersForTesting.GetUserWithClaims(submitmodel.EmployerAccountId);
+        sut.ControllerContext = new() { HttpContext = new DefaultHttpContext() { User = user } };
+
+        encodingServiceMock.Setup(o => o.Decode(It.IsAny<string>(), It.IsAny<EncodingType>())).Returns(decodedEmployerAccountId);
+        outerApiClient.Setup(o => o.GetEmployerSummary(decodedEmployerAccountId.ToString(), cancellationToken)).ReturnsAsync(employerMemberSummary);
 
         sut.Post(submitmodel, cancellationToken);
 
@@ -85,7 +97,7 @@ public class PreviousEngagementControllerPostTests
         [Frozen] PreviousEngagementSubmitModel submitmodel,
         [Frozen] OnboardingSessionModel sessionModel,
         [Frozen] EmployerMemberSummary employerMemberSummary,
-        [Frozen] long decodeEmployerAccountId,
+        long decodedEmployerAccountId,
         CancellationToken cancellationToken)
     {
         PreviousEngagementController sut = new PreviousEngagementController(sessionServiceMock.Object, validatorMock.Object, outerApiClient.Object, encodingServiceMock.Object);
@@ -99,8 +111,11 @@ public class PreviousEngagementControllerPostTests
         ValidationResult validationResult = new();
         validatorMock.Setup(v => v.Validate(submitmodel)).Returns(validationResult);
 
-        encodingServiceMock.Setup(o => o.Decode(It.IsAny<string>(), It.IsAny<EncodingType>())).Returns(decodeEmployerAccountId);
-        outerApiClient.Setup(o => o.GetEmployerSummary(decodeEmployerAccountId.ToString(), cancellationToken)).ReturnsAsync(employerMemberSummary);
+        encodingServiceMock.Setup(o => o.Decode(It.IsAny<string>(), It.IsAny<EncodingType>())).Returns(decodedEmployerAccountId);
+        outerApiClient.Setup(o => o.GetEmployerSummary(decodedEmployerAccountId.ToString(), cancellationToken)).ReturnsAsync(employerMemberSummary);
+
+        var user = UsersForTesting.GetUserWithClaims(submitmodel.EmployerAccountId);
+        sut.ControllerContext = new() { HttpContext = new DefaultHttpContext() { User = user } };
 
         sut.Post(submitmodel, cancellationToken);
 
@@ -117,6 +132,8 @@ public class PreviousEngagementControllerPostTests
             sessionModel.EmployerDetails.ActiveApprenticesCount.Should().Be(employerMemberSummary.ActiveCount);
             sessionModel.EmployerDetails.Sectors.Should().Equal(employerMemberSummary.Sectors);
             sessionModel.EmployerDetails.DigitalApprenticeshipProgrammeStartDate.Should().Be(employerMemberSummary.StartDate.GetValueOrDefault().Date.ToString("dd-MM-yyyy"));
+            var account = user.GetEmployerAccount(submitmodel.EmployerAccountId);
+            sessionModel.EmployerDetails.OrganisationName.Should().Be(account.DasAccountName);
         }
 
         sut.ModelState.IsValid.Should().BeTrue();

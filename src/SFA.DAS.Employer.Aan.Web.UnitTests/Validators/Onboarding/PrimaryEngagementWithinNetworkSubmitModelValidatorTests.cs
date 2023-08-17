@@ -12,14 +12,14 @@ public class PrimaryEngagementWithinNetworkSubmitModelValidatorTests
     [TestCase(null, false)]
     public void EngagedWithAnAmbassadorInTheNetwork_Validation(bool? value, bool isValid)
     {
-        var model = new PrimaryEngagementWithinNetworkSubmitModel { IsLocalOrganisation = value };
+        var model = new PrimaryEngagementWithinNetworkSubmitModel { IsMultiRegionalOrganisation = value };
         var sut = new PrimaryEngagementWithinNetworkSubmitModelValidator();
 
         var result = sut.TestValidate(model);
 
         if (isValid)
-            result.ShouldNotHaveValidationErrorFor(c => c.IsLocalOrganisation);
+            result.ShouldNotHaveValidationErrorFor(c => c.IsMultiRegionalOrganisation);
         else
-            result.ShouldHaveValidationErrorFor(x => x.IsLocalOrganisation).WithErrorMessage(PrimaryEngagementWithinNetworkSubmitModelValidator.NoSelectionErrorMessage);
+            result.ShouldHaveValidationErrorFor(x => x.IsMultiRegionalOrganisation).WithErrorMessage(PrimaryEngagementWithinNetworkSubmitModelValidator.NoSelectionErrorMessage);
     }
 }

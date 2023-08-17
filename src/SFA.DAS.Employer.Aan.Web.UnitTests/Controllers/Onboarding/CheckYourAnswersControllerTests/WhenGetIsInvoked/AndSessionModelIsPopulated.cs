@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using FluentAssertions;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -16,6 +17,8 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.CheckYourAns
 
 public class AndSessionModelIsPopulated
 {
+    Mock<IOuterApiClient> _outerApiClientMock;
+    Mock<IValidator<CheckYourAnswersSubmitModel>> _validatorMock;
     OnboardingSessionModel _sessionModel;
     CheckYourAnswersController _sut;
     ViewResult? _getResult;
@@ -73,7 +76,9 @@ public class AndSessionModelIsPopulated
         _sessionModel = new();
         _sessionServiceMock = new();
         _sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(_sessionModel);
-        _sut = new(_sessionServiceMock.Object);
+        _outerApiClientMock = new();
+        _validatorMock = new();
+        _sut = new(_sessionServiceMock.Object, _outerApiClientMock.Object, _validatorMock.Object);
 
         _sut.AddUrlHelperMock()
         .AddUrlForRoute(RouteNames.Onboarding.Regions, RegionUrl)
@@ -81,6 +86,8 @@ public class AndSessionModelIsPopulated
         .AddUrlForRoute(RouteNames.Onboarding.PreviousEngagement, PreviousEngagementUrl);
 
         user = UsersForTesting.GetUserWithClaims(_employerAccountId);
+        var account = user.GetEmployerAccount(_employerAccountId);
+        _sessionModel.EmployerDetails.OrganisationName = account.DasAccountName;
 
         _sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
@@ -132,7 +139,7 @@ public class AndSessionModelIsPopulated
     public void ThenSetsMultiRegionalOrganisationInViewModel()
     {
         _sessionModel.Regions = MultiOrganisationRegions;
-        _sessionModel.IsLocalOrganisation = false;
+        _sessionModel.IsMultiRegionalOrganisation = true;
         InvokeControllerGet();
         var result = MultiOrganisationRegions.Where(x => x.IsSelected).Select(x => x.Area).ToList();
         result.Add($"Prefers to engage as multi-regional");
@@ -163,12 +170,13 @@ public class AndSessionModelIsPopulated
     }
 
     [Test]
-    public void ThenSetsOrgansationInfoDataInViewModel()
+    public void ThenSetsEmployersDetailsInViewModel()
     {
         InvokeControllerGet();
-        _viewModel!.FullName.Should().Be(user.FindFirstValue(EmployerClaims.IdamsUserDisplayNameClaimTypeIdentifier));
-        _viewModel!.Email.Should().Be(user.FindFirstValue(ClaimTypes.Email));
-        _viewModel!.OrganisationName.Should().Be(user.GetEmployerAccount(_employerAccountId).DasAccountName);
+        _viewModel!.OrganisationName.Should().Be(_sessionModel.EmployerDetails.OrganisationName);
+        _viewModel!.ActiveApprenticesCount.Should().Be(_sessionModel.EmployerDetails.ActiveApprenticesCount);
+        _viewModel!.DigitalApprenticeshipProgrammeStartDate.Should().Be(_sessionModel.EmployerDetails.DigitalApprenticeshipProgrammeStartDate);
+        _viewModel!.Sectors.Should().BeEquivalentTo(_sessionModel.EmployerDetails.Sectors);
     }
 
     [TearDown]

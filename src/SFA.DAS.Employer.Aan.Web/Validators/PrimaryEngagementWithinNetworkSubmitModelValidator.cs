@@ -9,7 +9,7 @@ public class PrimaryEngagementWithinNetworkSubmitModelValidator : AbstractValida
 
     public PrimaryEngagementWithinNetworkSubmitModelValidator()
     {
-        RuleFor(m => m.IsLocalOrganisation)
+        RuleFor(m => m.IsMultiRegionalOrganisation)
             .NotNull()
             .WithMessage(NoSelectionErrorMessage);
     }

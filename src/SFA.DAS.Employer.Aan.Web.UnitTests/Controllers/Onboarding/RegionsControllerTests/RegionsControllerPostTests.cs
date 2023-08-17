@@ -60,7 +60,7 @@ public class RegionsControllerPostTests
         //Arrange        
         sut.AddUrlHelperMock();
 
-        RegionsSubmitModel submitmodel = new() { Regions = Enumerable.Range(1, noOfRegionsSelected).Select(i => new RegionModel { Id = i, IsSelected = true }).ToList() };
+        RegionsSubmitModel submitmodel = new() { Regions = Enumerable.Range(1, noOfRegionsSelected).Select(i => new RegionModel { Id = i, IsSelected = true, IsConfirmed = false }).ToList() };
 
         ValidationResult validationResult = new();
         validatorMock.Setup(v => v.Validate(submitmodel)).Returns(validationResult);
@@ -73,6 +73,15 @@ public class RegionsControllerPostTests
 
         //Assert
         sessionServiceMock.Verify(s => s.Set(It.Is<OnboardingSessionModel>(m => m.Regions == submitmodel.Regions)));
+
+        if (noOfRegionsSelected == 1)
+        {
+            sessionModel.Regions.Count(r => r.IsConfirmed).Should().Be(1);
+        }
+        else
+        {
+            sessionModel.Regions.Count(r => r.IsConfirmed).Should().Be(0);
+        }
 
         result.As<RedirectToRouteResult>().RouteName.Should().Be(routeToRedirect);
     }

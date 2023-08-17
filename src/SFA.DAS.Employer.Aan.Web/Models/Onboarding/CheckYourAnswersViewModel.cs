@@ -4,7 +4,11 @@ using SFA.DAS.Employer.Aan.Web.Infrastructure;
 
 namespace SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
-public class CheckYourAnswersViewModel : ViewModelBase
+public class CheckYourAnswersSubmitModel : ViewModelBase
+{
+    public bool IsRegionConfirmationDone { get; set; }
+}
+public class CheckYourAnswersViewModel : CheckYourAnswersSubmitModel
 {
     public string RegionChangeLink { get; }
     public List<string>? Region { get; }
@@ -15,7 +19,7 @@ public class CheckYourAnswersViewModel : ViewModelBase
     public string? PreviousEngagement { get; }
     public string FullName { get; set; } = null!;
     public string Email { get; set; } = null!;
-    public string OrganisationName { get; set; } = null!;
+    public string OrganisationName { get; set; }
     public int ActiveApprenticesCount { get; set; }
     public string DigitalApprenticeshipProgrammeStartDate { get; set; }
     public IEnumerable<string> Sectors { get; set; }
@@ -37,6 +41,10 @@ public class CheckYourAnswersViewModel : ViewModelBase
         ActiveApprenticesCount = sessionModel.EmployerDetails.ActiveApprenticesCount;
         DigitalApprenticeshipProgrammeStartDate = sessionModel.EmployerDetails.DigitalApprenticeshipProgrammeStartDate;
         Sectors = sessionModel.EmployerDetails.Sectors;
+
+        OrganisationName = sessionModel.EmployerDetails.OrganisationName;
+
+        IsRegionConfirmationDone = sessionModel.Regions.Exists(x => x.IsConfirmed) || sessionModel.IsMultiRegionalOrganisation.GetValueOrDefault();
     }
 
     private static List<string>? GetRegions(OnboardingSessionModel sessionModel)
@@ -48,7 +56,7 @@ public class CheckYourAnswersViewModel : ViewModelBase
         {
             regions.Add($"Locally prefers {locallyPreferredRegion.Area}");
         }
-        if (sessionModel.IsLocalOrganisation.HasValue && !sessionModel.IsLocalOrganisation.GetValueOrDefault())
+        if (sessionModel.IsMultiRegionalOrganisation.HasValue && sessionModel.IsMultiRegionalOrganisation.GetValueOrDefault())
         {
             regions.Add("Prefers to engage as multi-regional");
         }
