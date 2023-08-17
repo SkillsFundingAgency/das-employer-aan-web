@@ -10,7 +10,7 @@
         <form method="post">
             @Html.HiddenFor(m => m.EmployerAccountId)
             <fieldset class="govuk-fieldset">
-                <div esfa-validation-marker-for="IsLocalOrganisation" class="govuk-form-group">
+                <div esfa-validation-marker-for="IsMultiRegionalOrganisation" class="govuk-form-group">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                         <h1 class="govuk-heading-l">
                             Who would you like to primarily engage with in the network?
@@ -20,7 +20,7 @@
                     <div id="IsMultiRegionalOrganisation-hint" class="govuk-hint">
                         You work for multi-regional employer, which can impact how you engage with fellow network members at national or regional level. Provide us with your engagement preferences below.
                     </div>
-                    <span asp-validation-for="IsLocalOrganisation" class="govuk-error-message"></span>
+                    <span asp-validation-for="IsMultiRegionalOrganisation" class="govuk-error-message"></span>
                     <details class="govuk-details" data-module="govuk-details">
                         <summary class="govuk-details__summary">
                             <span class="govuk-details__summary-text">
@@ -33,14 +33,14 @@
                     </details>
                     <div id="IsMultiRegionalOrganisation-options" class="govuk-radios" data-module="govuk-radios">
                         <div class="govuk-radios__item">
-                            <input asp-for="IsLocalOrganisation" class="govuk-radios__input" type="radio" value="true"
+                            <input asp-for="IsMultiRegionalOrganisation" class="govuk-radios__input" type="radio" value="false"
                                    sfa-validationerror-class="form-control-error">
-                            <label class="govuk-label govuk-radios__label" for="IsLocalOrganisation">
+                            <label class="govuk-label govuk-radios__label" for="IsMultiRegionalOrganisation">
                                 Local organisations
                             </label>
                         </div>
                         <div class="govuk-radios__item">
-                            <input asp-for="IsLocalOrganisation" id="multiRegionalOrganisation" class="govuk-radios__input" type="radio" value="false"
+                            <input asp-for="IsMultiRegionalOrganisation" id="multiRegionalOrganisation" class="govuk-radios__input" type="radio" value="true"
                                    sfa-validationerror-class="form-control-error">
                             <label class="govuk-label govuk-radios__label" for="multiRegionalOrganisation">
                                 Multi-regional organisations

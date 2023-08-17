@@ -48,7 +48,8 @@ public class RegionsController : Controller
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
 
         sessionModel.Regions = submitModel.Regions!;
-        sessionModel.IsLocalOrganisation = null;
+        sessionModel.IsMultiRegionalOrganisation = null;
+        if (sessionModel.Regions.Count(x => x.IsSelected) == 1) sessionModel.Regions.Single(x => x.IsSelected).IsConfirmed = true;
 
         _sessionService.Set(sessionModel);
 

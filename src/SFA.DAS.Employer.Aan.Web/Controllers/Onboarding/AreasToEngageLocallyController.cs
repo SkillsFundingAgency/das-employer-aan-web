@@ -27,7 +27,7 @@ public class AreasToEngageLocallyController : Controller
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
         var model = GetViewModel(employerAccountId);
         model.EmployerAccountId = employerAccountId;
-        if (sessionModel.Regions.Any(x => x.IsConfirmed))
+        if (sessionModel.Regions.Exists(x => x.IsConfirmed))
         {
             model.SelectedAreaToEngageLocallyId = sessionModel.Regions.Single(x => x.IsConfirmed).Id;
         }
@@ -79,7 +79,7 @@ public class AreasToEngageLocallyController : Controller
         {
             return Url.RouteUrl(@RouteNames.Onboarding.Regions, new { employerAccountId })!;
         }
-        else if (noOfRegionsSelected >= 5 && sessionModel.IsLocalOrganisation.GetValueOrDefault())
+        else if (noOfRegionsSelected >= 5 && !sessionModel.IsMultiRegionalOrganisation.GetValueOrDefault())
         {
             return Url.RouteUrl(@RouteNames.Onboarding.PrimaryEngagementWithinNetwork, new { employerAccountId })!;
         }

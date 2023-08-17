@@ -4,7 +4,6 @@ using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using SFA.DAS.Employer.Aan.Domain.Constants;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
@@ -24,7 +23,7 @@ public class PrimaryEngagementWithinNetworkControllerPostTests
         string regionsUrl)
     {
         OnboardingSessionModel sessionModel = new();
-        sessionModel.IsLocalOrganisation = null;
+        sessionModel.IsMultiRegionalOrganisation = null;
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.Regions, regionsUrl);
@@ -38,12 +37,12 @@ public class PrimaryEngagementWithinNetworkControllerPostTests
         result.As<ViewResult>().Should().NotBeNull();
         result.As<ViewResult>().ViewName.Should().Be(PrimaryEngagementWithinNetworkController.ViewPath);
         result.As<ViewResult>().Model.As<PrimaryEngagementWithinNetworkViewModel>().BackLink.Should().Be(regionsUrl);
-        result.As<ViewResult>().Model.As<PrimaryEngagementWithinNetworkViewModel>().IsLocalOrganisation.Should().Be(sessionModel.IsLocalOrganisation);
+        result.As<ViewResult>().Model.As<PrimaryEngagementWithinNetworkViewModel>().IsMultiRegionalOrganisation.Should().Be(sessionModel.IsMultiRegionalOrganisation);
     }
 
     [TestCase(true)]
     [TestCase(false)]
-    public void Post_ModelStateIsValid_UpdatesSessionModel(bool? isLocalOrganisationValue)
+    public void Post_ModelStateIsValid_UpdatesSessionModel(bool? isMultiRegionalOrganisationValue)
     {
         Mock<ISessionService> sessionServiceMock = new();
         Mock<IValidator<PrimaryEngagementWithinNetworkSubmitModel>> validatorMock = new();
@@ -54,8 +53,8 @@ public class PrimaryEngagementWithinNetworkControllerPostTests
 
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.JoinTheNetwork);
 
-        submitmodel.IsLocalOrganisation = Convert.ToBoolean(isLocalOrganisationValue);
-        sessionModel.IsLocalOrganisation = null;
+        submitmodel.IsMultiRegionalOrganisation = Convert.ToBoolean(isMultiRegionalOrganisationValue);
+        sessionModel.IsMultiRegionalOrganisation = null;
 
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
         validatorMock.Setup(v => v.Validate(submitmodel)).Returns(validationResult);
@@ -65,17 +64,17 @@ public class PrimaryEngagementWithinNetworkControllerPostTests
         sut.Post(submitmodel);
 
         sessionServiceMock.Verify(s => s.Set(sessionModel));
-        sessionModel.ProfileData.FirstOrDefault(p => p.Id == ProfileDataId.HasPreviousEngagement)?.Value.Should().Be(submitmodel.IsLocalOrganisation.ToString());
+        sessionModel.IsMultiRegionalOrganisation.Should().Be(submitmodel.IsMultiRegionalOrganisation);
         sut.ModelState.IsValid.Should().BeTrue();
     }
 
-    [MoqInlineAutoData(false, false, RouteNames.Onboarding.JoinTheNetwork)]
-    [MoqInlineAutoData(true, false, RouteNames.Onboarding.CheckYourAnswers)]
-    [MoqInlineAutoData(true, true, RouteNames.Onboarding.AreasToEngageLocally)]
-    [MoqInlineAutoData(false, true, RouteNames.Onboarding.AreasToEngageLocally)]
+    [MoqInlineAutoData(false, true, RouteNames.Onboarding.JoinTheNetwork)]
+    [MoqInlineAutoData(true, true, RouteNames.Onboarding.CheckYourAnswers)]
+    [MoqInlineAutoData(true, false, RouteNames.Onboarding.AreasToEngageLocally)]
+    [MoqInlineAutoData(false, false, RouteNames.Onboarding.AreasToEngageLocally)]
     public void Post_RedirectsTo_CorrectRoute(
         bool hasSeenPreview,
-        bool? isLocalOrganisation,
+        bool? isMultiRegionalOrganisation,
         string navigateRoute,
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Frozen] Mock<IValidator<PrimaryEngagementWithinNetworkSubmitModel>> validatorMock,
@@ -85,7 +84,7 @@ public class PrimaryEngagementWithinNetworkControllerPostTests
         sut.AddUrlHelperMock();
         OnboardingSessionModel sessionModel = new();
         sessionModel.HasSeenPreview = hasSeenPreview;
-        submitmodel.IsLocalOrganisation = isLocalOrganisation;
+        submitmodel.IsMultiRegionalOrganisation = isMultiRegionalOrganisation;
 
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 

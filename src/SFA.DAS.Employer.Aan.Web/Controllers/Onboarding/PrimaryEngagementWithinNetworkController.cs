@@ -47,11 +47,11 @@ public class PrimaryEngagementWithinNetworkController : Controller
             return View(ViewPath, model);
         }
 
-        sessionModel.IsLocalOrganisation = submitModel.IsLocalOrganisation;
+        sessionModel.IsMultiRegionalOrganisation = submitModel.IsMultiRegionalOrganisation;
 
         _sessionService.Set(sessionModel);
 
-        if ((bool)sessionModel.IsLocalOrganisation!)
+        if (!(bool)sessionModel.IsMultiRegionalOrganisation!)
         {
             return RedirectToRoute(RouteNames.Onboarding.AreasToEngageLocally, new { submitModel.EmployerAccountId });
         }
@@ -64,7 +64,7 @@ public class PrimaryEngagementWithinNetworkController : Controller
     private PrimaryEngagementWithinNetworkViewModel GetViewModel(OnboardingSessionModel sessionModel, string employerAccountId)
     => new()
     {
-        IsLocalOrganisation = sessionModel.IsLocalOrganisation,
+        IsMultiRegionalOrganisation = sessionModel.IsMultiRegionalOrganisation,
         BackLink = Url.RouteUrl(@RouteNames.Onboarding.Regions, new { employerAccountId })!
     };
 }

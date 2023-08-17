@@ -9,8 +9,14 @@ public static class UsersForTesting
 {
     public static ClaimsPrincipal GetUserWithClaims(string employerAccountId)
     {
-        var nameClaim = new Claim(EmployerClaims.IdamsUserDisplayNameClaimTypeIdentifier, "full_name");
+        var familyName = "validFamilyName";
+        var givenName = "validGivenName";
+        var familyNameClaim = new Claim(EmployerClaims.FamilyName, familyName);
+        var givenNameClaim = new Claim(EmployerClaims.GivenName, givenName);
+        var nameClaim = new Claim(EmployerClaims.IdamsUserDisplayNameClaimTypeIdentifier, $"{givenName} {familyName}");
+
         var emailClaim = new Claim(ClaimTypes.Email, "valid_email");
+        var userIdClaimTypeIdentifier = new Claim(EmployerClaims.IdamsUserIdClaimTypeIdentifier, Guid.NewGuid().ToString());
 
         EmployerUserAccountItem employerIdentifier = new(employerAccountId.ToString().ToUpper(), "das_account_name", "role");
         var employerAccounts = new Dictionary<string, EmployerUserAccountItem> { { employerIdentifier.EncodedAccountId, employerIdentifier } };
@@ -19,10 +25,13 @@ public static class UsersForTesting
 
         ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity[1]
             {
-                new ClaimsIdentity(new Claim[3]
+                new ClaimsIdentity(new Claim[6]
                 {
+                    givenNameClaim,
+                    familyNameClaim,
                     nameClaim,
                     emailClaim,
+                    userIdClaimTypeIdentifier,
                     accountsClaim
                 }, "Test")
             });
