@@ -1,10 +1,4 @@
-﻿using RestEase;
-using SFA.DAS.Aan.SharedUi.Constants;
-using SFA.DAS.Aan.SharedUi.OuterApi.Responses;
-using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
-using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
-
-namespace SFA.DAS.Employer.Aan.Domain.Interfaces;
+﻿namespace SFA.DAS.Employer.Aan.Domain.Interfaces;
 
 public interface IOuterApiClient
 {
@@ -31,7 +25,7 @@ public interface IOuterApiClient
     Task<GetCalendarEventsQueryResult> GetCalendarEvents([Header(RequestHeaders.RequestedByMemberIdHeader)] Guid requestedByMemberId, [QueryMap] IDictionary<string, string[]> parameters, CancellationToken cancellationToken);
 
     [Get("/calendars")]
-    Task<List<Calendar>> GetCalendars(CancellationToken cancellationToken);
+    Task<List<Calendar>> GetCalendars();
 
     [Post("/employers")]
     Task<CreateEmployerMemberResponse> PostEmployerMember([Body] CreateEmployerMemberRequest request, CancellationToken cancellationToken);

@@ -1,19 +1,4 @@
-﻿using AutoFixture.NUnit3;
-using FluentAssertions;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
-using SFA.DAS.Aan.SharedUi.Constants;
-using SFA.DAS.Aan.SharedUi.Extensions;
-using SFA.DAS.Aan.SharedUi.Infrastructure;
-using SFA.DAS.Aan.SharedUi.Models.NetworkEvents;
-using SFA.DAS.Employer.Aan.Domain.Interfaces;
-using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
-using SFA.DAS.Employer.Aan.Web.Controllers;
-using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
-using SFA.DAS.Testing.AutoFixture;
-
-namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers;
+﻿namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers;
 
 public class NetworkEventsControllerTests
 {
