@@ -25,7 +25,7 @@ public interface IOuterApiClient
     Task<GetCalendarEventsQueryResult> GetCalendarEvents([Header(RequestHeaders.RequestedByMemberIdHeader)] Guid requestedByMemberId, [QueryMap] IDictionary<string, string[]> parameters, CancellationToken cancellationToken);
 
     [Get("/calendars")]
-    Task<List<Calendar>> GetCalendars();
+    Task<List<Calendar>> GetCalendars(CancellationToken cancellationToken);
 
     [Post("/employers")]
     Task<CreateEmployerMemberResponse> PostEmployerMember([Body] CreateEmployerMemberRequest request, CancellationToken cancellationToken);
