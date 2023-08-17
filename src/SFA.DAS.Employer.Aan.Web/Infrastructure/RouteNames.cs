@@ -17,6 +17,7 @@ public static class RouteNames
     public const string Home = nameof(Home);
     public const string NetworkHub = nameof(NetworkHub);
     public const string EventsHub = nameof(EventsHub);
+    public const string PublicProfile = nameof(PublicProfile);
 
     public static class Onboarding
     {
