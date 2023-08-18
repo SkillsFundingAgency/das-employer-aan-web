@@ -73,15 +73,15 @@ public class NetworkEventsControllerTests
 
         var viewResult = actualResult.Result.As<ViewResult>();
         var model = viewResult.Model as NetworkEventsViewModel;
-        model.PaginationViewModel.CurrentPage.Should().Be(expectedResult.Page);
-        model.PaginationViewModel.PageSize.Should().Be(expectedResult.PageSize);
-        model.PaginationViewModel.TotalPages.Should().Be(expectedResult.TotalPages);
-        model.TotalCount.Should().Be(expectedResult.TotalCount);
-        model.FilterChoices.FromDate?.ToApiString().Should().Be(fromDateFormatted);
-        model.FilterChoices.ToDate?.ToApiString().Should().Be(toDateFormatted);
-        model.FilterChoices.Keyword.Should().Be(keyword);
-        model.FilterChoices.EventFormatChecklistDetails.Lookups.Should().BeEquivalentTo(expectedEventFormatChecklistLookup);
-        model.ClearSelectedFiltersLink.Should().Be(AllNetworksUrl);
+        model!.PaginationViewModel.CurrentPage.Should().Be(expectedResult.Page);
+        model!.PaginationViewModel.PageSize.Should().Be(expectedResult.PageSize);
+        model!.PaginationViewModel.TotalPages.Should().Be(expectedResult.TotalPages);
+        model!.TotalCount.Should().Be(expectedResult.TotalCount);
+        model!.FilterChoices.FromDate?.ToApiString().Should().Be(fromDateFormatted);
+        model!.FilterChoices.ToDate?.ToApiString().Should().Be(toDateFormatted);
+        model!.FilterChoices.Keyword.Should().Be(keyword);
+        model!.FilterChoices.EventFormatChecklistDetails.Lookups.Should().BeEquivalentTo(expectedEventFormatChecklistLookup);
+        model!.ClearSelectedFiltersLink.Should().Be(AllNetworksUrl);
 
         outerApiMock.Verify(o => o.GetCalendarEvents(It.IsAny<Guid>(), It.IsAny<Dictionary<string, string[]>>(), It.IsAny<CancellationToken>()), Times.Once);
     }
