@@ -11,7 +11,7 @@ public class NetworkEventsController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index(GetNetworkEventsRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index([FromRoute] string employerAccountId, GetNetworkEventsRequest request, CancellationToken cancellationToken)
     {
         var calendarEventsTask = _outerApiClient.GetCalendarEvents(User.GetAanMemberId(), QueryStringParameterBuilder.BuildQueryStringParameters(request), cancellationToken);
         var calendarTask = _outerApiClient.GetCalendars(cancellationToken);
@@ -24,18 +24,18 @@ public class NetworkEventsController : Controller
         var calendars = calendarTask.Result;
         var regions = regionTask.Result.Regions;
 
-        var model = InitialiseViewModel(calendarEventsTask.Result);
+        var model = InitialiseViewModel(employerAccountId, calendarEventsTask.Result);
 
-        var filterUrl = FilterBuilder.BuildFullQueryString(request, Url);
+        var filterUrl = FilterBuilder.BuildFullQueryString(request, () => Url.RouteUrl(SharedRouteNames.NetworkEvents)!);
         model.PaginationViewModel = SetupPagination(calendarEventsTask.Result, filterUrl);
         var filterChoices = PopulateFilterChoices(request, calendars, regions);
         model.FilterChoices = filterChoices;
-        model.SelectedFilters = FilterBuilder.Build(request, Url, filterChoices.EventFormatChecklistDetails.Lookups, filterChoices.EventTypeChecklistDetails.Lookups, filterChoices.RegionChecklistDetails.Lookups);
+        model.SelectedFilters = FilterBuilder.Build(request, () => Url.RouteUrl(SharedRouteNames.NetworkEvents)!, filterChoices.EventFormatChecklistDetails.Lookups, filterChoices.EventTypeChecklistDetails.Lookups, filterChoices.RegionChecklistDetails.Lookups);
         model.ClearSelectedFiltersLink = Url.RouteUrl(SharedRouteNames.NetworkEvents)!;
         return View(model);
     }
 
-    private NetworkEventsViewModel InitialiseViewModel(GetCalendarEventsQueryResult result)
+    private NetworkEventsViewModel InitialiseViewModel(string employerAccountId, GetCalendarEventsQueryResult result)
     {
         var model = new NetworkEventsViewModel
         {
@@ -45,7 +45,7 @@ public class NetworkEventsController : Controller
         foreach (var calendarEvent in result.CalendarEvents)
         {
             CalendarEventViewModel vm = calendarEvent;
-            vm.CalendarEventLink = Url.RouteUrl(SharedRouteNames.NetworkEventDetails, new { id = calendarEvent.CalendarEventId })!;
+            vm.CalendarEventLink = Url.RouteUrl(@RouteNames.NetworkEventDetails, new { employerAccountId = employerAccountId, id = calendarEvent.CalendarEventId })!;
             model.CalendarEvents.Add(vm);
         }
         return model;

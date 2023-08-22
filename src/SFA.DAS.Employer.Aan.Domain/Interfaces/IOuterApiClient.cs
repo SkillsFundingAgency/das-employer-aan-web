@@ -30,4 +30,16 @@ public interface IOuterApiClient
     [Post("/employers")]
     Task<CreateEmployerMemberResponse> PostEmployerMember([Body] CreateEmployerMemberRequest request, CancellationToken cancellationToken);
 
+    [Get("/calendarevents/{calendarEventId}")]
+    [AllowAnyStatusCode]
+    Task<Response<CalendarEvent>> GetCalendarEventDetails([Path] Guid calendarEventId,
+    [Header(RequestHeaders.RequestedByMemberIdHeader)] Guid requestedByMemberId,
+    CancellationToken cancellationToken);
+
+    [Put("/calendarevents/{calendarEventId}/attendance")]
+    Task PutAttendance([Path] Guid calendarEventId,
+                   [Header(RequestHeaders.RequestedByMemberIdHeader)] Guid requestedByMemberId,
+                   [Body] SetAttendanceStatusRequest newStatus,
+                   CancellationToken cancellationToken);
+
 }
