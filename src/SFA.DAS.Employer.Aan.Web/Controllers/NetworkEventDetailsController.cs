@@ -11,8 +11,6 @@ using SFA.DAS.Employer.Aan.Web.Infrastructure;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers;
 
-
-
 public class NetworkEventDetailsController : Controller
 {
     public const string DetailsViewPath = "~/Views/NetworkEventDetails/Detail.cshtml";
@@ -46,9 +44,9 @@ public class NetworkEventDetailsController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(SubmitAttendanceCommand command, CancellationToken cancellationToken)
+    [Route("accounts/{employerAccountId}/network-events/{id}", Name = SharedRouteNames.NetworkEventDetails)]
+    public async Task<IActionResult> Post([FromRoute] string employerAccountId, SubmitAttendanceCommand command, CancellationToken cancellationToken)
     {
-        string employerAccountId = "v6gr7d";
         var memberId = User.GetAanMemberId();
         var result = await _validator.ValidateAsync(command, cancellationToken);
 
