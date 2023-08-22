@@ -18,6 +18,7 @@ public static class RouteNames
     public const string NetworkHub = nameof(NetworkHub);
     public const string EventsHub = nameof(EventsHub);
     public const string NetworkEvents = nameof(NetworkEvents);
+    public const string NetworkEventDetails = nameof(NetworkEventDetails);
 
     public static class Onboarding
     {
@@ -30,5 +31,11 @@ public static class RouteNames
         public const string AreasToEngageLocally = nameof(AreasToEngageLocally);
         public const string PrimaryEngagementWithinNetwork = nameof(PrimaryEngagementWithinNetwork);
 
+    }
+
+    public static class AttendanceConfirmations
+    {
+        public const string SignUpConfirmation = nameof(SignUpConfirmation);
+        public const string CancellationConfirmation = nameof(CancellationConfirmation);
     }
 }
