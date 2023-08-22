@@ -27,6 +27,12 @@ public interface IOuterApiClient
     [Get("/attendances")]
     Task<GetAttendancesResponse> GetAttendances([Header(RequestHeaders.RequestedByMemberIdHeader)] Guid requestedByMemberId, string fromDate, string toDate, CancellationToken cancellationToken);
 
+    [Get("calendarEvents")]
+    Task<GetCalendarEventsQueryResult> GetCalendarEvents([Header(RequestHeaders.RequestedByMemberIdHeader)] Guid requestedByMemberId, [QueryMap] IDictionary<string, string[]> parameters, CancellationToken cancellationToken);
+
+    [Get("/calendars")]
+    Task<List<Calendar>> GetCalendars(CancellationToken cancellationToken);
+
     [Post("/employers")]
     Task<CreateEmployerMemberResponse> PostEmployerMember([Body] CreateEmployerMemberRequest request, CancellationToken cancellationToken);
 
