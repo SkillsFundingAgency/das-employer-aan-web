@@ -1,4 +1,10 @@
-﻿namespace SFA.DAS.Employer.Aan.Domain.Interfaces;
+﻿using RestEase;
+using SFA.DAS.Aan.SharedUi.Constants;
+using SFA.DAS.Aan.SharedUi.OuterApi.Responses;
+using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
+using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
+
+namespace SFA.DAS.Employer.Aan.Domain.Interfaces;
 
 public interface IOuterApiClient
 {

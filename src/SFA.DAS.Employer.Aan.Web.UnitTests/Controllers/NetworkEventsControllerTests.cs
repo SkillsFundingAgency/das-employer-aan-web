@@ -1,9 +1,23 @@
-﻿namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers;
+﻿using AutoFixture.NUnit3;
+using FluentAssertions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
+using SFA.DAS.Aan.SharedUi.Constants;
+using SFA.DAS.Aan.SharedUi.Extensions;
+using SFA.DAS.Aan.SharedUi.Infrastructure;
+using SFA.DAS.Aan.SharedUi.Models.NetworkEvents;
+using SFA.DAS.Employer.Aan.Domain.Interfaces;
+using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
+using SFA.DAS.Employer.Aan.Web.Controllers;
+using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
+using SFA.DAS.Testing.AutoFixture;
+
+namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers;
 
 public class NetworkEventsControllerTests
 {
     private static readonly string AllNetworksUrl = Guid.NewGuid().ToString();
-    string accountId = Guid.NewGuid().ToString();
 
     string accountId = Guid.NewGuid().ToString();
 
@@ -47,7 +61,6 @@ public class NetworkEventsControllerTests
         sut.AddUrlHelperMock().AddUrlForRoute(SharedRouteNames.NetworkEvents, AllNetworksUrl);
 
         //action
-        var actualResult = sut.Index(request, new CancellationToken());
 
         var actualResult = sut.Index(accountId, request, new CancellationToken());
         var expectedEventFormatChecklistLookup = new ChecklistLookup[]
