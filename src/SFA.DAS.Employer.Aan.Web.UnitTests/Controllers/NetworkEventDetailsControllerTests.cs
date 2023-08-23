@@ -22,8 +22,8 @@ public class NetworkEventDetailsControllerTests
 {
     private static readonly string AllNetworksUrl = Guid.NewGuid().ToString();
     string accountId = Guid.NewGuid().ToString();
-    [Test]
-    [MoqAutoData]
+
+    [Test, MoqAutoData]
     public void Get_ReturnsEventDetailsViewModel_ValidateModelType(
         [Frozen] Mock<IOuterApiClient> outerApiMock,
         [Greedy] NetworkEventDetailsController sut,
@@ -44,8 +44,7 @@ public class NetworkEventDetailsControllerTests
         Assert.That(result.Model, Is.TypeOf<NetworkEventDetailsViewModel>());
     }
 
-    [Test]
-    [MoqAutoData]
+    [Test, MoqAutoData]
     public void Get_InvokesOuterApiClientGetEventDetails_ExecutedOnce(
         [Frozen] Mock<IOuterApiClient> outerApiMock,
         [Greedy] NetworkEventDetailsController sut,
@@ -61,8 +60,7 @@ public class NetworkEventDetailsControllerTests
         outerApiMock.Verify(o => o.GetCalendarEventDetails(apprenticeId, It.IsAny<Guid>(), cancellationToken), Times.Once());
     }
 
-    [Test]
-    [MoqAutoData]
+    [Test, MoqAutoData]
     public void Get_CalendarEventIdIsNotFound_ThrowsInvalidOperationException(
         [Frozen] Mock<IOuterApiClient> outerApiMock,
         [Greedy] NetworkEventDetailsController sut,
@@ -81,8 +79,7 @@ public class NetworkEventDetailsControllerTests
         Assert.That(() => sut.Get(accountId, apprenticeId, cancellationToken), Throws.InvalidOperationException);
     }
 
-    [Test]
-    [MoqAutoData]
+    [Test, MoqAutoData]
     public void SignUpConfirmation_ReturnsSignUpConfirmationView(
         [Greedy] NetworkEventDetailsController sut,
         Guid apprenticeId,
@@ -101,8 +98,7 @@ public class NetworkEventDetailsControllerTests
         });
     }
 
-    [Test]
-    [MoqAutoData]
+    [Test, MoqAutoData]
     public void CancellationConfirmation_ReturnsCancellationConfirmationView(
         [Greedy] NetworkEventDetailsController sut,
         Guid apprenticeId,
@@ -121,8 +117,7 @@ public class NetworkEventDetailsControllerTests
         });
     }
 
-    [Test]
-    [MoqAutoData]
+    [Test, MoqAutoData]
     public async Task Post_SetAttendanceStatus_InvokesOuterApiClientPutAttendance(
         Mock<IOuterApiClient> outerApiMock,
         Guid apprenticeId,
@@ -179,8 +174,7 @@ public class NetworkEventDetailsControllerTests
         result!.ViewName.Should().Be(NetworkEventDetailsController.DetailsViewPath);
     }
 
-    [Test]
-    [MoqAutoData]
+    [Test, MoqAutoData]
     public async Task SetAttendanceStatus_NewStatusIsTrue_RedirectsToSignUpConfirmation(
         [Greedy] NetworkEventDetailsController sut,
         Guid apprenticeId,
@@ -200,8 +194,7 @@ public class NetworkEventDetailsControllerTests
         Assert.That(result.As<RedirectToActionResult>().ActionName, Is.EqualTo("SignUpConfirmation"));
     }
 
-    [Test]
-    [MoqAutoData]
+    [Test, MoqAutoData]
     public async Task SetAttendanceStatus_NewStatusIsFalse_RedirectsToCancellationConfirmation(
         [Greedy] NetworkEventDetailsController sut,
         Guid apprenticeId,
