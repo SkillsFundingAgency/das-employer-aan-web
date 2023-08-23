@@ -66,6 +66,9 @@
     "utcValue": {
       "type": "string",
       "defaultValue": "[utcNow()]"
+    },
+    "stubAuth": {
+      "type": "string"
     }
   },
   "variables": {
@@ -213,6 +216,10 @@
                 {
                   "name": "LoggingRedisKey",
                   "value": "[parameters('loggingRedisKey')]"
+                },
+                {
+                  "name": "StubAuth",
+                  "value": "[parameters('stubAuth')]"
                 }
               ]
             }
