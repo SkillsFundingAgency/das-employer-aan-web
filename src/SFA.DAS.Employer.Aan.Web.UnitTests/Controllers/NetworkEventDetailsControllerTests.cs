@@ -50,8 +50,8 @@ public class NetworkEventDetailsControllerTests
         [Frozen] Mock<IOuterApiClient> outerApiMock,
         [Greedy] NetworkEventDetailsController sut,
         Guid apprenticeId,
-        CancellationToken cancellationToken,
-        Guid employerId)
+        Guid employerId,
+        CancellationToken cancellationToken)
     {
         var user = UsersForTesting.GetUserWithClaims(employerId.ToString());
 
@@ -67,8 +67,8 @@ public class NetworkEventDetailsControllerTests
         [Frozen] Mock<IOuterApiClient> outerApiMock,
         [Greedy] NetworkEventDetailsController sut,
         Guid apprenticeId,
-        CancellationToken cancellationToken,
-        Guid employerId)
+        Guid employerId,
+        CancellationToken cancellationToken)
     {
         var user = UsersForTesting.GetUserWithClaims(employerId.ToString());
         var calendarEvent = new CalendarEvent() { CalendarEventId = Guid.Empty };
