@@ -19,6 +19,8 @@ public class NetworkEventsControllerTests
 {
     private static readonly string AllNetworksUrl = Guid.NewGuid().ToString();
 
+    string accountId = Guid.NewGuid().ToString();
+
     [Test, MoqAutoData]
     public void GetCalendarEvents_ReturnsApiResponse(
     [Frozen] Mock<IOuterApiClient> outerApiMock,
@@ -59,8 +61,8 @@ public class NetworkEventsControllerTests
         sut.AddUrlHelperMock().AddUrlForRoute(SharedRouteNames.NetworkEvents, AllNetworksUrl);
 
         //action
-        var actualResult = sut.Index(request, new CancellationToken());
 
+        var actualResult = sut.Index(accountId, request, new CancellationToken());
         var expectedEventFormatChecklistLookup = new ChecklistLookup[]
         {
             new(EventFormat.InPerson.GetDescription()!, EventFormat.InPerson.ToString(),
@@ -100,7 +102,7 @@ public class NetworkEventsControllerTests
         sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
         sut.AddUrlHelperMock().AddUrlForRoute(SharedRouteNames.NetworkEvents, AllNetworksUrl);
 
-        var actualResult = sut.Index(request, new CancellationToken());
+        var actualResult = sut.Index(accountId, request, new CancellationToken());
         var expectedEventFormatChecklistLookup = new ChecklistLookup[]
         {
             new(EventFormat.InPerson.GetDescription()!, EventFormat.InPerson.ToString(),
