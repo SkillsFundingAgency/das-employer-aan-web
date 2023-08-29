@@ -11,13 +11,14 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Extensions;
 
 public class AttendanceExtensionTests
 {
+    string accountId = Guid.NewGuid().ToString();
     [Test, AutoData]
     public void ToAppointment_ReturnsAppointment(Attendance attendance)
     {
         Mock<IUrlHelper> urlHelperMock = new();
         urlHelperMock.AddUrlForRoute(SharedRouteNames.NetworkEventDetails);
 
-        var appointment = attendance.ToAppointment(urlHelperMock.Object);
+        var appointment = attendance.ToAppointment(urlHelperMock.Object, accountId);
 
         appointment.Title.Should().Be(attendance.EventTitle);
         appointment.Date.Should().Be(DateOnly.FromDateTime(attendance.EventStartDate));
