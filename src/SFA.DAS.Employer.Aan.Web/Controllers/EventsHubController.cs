@@ -30,19 +30,19 @@ public class EventsHubController : Controller
 
         var response = await _apiClient.GetAttendances(User.GetAanMemberId(), firstDayOfTheMonth.ToApiString(), lastDayOfTheMonth.ToApiString(), cancellationToken);
 
-        EventsHubViewModel model = new(firstDayOfTheMonth, Url, GetAppointments(response.Attendances))
+        EventsHubViewModel model = new(firstDayOfTheMonth, Url, GetAppointments(response.Attendances, employerAccountId), () => Url.RouteUrl(@RouteNames.NetworkEvents, new { employerAccountId })!)
         {
             AllNetworksUrl = Url.RouteUrl(@RouteNames.NetworkEvents, new { employerAccountId })!
         };
         return View(model);
     }
 
-    private List<Appointment> GetAppointments(List<Attendance> attendances)
+    private List<Appointment> GetAppointments(List<Attendance> attendances, string employerAccountId)
     {
         List<Appointment> appointments = new();
         foreach (Attendance attendance in attendances)
         {
-            appointments.Add(attendance.ToAppointment(Url));
+            appointments.Add(attendance.ToAppointment(Url, employerAccountId));
         }
         return appointments;
     }
