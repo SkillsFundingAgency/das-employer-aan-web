@@ -56,6 +56,7 @@ public class CheckYourAnswersControllerPostTests
         validatorMock.Setup(v => v.Validate(submitmodel)).Returns(validationResult);
 
         CheckYourAnswersController sut = new CheckYourAnswersController(sessionServiceMock.Object, outerApiClientMock.Object, validatorMock.Object);
+        sut.AddUrlHelperMock();
 
         sut.ControllerContext = new() { HttpContext = new DefaultHttpContext() { User = user, RequestServices = serviceProviderMock.Object } };
 
