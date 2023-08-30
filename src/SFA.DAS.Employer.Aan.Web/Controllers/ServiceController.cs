@@ -63,15 +63,12 @@ public class ServiceController : Controller
         return View();
     }
 
+    //This is for LOCAL dev only
+#if DEBUG
     [HttpGet]
     [Route("account-details", Name = RouteNames.StubAccountDetailsGet)]
     public IActionResult AccountDetails([FromQuery] string returnUrl)
     {
-
-        if (_configuration["ResourceEnvironmentName"].ToUpper() == "PRD")
-        {
-            return NotFound();
-        }
         return View("AccountDetails", new StubAuthenticationViewModel
         {
             ReturnUrl = returnUrl
@@ -81,11 +78,7 @@ public class ServiceController : Controller
     [Route("account-details", Name = RouteNames.StubAccountDetailsPost)]
     public async Task<IActionResult> AccountDetails(StubAuthenticationViewModel model)
     {
-        if (_configuration["ResourceEnvironmentName"].ToUpper() == "PRD")
-        {
-            return NotFound();
-        }
-
+        
         var claims = await _stubAuthenticationService.GetStubSignInClaims(model);
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claims,
@@ -99,10 +92,6 @@ public class ServiceController : Controller
     [Route("Stub-Auth", Name = RouteNames.StubSignedIn)]
     public IActionResult StubSignedIn([FromQuery] string returnUrl)
     {
-        if (_configuration["ResourceEnvironmentName"].ToUpper() == "PRD")
-        {
-            return NotFound();
-        }
 
         var employerAccounts = User.GetEmployerAccounts().Values.ToList();
 
@@ -116,6 +105,7 @@ public class ServiceController : Controller
 
         return View(viewModel);
     }
+#endif
 }
 
 

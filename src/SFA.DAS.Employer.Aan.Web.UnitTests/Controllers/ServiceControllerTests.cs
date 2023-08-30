@@ -67,42 +67,6 @@ public class ServiceControllerTests
     }
 
     [Test, MoqAutoData]
-    public async Task PostAccountDetails_ResourceEnvironmentIsProd_StubAuthNotCreated(
-        StubAuthenticationViewModel model,
-        [Frozen] Mock<IAuthenticationService> authService,
-        [Frozen] Mock<IConfiguration> configuration,
-        [Frozen] Mock<IStubAuthenticationService> stubAuthService,
-        [Greedy] ServiceController sut)
-    {
-        configuration.Setup(x => x["ResourceEnvironmentName"]).Returns("prd");
-        var httpContext = new DefaultHttpContext();
-
-        var httpContextRequestServices = new Mock<IServiceProvider>();
-        httpContextRequestServices.Setup(x => x.GetService(typeof(IAuthenticationService))).Returns(authService.Object);
-        var controllerContext = new ControllerContext { HttpContext = httpContext };
-        sut.ControllerContext = controllerContext;
-
-        var actual = await sut.AccountDetails(model);
-
-        actual.As<NotFoundResult>().Should().NotBeNull();
-        stubAuthService.Verify(x => x.GetStubSignInClaims(It.IsAny<StubAuthenticationViewModel>()), Times.Never);
-        authService.Verify(x => x.SignInAsync(httpContext, CookieAuthenticationDefaults.AuthenticationScheme, It.IsAny<ClaimsPrincipal>(), It.IsAny<AuthenticationProperties?>()), Times.Never);
-    }
-
-    [Test, MoqAutoData]
-    public void StubSignedIn_ResourceEnvironmentIsProd_ReturnsNotFound(
-        string returnUrl,
-        [Frozen] Mock<IConfiguration> configuration,
-        [Greedy] ServiceController sut)
-    {
-        configuration.Setup(x => x["ResourceEnvironmentName"]).Returns("prd");
-
-        var actual = sut.StubSignedIn(returnUrl);
-
-        actual.As<NotFoundResult>().Should().NotBeNull();
-    }
-
-    [Test, MoqAutoData]
     public void StubSignedIn_ResourceEnvironmentIsNotProd_ReturnsAuthDetails(
         string emailClaimValue,
         string nameClaimValue,
@@ -142,29 +106,4 @@ public class ServiceControllerTests
         actualModel.Accounts.Should().BeEquivalentTo(new List<EmployerUserAccountItem> { employerIdentifier });
     }
 
-    [Test, MoqAutoData]
-    public void GetAccountDetails_ResourceEnvironmentIsNotProd_ReturnsStubAuthDetails(
-        string returnUrl,
-        [Frozen] Mock<IConfiguration> configuration,
-        [Greedy] ServiceController sut)
-    {
-        configuration.Setup(x => x["ResourceEnvironmentName"]).Returns("test");
-
-        var actual = sut.AccountDetails(returnUrl);
-
-        actual.As<ViewResult>().Model.As<StubAuthenticationViewModel>().ReturnUrl.Should().Be(returnUrl);
-    }
-
-    [Test, MoqAutoData]
-    public void GetAccountDetails_ResourceEnvironmentIsProd_ReturnsNotFoundResponse(
-        string returnUrl,
-        [Frozen] Mock<IConfiguration> configuration,
-        [Greedy] ServiceController sut)
-    {
-        configuration.Setup(x => x["ResourceEnvironmentName"]).Returns("prd");
-
-        var actual = sut.AccountDetails(returnUrl) as NotFoundResult;
-
-        actual.Should().NotBeNull();
-    }
 }
