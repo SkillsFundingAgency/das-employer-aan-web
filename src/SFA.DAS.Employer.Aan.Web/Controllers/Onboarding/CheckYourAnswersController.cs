@@ -62,7 +62,7 @@ public class CheckYourAnswersController : Controller
 
         User.AddAanMemberIdClaim(response.MemberId);
 
-        return View(ApplicationSubmittedViewPath);
+        return View(ApplicationSubmittedViewPath, new ApplicationSubmittedViewModel(Url.RouteUrl(@RouteNames.NetworkHub, new { EmployerAccountId = employerAccountId })!));
     }
 
     private CreateEmployerMemberRequest PopulateCreateEmployerMemberRequest(OnboardingSessionModel source, string employerAccountId)
