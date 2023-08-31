@@ -54,12 +54,6 @@ public class EmployerAccountPostAuthenticationClaimsHandler : ICustomClaims
 
         claims.Add(associatedAccountsClaim);
 
-        if (Guid.TryParse(userId, out var id))
-        {
-            var response = await _outerApiClient.GetEmployerMember(id, CancellationToken.None);
-            if (response.ResponseMessage.IsSuccessStatusCode) claims.Add(new Claim(EmployerClaims.AanMemberId, response.GetContent().MemberId.ToString()));
-        }
-
         return claims;
     }
 }
