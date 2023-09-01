@@ -44,7 +44,11 @@ public class RequiresExistingMemberAttribute : IAsyncActionFilter
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        if (context.ActionDescriptor is not ControllerActionDescriptor controllerActionDescriptor) return;
+        if (context.ActionDescriptor is not ControllerActionDescriptor controllerActionDescriptor)
+        {
+            await next();
+            return;
+        }
 
         if (BypassCheck(controllerActionDescriptor))
         {
