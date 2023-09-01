@@ -51,16 +51,17 @@ public class CheckYourAnswersController : Controller
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
         submitModel.IsRegionConfirmationDone = sessionModel.Regions.Exists(x => x.IsConfirmed) || sessionModel.IsMultiRegionalOrganisation.GetValueOrDefault();
 
-        ValidationResult result = _validator.Validate(submitModel);
+        var result = _validator.Validate(submitModel);
         if (!result.IsValid)
         {
             var model = GetViewModel(sessionModel, employerAccountId);
             result.AddToModelState(ModelState);
             return View(ViewPath, model);
         }
-        var response = await _outerApiClient.PostEmployerMember(PopulateCreateEmployerMemberRequest(sessionModel, employerAccountId), cancellationToken);
+        
+        await _outerApiClient.PostEmployerMember(PopulateCreateEmployerMemberRequest(sessionModel, employerAccountId), cancellationToken);
 
-        User.AddAanMemberIdClaim(response.MemberId);
+        //User.AddAanMemberIdClaim(response.MemberId);
 
         return View(ApplicationSubmittedViewPath, new ApplicationSubmittedViewModel(Url.RouteUrl(@RouteNames.NetworkHub, new { EmployerAccountId = employerAccountId })!));
     }

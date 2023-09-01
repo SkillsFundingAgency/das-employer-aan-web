@@ -28,7 +28,7 @@ public class EventsHubController : Controller
         var firstDayOfTheMonth = new DateOnly(year.GetValueOrDefault(), month.GetValueOrDefault(), 1);
         var lastDayOfTheMonth = new DateOnly(firstDayOfTheMonth.Year, firstDayOfTheMonth.Month, DateTime.DaysInMonth(firstDayOfTheMonth.Year, firstDayOfTheMonth.Month));
 
-        var response = await _apiClient.GetAttendances(User.GetAanMemberId(), firstDayOfTheMonth.ToApiString(), lastDayOfTheMonth.ToApiString(), cancellationToken);
+        var response = await _apiClient.GetAttendances(User.GetIdamsUserId(), firstDayOfTheMonth.ToApiString(), lastDayOfTheMonth.ToApiString(), cancellationToken);
 
         EventsHubViewModel model = new(firstDayOfTheMonth, Url, GetAppointments(response.Attendances, employerAccountId), () => Url.RouteUrl(@RouteNames.NetworkEvents, new { employerAccountId })!)
         {

@@ -8,6 +8,7 @@ using SFA.DAS.Aan.SharedUi.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Controllers;
 using SFA.DAS.Employer.Aan.Web.Extensions;
+using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers;
@@ -38,7 +39,7 @@ public class EventsHubControllerTests
 
         _sut = new(_outerApiClientMock.Object);
         _sut.AddUrlHelperMock().AddUrlForRoute(SharedRouteNames.NetworkEvents, AllNetworksUrl);
-        _sut.AddContextWithClaim(ClaimsPrincipalExtensions.ClaimTypes.AanMemberId, memberId.ToString());
+        _sut.AddContextWithClaim(EmployerClaims.IdamsUserIdClaimTypeIdentifier, memberId.ToString());
 
         _result = await _sut.Index(accountId, null, null, _cancellationToken);
     }

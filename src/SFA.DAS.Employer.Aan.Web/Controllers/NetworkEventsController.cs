@@ -27,7 +27,7 @@ public class NetworkEventsController : Controller
     [HttpGet]
     public async Task<IActionResult> Index([FromRoute] string employerAccountId, GetNetworkEventsRequest request, CancellationToken cancellationToken)
     {
-        var calendarEventsTask = _outerApiClient.GetCalendarEvents(User.GetAanMemberId(), QueryStringParameterBuilder.BuildQueryStringParameters(request), cancellationToken);
+        var calendarEventsTask = _outerApiClient.GetCalendarEvents(User.GetIdamsUserId(), QueryStringParameterBuilder.BuildQueryStringParameters(request), cancellationToken);
         var calendarTask = _outerApiClient.GetCalendars(cancellationToken);
         var regionTask = _outerApiClient.GetRegions(cancellationToken);
 

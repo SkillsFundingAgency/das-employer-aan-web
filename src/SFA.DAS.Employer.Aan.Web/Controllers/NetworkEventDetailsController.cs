@@ -30,7 +30,7 @@ public class NetworkEventDetailsController : Controller
     [Route("accounts/{employerAccountId}/network-events/{id}", Name = SharedRouteNames.NetworkEventDetails)]
     public async Task<IActionResult> Get([FromRoute] string employerAccountId, [FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        var memberId = User.GetAanMemberId();
+        var memberId = User.GetIdamsUserId();
         var eventDetailsResponse = await _outerApiClient.GetCalendarEventDetails(id, memberId, cancellationToken);
 
         if (eventDetailsResponse.ResponseMessage.IsSuccessStatusCode)
@@ -47,7 +47,7 @@ public class NetworkEventDetailsController : Controller
     [Route("accounts/{employerAccountId}/network-events/{id}", Name = SharedRouteNames.NetworkEventDetails)]
     public async Task<IActionResult> Post([FromRoute] string employerAccountId, SubmitAttendanceCommand command, CancellationToken cancellationToken)
     {
-        var memberId = User.GetAanMemberId();
+        var memberId = User.GetIdamsUserId();
         var result = await _validator.ValidateAsync(command, cancellationToken);
 
         if (!result.IsValid)
