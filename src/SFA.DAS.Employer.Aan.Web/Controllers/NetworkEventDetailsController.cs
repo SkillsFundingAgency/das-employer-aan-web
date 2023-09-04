@@ -1,15 +1,18 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Aan.SharedUi.Infrastructure;
 using SFA.DAS.Aan.SharedUi.Models;
 using SFA.DAS.ApprenticeAan.Web.Models.NetworkEvents;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
+using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers;
 
+[Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
 public class NetworkEventDetailsController : Controller
 {
     public const string DetailsViewPath = "~/Views/NetworkEventDetails/Detail.cshtml";

@@ -1,13 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Aan.SharedUi.Extensions;
 using SFA.DAS.Aan.SharedUi.Models;
 using SFA.DAS.Aan.SharedUi.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
+using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers;
 
+[Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
 [Route("accounts/{employerAccountId}/events-hub", Name = RouteNames.EventsHub)]
 public class EventsHubController : Controller
 {

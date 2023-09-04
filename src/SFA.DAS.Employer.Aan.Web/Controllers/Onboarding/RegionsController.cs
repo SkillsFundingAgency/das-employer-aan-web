@@ -1,14 +1,17 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
+using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 
+[Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
 [Route("accounts/{employerAccountId}/onboarding/regions", Name = RouteNames.Onboarding.Regions)]
 public class RegionsController : Controller
 {

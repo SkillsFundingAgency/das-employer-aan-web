@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Aan.SharedUi.Constants;
 using SFA.DAS.Aan.SharedUi.Extensions;
 using SFA.DAS.Aan.SharedUi.Infrastructure;
@@ -9,10 +10,12 @@ using SFA.DAS.ApprenticeAan.Web.Models.NetworkEvents;
 using SFA.DAS.ApprenticeAan.Web.Services;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
+using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers;
 
+[Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
 [Route("accounts/{employerAccountId}/network-events", Name = RouteNames.NetworkEvents)]
 public class NetworkEventsController : Controller
 {
