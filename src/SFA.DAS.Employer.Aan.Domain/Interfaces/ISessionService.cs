@@ -2,7 +2,7 @@
 
 public interface ISessionService
 {
-    void Set(string value, string key);
+    void Set(string key, string value);
     void Set<T>(T model);
     string? Get(string key);
     T Get<T>();

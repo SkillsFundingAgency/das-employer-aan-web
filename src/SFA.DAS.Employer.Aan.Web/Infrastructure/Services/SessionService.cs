@@ -11,8 +11,8 @@ public class SessionService : ISessionService
 
     public SessionService(IHttpContextAccessor httpContextAccessor) => _httpContextAccessor = httpContextAccessor;
 
-    public void Set(string value, string key) => _httpContextAccessor.HttpContext?.Session.SetString(key, value);
-    public void Set<T>(T model) => Set(JsonSerializer.Serialize(model), typeof(T).Name);
+    public void Set(string key, string value) => _httpContextAccessor.HttpContext?.Session.SetString(key, value);
+    public void Set<T>(T model) => Set(typeof(T).Name, JsonSerializer.Serialize(model));
 
     public string? Get(string key) => _httpContextAccessor.HttpContext?.Session.GetString(key);
 

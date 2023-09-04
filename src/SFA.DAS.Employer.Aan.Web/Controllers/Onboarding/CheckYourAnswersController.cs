@@ -60,7 +60,7 @@ public class CheckYourAnswersController : Controller
         }
         var response = await _outerApiClient.PostEmployerMember(PopulateCreateEmployerMemberRequest(sessionModel, employerAccountId), cancellationToken);
 
-        User.AddAanMemberIdClaim(response.MemberId);
+        _sessionService.Set(Constants.SessionKeys.MemberId, response.MemberId.ToString());
 
         return View(ApplicationSubmittedViewPath, new ApplicationSubmittedViewModel(Url.RouteUrl(@RouteNames.NetworkHub, new { EmployerAccountId = employerAccountId })!));
     }

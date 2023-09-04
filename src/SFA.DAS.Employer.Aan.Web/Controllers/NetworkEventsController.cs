@@ -9,7 +9,6 @@ using SFA.DAS.ApprenticeAan.Web.Models.NetworkEvents;
 using SFA.DAS.ApprenticeAan.Web.Services;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
-using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers;
@@ -18,16 +17,19 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers;
 public class NetworkEventsController : Controller
 {
     private readonly IOuterApiClient _outerApiClient;
+    private readonly ISessionService _sessionService;
 
-    public NetworkEventsController(IOuterApiClient outerApiClient)
+    public NetworkEventsController(IOuterApiClient outerApiClient, ISessionService sessionService)
     {
         _outerApiClient = outerApiClient;
+        _sessionService = sessionService;
     }
 
     [HttpGet]
     public async Task<IActionResult> Index([FromRoute] string employerAccountId, GetNetworkEventsRequest request, CancellationToken cancellationToken)
     {
-        var calendarEventsTask = _outerApiClient.GetCalendarEvents(User.GetAanMemberId(), QueryStringParameterBuilder.BuildQueryStringParameters(request), cancellationToken);
+        var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
+        var calendarEventsTask = _outerApiClient.GetCalendarEvents(memberId, QueryStringParameterBuilder.BuildQueryStringParameters(request), cancellationToken);
         var calendarTask = _outerApiClient.GetCalendars(cancellationToken);
         var regionTask = _outerApiClient.GetRegions(cancellationToken);
 

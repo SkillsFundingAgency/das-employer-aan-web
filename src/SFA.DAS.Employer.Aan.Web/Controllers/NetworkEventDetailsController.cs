@@ -6,7 +6,6 @@ using SFA.DAS.Aan.SharedUi.Models;
 using SFA.DAS.ApprenticeAan.Web.Models.NetworkEvents;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
-using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers;
@@ -19,18 +18,20 @@ public class NetworkEventDetailsController : Controller
 
     private readonly IOuterApiClient _outerApiClient;
     private readonly IValidator<SubmitAttendanceCommand> _validator;
+    private readonly ISessionService _sessionService;
 
-    public NetworkEventDetailsController(IOuterApiClient outerApiClient, IValidator<SubmitAttendanceCommand> validator)
+    public NetworkEventDetailsController(IOuterApiClient outerApiClient, IValidator<SubmitAttendanceCommand> validator, ISessionService sessionService)
     {
         _outerApiClient = outerApiClient;
         _validator = validator;
+        _sessionService = sessionService;
     }
 
     [HttpGet]
     [Route("accounts/{employerAccountId}/network-events/{id}", Name = SharedRouteNames.NetworkEventDetails)]
     public async Task<IActionResult> Get([FromRoute] string employerAccountId, [FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        var memberId = User.GetAanMemberId();
+        var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
         var eventDetailsResponse = await _outerApiClient.GetCalendarEventDetails(id, memberId, cancellationToken);
 
         if (eventDetailsResponse.ResponseMessage.IsSuccessStatusCode)
@@ -47,7 +48,7 @@ public class NetworkEventDetailsController : Controller
     [Route("accounts/{employerAccountId}/network-events/{id}", Name = SharedRouteNames.NetworkEventDetails)]
     public async Task<IActionResult> Post([FromRoute] string employerAccountId, SubmitAttendanceCommand command, CancellationToken cancellationToken)
     {
-        var memberId = User.GetAanMemberId();
+        var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
         var result = await _validator.ValidateAsync(command, cancellationToken);
 
         if (!result.IsValid)
