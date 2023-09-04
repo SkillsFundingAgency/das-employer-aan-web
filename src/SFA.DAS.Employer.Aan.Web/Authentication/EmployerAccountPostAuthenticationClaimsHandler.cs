@@ -42,11 +42,11 @@ public class EmployerAccountPostAuthenticationClaimsHandler : ICustomClaims
         {
             claims.Add(new Claim(EmployerClaims.GivenName, result.FirstName));
             claims.Add(new Claim(EmployerClaims.FamilyName, result.LastName));
-            claims.Add(new Claim(EmployerClaims.IdamsUserDisplayNameClaimTypeIdentifier, result.FirstName + " " + result.LastName));
+            claims.Add(new Claim(EmployerClaims.UserDisplayNameClaimTypeIdentifier, result.FirstName + " " + result.LastName));
         }
 
-        claims.Add(new Claim(EmployerClaims.IdamsUserIdClaimTypeIdentifier, result.EmployerUserId));
-        claims.Add(new Claim(EmployerClaims.IdamsUserEmailClaimTypeIdentifier, email!));
+        claims.Add(new Claim(EmployerClaims.UserIdClaimTypeIdentifier, result.EmployerUserId));
+        claims.Add(new Claim(EmployerClaims.UserEmailClaimTypeIdentifier, email!));
 
         result.UserAccountResponse
             .Where(c => c.Role.Equals("owner", StringComparison.CurrentCultureIgnoreCase) || c.Role.Equals("transactor", StringComparison.CurrentCultureIgnoreCase))

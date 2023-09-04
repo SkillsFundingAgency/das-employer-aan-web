@@ -13,10 +13,10 @@ public static class UsersForTesting
         var givenName = "validGivenName";
         var familyNameClaim = new Claim(EmployerClaims.FamilyName, familyName);
         var givenNameClaim = new Claim(EmployerClaims.GivenName, givenName);
-        var nameClaim = new Claim(EmployerClaims.IdamsUserDisplayNameClaimTypeIdentifier, $"{givenName} {familyName}");
+        var nameClaim = new Claim(EmployerClaims.UserDisplayNameClaimTypeIdentifier, $"{givenName} {familyName}");
 
         var emailClaim = new Claim(ClaimTypes.Email, "valid_email");
-        var userIdClaimTypeIdentifier = new Claim(EmployerClaims.IdamsUserIdClaimTypeIdentifier, Guid.NewGuid().ToString());
+        var userIdClaimTypeIdentifier = new Claim(EmployerClaims.UserIdClaimTypeIdentifier, Guid.NewGuid().ToString());
 
         EmployerUserAccountItem employerIdentifier = new(employerAccountId.ToString().ToUpper(), "das_account_name", "role");
         var employerAccounts = new Dictionary<string, EmployerUserAccountItem> { { employerIdentifier.EncodedAccountId, employerIdentifier } };

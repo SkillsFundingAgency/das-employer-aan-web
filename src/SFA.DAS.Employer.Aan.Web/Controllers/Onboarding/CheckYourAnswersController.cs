@@ -40,7 +40,7 @@ public class CheckYourAnswersController : Controller
     private CheckYourAnswersViewModel GetViewModel(OnboardingSessionModel sessionModel, string employerAccountId)
     {
         var viewModel = new CheckYourAnswersViewModel(Url, sessionModel, employerAccountId);
-        viewModel.FullName = User.GetIdamsUserDisplayName();
+        viewModel.FullName = User.GetUserDisplayName();
         viewModel.Email = User.GetEmail();
         return viewModel;
     }
@@ -77,7 +77,7 @@ public class CheckYourAnswersController : Controller
         request.Email = User.GetEmail();
         request.FirstName = User.GetGivenName();
         request.LastName = User.GetFamilyName();
-        request.UserRef = User.GetIdamsUserId();
+        request.UserRef = User.GetUserId();
         request.AccountId = source.EmployerDetails.AccountId;
 
         return request;

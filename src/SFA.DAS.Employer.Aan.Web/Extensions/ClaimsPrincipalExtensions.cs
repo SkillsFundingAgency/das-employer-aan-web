@@ -40,9 +40,9 @@ public static class ClaimsPrincipalExtensions
 
     public static EmployerUserAccountItem GetEmployerAccount(this ClaimsPrincipal user, string employerAccountId)
         => GetEmployerAccounts(user)[employerAccountId.ToUpper()];
-    public static Guid GetIdamsUserId(this ClaimsPrincipal principal) => GetClaimValue(principal, EmployerClaims.IdamsUserIdClaimTypeIdentifier);
-    public static string GetIdamsUserDisplayName(this ClaimsPrincipal principal) => principal.FindFirstValue(EmployerClaims.IdamsUserDisplayNameClaimTypeIdentifier);
+    public static Guid GetUserId(this ClaimsPrincipal principal) => GetClaimValue(principal, EmployerClaims.UserIdClaimTypeIdentifier);
+    public static string GetUserDisplayName(this ClaimsPrincipal principal) => principal.FindFirstValue(EmployerClaims.UserDisplayNameClaimTypeIdentifier);
     public static string GetGivenName(this ClaimsPrincipal principal) => principal.FindFirstValue(EmployerClaims.GivenName);
     public static string GetFamilyName(this ClaimsPrincipal principal) => principal.FindFirstValue(EmployerClaims.FamilyName);
-    public static string GetEmail(this ClaimsPrincipal principal) => principal.FindFirstValue(EmployerClaims.IdamsUserEmailClaimTypeIdentifier);
+    public static string GetEmail(this ClaimsPrincipal principal) => principal.FindFirstValue(EmployerClaims.UserEmailClaimTypeIdentifier);
 }
