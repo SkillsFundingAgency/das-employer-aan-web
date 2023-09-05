@@ -43,10 +43,13 @@ public class RequiresExistingMemberAttribute : ApplicationFilterAttribute
 
     private async Task<bool> IsValidRequest(ActionExecutingContext context, ControllerActionDescriptor controllerActionDescriptor)
     {
+        var userId = context.HttpContext.User.GetUserId();
+        if (userId == Guid.Empty) return true;
+
         var sessionValue = _sessionService.Get(Constants.SessionKeys.MemberId);
         if (sessionValue == null)
         {
-            var response = await _outerApiClient.GetEmployerMember(context.HttpContext.User.GetUserId(), CancellationToken.None);
+            var response = await _outerApiClient.GetEmployerMember(userId, CancellationToken.None);
             sessionValue = response.ResponseMessage.IsSuccessStatusCode ? response.GetContent().MemberId.ToString() : Guid.Empty.ToString();
             _sessionService.Set(Constants.SessionKeys.MemberId, sessionValue);
         }
