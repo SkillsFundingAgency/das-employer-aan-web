@@ -10,10 +10,6 @@ namespace SFA.DAS.Employer.Aan.Web.Filters;
 [ExcludeFromCodeCoverage]
 public class RequiredSessionModelAttribute : ApplicationFilterAttribute
 {
-    const string DefaultActionName = "Index";
-    const string DefaultControllerName = "Home";
-    const string OnboardingFilter = "Onboarding";
-
     private static readonly string[] controllersToByPass = new[] { nameof(BeforeYouStartController), nameof(TermsAndConditionsController) };
 
     public string[] ControllersToByPass { get => controllersToByPass; }
