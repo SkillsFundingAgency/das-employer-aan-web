@@ -12,6 +12,7 @@ using SFA.DAS.ApprenticeAan.Web.Models.NetworkEvents;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.Aan.Web.Controllers;
+using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 using SFA.DAS.Testing.AutoFixture;
 
@@ -190,7 +191,7 @@ public class NetworkEventDetailsControllerTests
         };
         var result = await sut.Post(accountId, command, new CancellationToken());
 
-        Assert.That(result.As<RedirectToActionResult>().ActionName, Is.EqualTo("SignUpConfirmation"));
+        Assert.That(result.As<RedirectToRouteResult>().RouteName, Is.EqualTo(RouteNames.AttendanceConfirmations.SignUpConfirmation));
     }
 
     [Test, MoqAutoData]
@@ -209,6 +210,6 @@ public class NetworkEventDetailsControllerTests
         };
         var result = await sut.Post(accountId, command, new CancellationToken());
 
-        Assert.That(result.As<RedirectToActionResult>().ActionName, Is.EqualTo("CancellationConfirmation"));
+        Assert.That(result.As<RedirectToRouteResult>().RouteName, Is.EqualTo(RouteNames.AttendanceConfirmations.CancellationConfirmation));
     }
 }

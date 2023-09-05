@@ -71,25 +71,26 @@ public class NetworkEventDetailsController : Controller
 
         await _outerApiClient.PutAttendance(command.CalendarEventId, memberId, new SetAttendanceStatusRequest(command.NewStatus), cancellationToken);
 
+        var routeValues = new { employerAccountId, id = command.CalendarEventId };
         return command.NewStatus
-            ? RedirectToAction("SignUpConfirmation", new { employerAccountId = employerAccountId })
-            : RedirectToAction("CancellationConfirmation", new { employerAccountId = employerAccountId });
+            ? RedirectToRoute(RouteNames.AttendanceConfirmations.SignUpConfirmation, routeValues)
+            : RedirectToRoute(RouteNames.AttendanceConfirmations.CancellationConfirmation, routeValues);
     }
 
 
     [HttpGet]
-    [Route("signup-confirmation", Name = RouteNames.AttendanceConfirmations.SignUpConfirmation)]
-    public IActionResult SignUpConfirmation(string employerAccountId)
+    [Route("accounts/{employerAccountId}/network-events/{id}/signup-confirmation", Name = RouteNames.AttendanceConfirmations.SignUpConfirmation)]
+    public IActionResult SignUpConfirmation([FromRoute] string employerAccountId)
     {
-        EventAttendanceConfirmationViewModel model = new(Url.RouteUrl(SharedRouteNames.NetworkEvents, new { employerAccountId = employerAccountId })!, new(Url.RouteUrl(SharedRouteNames.EventsHub, new { employerAccountId = employerAccountId })));
+        EventAttendanceConfirmationViewModel model = new(Url.RouteUrl(SharedRouteNames.NetworkEvents, new { employerAccountId = employerAccountId })!, new(Url.RouteUrl(SharedRouteNames.EventsHub, new { employerAccountId })));
         return View(SignUpConfirmationViewPath, model);
     }
 
     [HttpGet]
-    [Route("cancellation-confirmation", Name = RouteNames.AttendanceConfirmations.CancellationConfirmation)]
-    public IActionResult CancellationConfirmation(string employerAccountId)
+    [Route("accounts/{employerAccountId}/network-events/{id}/cancellation-confirmation", Name = RouteNames.AttendanceConfirmations.CancellationConfirmation)]
+    public IActionResult CancellationConfirmation([FromRoute] string employerAccountId)
     {
-        EventAttendanceConfirmationViewModel model = new(Url.RouteUrl(SharedRouteNames.NetworkEvents, new { employerAccountId = employerAccountId })!, new(Url.RouteUrl(SharedRouteNames.EventsHub, new { employerAccountId = employerAccountId })));
+        EventAttendanceConfirmationViewModel model = new(Url.RouteUrl(SharedRouteNames.NetworkEvents, new { employerAccountId = employerAccountId })!, new(Url.RouteUrl(SharedRouteNames.EventsHub, new { employerAccountId })));
         return View(CancellationConfirmationViewPath, model);
     }
 }
