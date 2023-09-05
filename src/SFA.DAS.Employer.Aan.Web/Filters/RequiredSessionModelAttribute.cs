@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
@@ -9,12 +8,8 @@ using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 namespace SFA.DAS.Employer.Aan.Web.Filters;
 
 [ExcludeFromCodeCoverage]
-public class RequiredSessionModelAttribute : ActionFilterAttribute
+public class RequiredSessionModelAttribute : ApplicationFilterAttribute
 {
-    const string DefaultActionName = "Index";
-    const string DefaultControllerName = "Home";
-    const string OnboardingFilter = "Onboarding";
-
     private static readonly string[] controllersToByPass = new[] { nameof(BeforeYouStartController), nameof(TermsAndConditionsController) };
 
     public string[] ControllersToByPass { get => controllersToByPass; }
@@ -27,7 +22,7 @@ public class RequiredSessionModelAttribute : ActionFilterAttribute
 
         if (!HasValidSessionModel(context.HttpContext.RequestServices))
         {
-            context.Result = RedirectToHome;
+            context.Result = RedirectToHome(context.RouteData.Values);
         }
     }
 
@@ -39,7 +34,6 @@ public class RequiredSessionModelAttribute : ActionFilterAttribute
 
         return false;
     }
-    private static bool IsRequestForOnboardingAction(ControllerActionDescriptor action) => action.ControllerTypeInfo.FullName!.Contains(OnboardingFilter);
 
     private static bool HasValidSessionModel(IServiceProvider services)
     {
@@ -49,6 +43,4 @@ public class RequiredSessionModelAttribute : ActionFilterAttribute
 
         return sessionModel != null && sessionModel.IsValid;
     }
-
-    private readonly static RedirectToActionResult RedirectToHome = new(DefaultActionName, DefaultControllerName, null);
 }

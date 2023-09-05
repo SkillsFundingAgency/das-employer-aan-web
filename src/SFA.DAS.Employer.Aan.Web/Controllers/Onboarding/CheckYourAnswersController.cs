@@ -1,15 +1,18 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
+using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 
+[Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
 [Route("accounts/{employerAccountId}/onboarding/check-your-answers", Name = RouteNames.Onboarding.CheckYourAnswers)]
 public class CheckYourAnswersController : Controller
 {
@@ -40,7 +43,7 @@ public class CheckYourAnswersController : Controller
     private CheckYourAnswersViewModel GetViewModel(OnboardingSessionModel sessionModel, string employerAccountId)
     {
         var viewModel = new CheckYourAnswersViewModel(Url, sessionModel, employerAccountId);
-        viewModel.FullName = User.GetIdamsUserDisplayName();
+        viewModel.FullName = User.GetUserDisplayName();
         viewModel.Email = User.GetEmail();
         return viewModel;
     }
@@ -60,7 +63,7 @@ public class CheckYourAnswersController : Controller
         }
         var response = await _outerApiClient.PostEmployerMember(PopulateCreateEmployerMemberRequest(sessionModel, employerAccountId), cancellationToken);
 
-        User.AddAanMemberIdClaim(response.MemberId);
+        _sessionService.Set(Constants.SessionKeys.MemberId, response.MemberId.ToString());
 
         return View(ApplicationSubmittedViewPath, new ApplicationSubmittedViewModel(Url.RouteUrl(@RouteNames.NetworkHub, new { EmployerAccountId = employerAccountId })!));
     }
@@ -77,7 +80,7 @@ public class CheckYourAnswersController : Controller
         request.Email = User.GetEmail();
         request.FirstName = User.GetGivenName();
         request.LastName = User.GetFamilyName();
-        request.UserRef = User.GetIdamsUserId();
+        request.UserRef = User.GetUserId();
         request.AccountId = source.EmployerDetails.AccountId;
 
         return request;

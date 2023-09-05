@@ -68,7 +68,7 @@ public class CheckYourAnswersControllerPostTests
             r.OrganisationName == user.GetEmployerAccount(employerAccountId).DasAccountName
             && r.JoinedDate.Date == DateTime.UtcNow.Date
             && r.AccountId == onboardingSessionModel.EmployerDetails.AccountId
-            && r.UserRef == user.GetIdamsUserId()
+            && r.UserRef == user.GetUserId()
             && r.RegionId == (onboardingSessionModel.IsMultiRegionalOrganisation.GetValueOrDefault() ? null : onboardingSessionModel.Regions.Find(x => x.IsConfirmed)!.Id)
             && r.Email == user.GetEmail()
             && r.FirstName == user.GetGivenName()

@@ -78,7 +78,7 @@ public class ServiceController : Controller
     [Route("account-details", Name = RouteNames.StubAccountDetailsPost)]
     public async Task<IActionResult> AccountDetails(StubAuthenticationViewModel model)
     {
-        
+
         var claims = await _stubAuthenticationService.GetStubSignInClaims(model);
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claims,
@@ -107,6 +107,3 @@ public class ServiceController : Controller
     }
 #endif
 }
-
-
-

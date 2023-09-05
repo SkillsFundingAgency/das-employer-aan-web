@@ -1,16 +1,18 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Aan.SharedUi.Infrastructure;
 using SFA.DAS.Aan.SharedUi.Models;
 using SFA.DAS.ApprenticeAan.Web.Models.NetworkEvents;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
-using SFA.DAS.Employer.Aan.Web.Extensions;
+using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers;
 
+[Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
 public class NetworkEventDetailsController : Controller
 {
     public const string DetailsViewPath = "~/Views/NetworkEventDetails/Detail.cshtml";
@@ -19,18 +21,20 @@ public class NetworkEventDetailsController : Controller
 
     private readonly IOuterApiClient _outerApiClient;
     private readonly IValidator<SubmitAttendanceCommand> _validator;
+    private readonly ISessionService _sessionService;
 
-    public NetworkEventDetailsController(IOuterApiClient outerApiClient, IValidator<SubmitAttendanceCommand> validator)
+    public NetworkEventDetailsController(IOuterApiClient outerApiClient, IValidator<SubmitAttendanceCommand> validator, ISessionService sessionService)
     {
         _outerApiClient = outerApiClient;
         _validator = validator;
+        _sessionService = sessionService;
     }
 
     [HttpGet]
     [Route("accounts/{employerAccountId}/network-events/{id}", Name = SharedRouteNames.NetworkEventDetails)]
     public async Task<IActionResult> Get([FromRoute] string employerAccountId, [FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        var memberId = User.GetAanMemberId();
+        var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
         var eventDetailsResponse = await _outerApiClient.GetCalendarEventDetails(id, memberId, cancellationToken);
 
         if (eventDetailsResponse.ResponseMessage.IsSuccessStatusCode)
@@ -47,7 +51,7 @@ public class NetworkEventDetailsController : Controller
     [Route("accounts/{employerAccountId}/network-events/{id}", Name = SharedRouteNames.NetworkEventDetails)]
     public async Task<IActionResult> Post([FromRoute] string employerAccountId, SubmitAttendanceCommand command, CancellationToken cancellationToken)
     {
-        var memberId = User.GetAanMemberId();
+        var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
         var result = await _validator.ValidateAsync(command, cancellationToken);
 
         if (!result.IsValid)
@@ -67,25 +71,26 @@ public class NetworkEventDetailsController : Controller
 
         await _outerApiClient.PutAttendance(command.CalendarEventId, memberId, new SetAttendanceStatusRequest(command.NewStatus), cancellationToken);
 
+        var routeValues = new { employerAccountId, id = command.CalendarEventId };
         return command.NewStatus
-            ? RedirectToAction("SignUpConfirmation", new { employerAccountId = employerAccountId })
-            : RedirectToAction("CancellationConfirmation", new { employerAccountId = employerAccountId });
+            ? RedirectToRoute(RouteNames.AttendanceConfirmations.SignUpConfirmation, routeValues)
+            : RedirectToRoute(RouteNames.AttendanceConfirmations.CancellationConfirmation, routeValues);
     }
 
 
     [HttpGet]
-    [Route("signup-confirmation", Name = RouteNames.AttendanceConfirmations.SignUpConfirmation)]
-    public IActionResult SignUpConfirmation(string employerAccountId)
+    [Route("accounts/{employerAccountId}/network-events/{id}/signup-confirmation", Name = RouteNames.AttendanceConfirmations.SignUpConfirmation)]
+    public IActionResult SignUpConfirmation([FromRoute] string employerAccountId)
     {
-        EventAttendanceConfirmationViewModel model = new(Url.RouteUrl(SharedRouteNames.NetworkEvents, new { employerAccountId = employerAccountId })!, new(Url.RouteUrl(SharedRouteNames.EventsHub, new { employerAccountId = employerAccountId })));
+        EventAttendanceConfirmationViewModel model = new(Url.RouteUrl(SharedRouteNames.NetworkEvents, new { employerAccountId = employerAccountId })!, new(Url.RouteUrl(SharedRouteNames.EventsHub, new { employerAccountId })));
         return View(SignUpConfirmationViewPath, model);
     }
 
     [HttpGet]
-    [Route("cancellation-confirmation", Name = RouteNames.AttendanceConfirmations.CancellationConfirmation)]
-    public IActionResult CancellationConfirmation(string employerAccountId)
+    [Route("accounts/{employerAccountId}/network-events/{id}/cancellation-confirmation", Name = RouteNames.AttendanceConfirmations.CancellationConfirmation)]
+    public IActionResult CancellationConfirmation([FromRoute] string employerAccountId)
     {
-        EventAttendanceConfirmationViewModel model = new(Url.RouteUrl(SharedRouteNames.NetworkEvents, new { employerAccountId = employerAccountId })!, new(Url.RouteUrl(SharedRouteNames.EventsHub, new { employerAccountId = employerAccountId })));
+        EventAttendanceConfirmationViewModel model = new(Url.RouteUrl(SharedRouteNames.NetworkEvents, new { employerAccountId = employerAccountId })!, new(Url.RouteUrl(SharedRouteNames.EventsHub, new { employerAccountId })));
         return View(CancellationConfirmationViewPath, model);
     }
 }

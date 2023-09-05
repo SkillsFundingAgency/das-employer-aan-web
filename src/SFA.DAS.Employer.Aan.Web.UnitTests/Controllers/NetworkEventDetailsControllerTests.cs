@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using AutoFixture.NUnit3;
 using FluentAssertions;
-using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -13,6 +12,7 @@ using SFA.DAS.ApprenticeAan.Web.Models.NetworkEvents;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.Aan.Web.Controllers;
+using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 using SFA.DAS.Testing.AutoFixture;
 
@@ -119,16 +119,17 @@ public class NetworkEventDetailsControllerTests
 
     [Test, MoqAutoData]
     public async Task Post_SetAttendanceStatus_InvokesOuterApiClientPutAttendance(
-        Mock<IOuterApiClient> outerApiMock,
-        Guid apprenticeId,
+        [Frozen] Mock<IOuterApiClient> outerApiMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] NetworkEventDetailsController sut,
         Guid calendarEventId,
-        Mock<IValidator<SubmitAttendanceCommand>> validator,
         bool newStatus,
         Guid employerId)
     {
         var user = UsersForTesting.GetUserWithClaims(employerId.ToString());
 
-        var sut = new NetworkEventDetailsController(outerApiMock.Object, validator.Object);
+        sessionServiceMock.Setup(s => s.Get(Constants.SessionKeys.MemberId)).Returns(Guid.NewGuid().ToString());
+
         sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
         var command = new SubmitAttendanceCommand
@@ -148,10 +149,10 @@ public class NetworkEventDetailsControllerTests
 
     [Test, MoqAutoData]
     public async Task Post_WhenValidationErrorIsRaised_ReturnsValidateFalse(
-        Mock<IOuterApiClient> outerApiMock,
-        Guid apprenticeId,
+        [Frozen] Mock<IOuterApiClient> outerApiMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] NetworkEventDetailsController sut,
         Guid calendarEventId,
-        Mock<IValidator<SubmitAttendanceCommand>> validator,
         Guid employerId)
     {
 
@@ -160,8 +161,8 @@ public class NetworkEventDetailsControllerTests
         outerApiMock.Setup(o => o.GetCalendarEventDetails(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(response);
         var user = UsersForTesting.GetUserWithClaims(employerId.ToString());
+        sessionServiceMock.Setup(s => s.Get(Constants.SessionKeys.MemberId)).Returns(Guid.NewGuid().ToString());
 
-        var sut = new NetworkEventDetailsController(outerApiMock.Object, validator.Object);
         sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
         sut.ModelState.AddModelError("key", "message");
@@ -177,7 +178,6 @@ public class NetworkEventDetailsControllerTests
     [Test, MoqAutoData]
     public async Task SetAttendanceStatus_NewStatusIsTrue_RedirectsToSignUpConfirmation(
         [Greedy] NetworkEventDetailsController sut,
-        Guid apprenticeId,
         Guid calendarEventId,
         Guid employerId)
     {
@@ -191,13 +191,12 @@ public class NetworkEventDetailsControllerTests
         };
         var result = await sut.Post(accountId, command, new CancellationToken());
 
-        Assert.That(result.As<RedirectToActionResult>().ActionName, Is.EqualTo("SignUpConfirmation"));
+        Assert.That(result.As<RedirectToRouteResult>().RouteName, Is.EqualTo(RouteNames.AttendanceConfirmations.SignUpConfirmation));
     }
 
     [Test, MoqAutoData]
     public async Task SetAttendanceStatus_NewStatusIsFalse_RedirectsToCancellationConfirmation(
         [Greedy] NetworkEventDetailsController sut,
-        Guid apprenticeId,
         Guid calendarEventId,
         Guid employerId)
     {
@@ -211,6 +210,6 @@ public class NetworkEventDetailsControllerTests
         };
         var result = await sut.Post(accountId, command, new CancellationToken());
 
-        Assert.That(result.As<RedirectToActionResult>().ActionName, Is.EqualTo("CancellationConfirmation"));
+        Assert.That(result.As<RedirectToRouteResult>().RouteName, Is.EqualTo(RouteNames.AttendanceConfirmations.CancellationConfirmation));
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
+using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Controllers;
 using SFA.DAS.Employer.Aan.Web.Extensions;
 
@@ -9,17 +10,28 @@ namespace SFA.DAS.Employer.Aan.Web.Filters;
 [ExcludeFromCodeCoverage]
 public class RequiresExistingMemberAttribute : ApplicationFilterAttribute
 {
-    public override void OnActionExecuting(ActionExecutingContext context)
+    private readonly ISessionService _sessionService;
+    private readonly IOuterApiClient _outerApiClient;
+
+    public RequiresExistingMemberAttribute(ISessionService sessionService, IOuterApiClient outerApiClient)
+    {
+        _sessionService = sessionService;
+        _outerApiClient = outerApiClient;
+    }
+
+    public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         if (context.ActionDescriptor is not ControllerActionDescriptor controllerActionDescriptor) return;
 
-        if (BypassCheck(controllerActionDescriptor)) return;
-
-        if (!IsValidRequest(context, controllerActionDescriptor))
+        var isValidRequest = await IsValidRequest(context, controllerActionDescriptor);
+        if (!isValidRequest)
         {
             context.RouteData.Values.TryGetValue("employerAccountId", out object? accountId);
             context.Result = RedirectToHome(new { EmployerAccountId = accountId });
+            return;
         }
+
+        await next();
     }
 
     private bool BypassCheck(ControllerActionDescriptor controllerActionDescriptor)
@@ -29,9 +41,22 @@ public class RequiresExistingMemberAttribute : ApplicationFilterAttribute
         return controllersToByPass.Contains(controllerActionDescriptor.ControllerTypeInfo.Name);
     }
 
-    private static bool IsValidRequest(ActionExecutingContext context, ControllerActionDescriptor controllerActionDescriptor)
+    private async Task<bool> IsValidRequest(ActionExecutingContext context, ControllerActionDescriptor controllerActionDescriptor)
     {
-        var isMember = context.HttpContext.User.GetAanMemberId() != Guid.Empty;
+        var userId = context.HttpContext.User.GetUserId();
+        if (userId == Guid.Empty) return true;
+
+        var sessionValue = _sessionService.Get(Constants.SessionKeys.MemberId);
+        if (sessionValue == null)
+        {
+            var response = await _outerApiClient.GetEmployerMember(userId, CancellationToken.None);
+            sessionValue = response.ResponseMessage.IsSuccessStatusCode ? response.GetContent().MemberId.ToString() : Guid.Empty.ToString();
+            _sessionService.Set(Constants.SessionKeys.MemberId, sessionValue);
+        }
+
+        if (BypassCheck(controllerActionDescriptor)) return true;
+
+        var isMember = Guid.Parse(sessionValue) != Guid.Empty;
 
         var isRequestingOnboardingPage = IsRequestForOnboardingAction(controllerActionDescriptor);
 
