@@ -21,7 +21,6 @@ public class CheckYourAnswersViewModel : CheckYourAnswersSubmitModel
     public string Email { get; set; } = null!;
     public string OrganisationName { get; set; }
     public int ActiveApprenticesCount { get; set; }
-    public string DigitalApprenticeshipProgrammeStartDate { get; set; }
     public IEnumerable<string> Sectors { get; set; }
 
     public CheckYourAnswersViewModel(IUrlHelper url, OnboardingSessionModel sessionModel, string employerAccountId)
@@ -39,7 +38,6 @@ public class CheckYourAnswersViewModel : CheckYourAnswersSubmitModel
         PreviousEngagement = GetPreviousEngagementValue(sessionModel.GetProfileValue(ProfileDataId.HasPreviousEngagement))!;
 
         ActiveApprenticesCount = sessionModel.EmployerDetails.ActiveApprenticesCount;
-        DigitalApprenticeshipProgrammeStartDate = sessionModel.EmployerDetails.DigitalApprenticeshipProgrammeStartDate;
         Sectors = sessionModel.EmployerDetails.Sectors;
 
         OrganisationName = sessionModel.EmployerDetails.OrganisationName;

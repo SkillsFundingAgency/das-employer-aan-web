@@ -131,7 +131,6 @@ public class PreviousEngagementControllerPostTests
 
             sessionModel.EmployerDetails.ActiveApprenticesCount.Should().Be(employerMemberSummary.ActiveCount);
             sessionModel.EmployerDetails.Sectors.Should().Equal(employerMemberSummary.Sectors);
-            sessionModel.EmployerDetails.DigitalApprenticeshipProgrammeStartDate.Should().Be(employerMemberSummary.StartDate.GetValueOrDefault().Date.ToString("dd-MM-yyyy"));
             var account = user.GetEmployerAccount(submitmodel.EmployerAccountId);
             sessionModel.EmployerDetails.OrganisationName.Should().Be(account.DasAccountName);
         }
