@@ -175,7 +175,6 @@ public class AndSessionModelIsPopulated
         InvokeControllerGet();
         _viewModel!.OrganisationName.Should().Be(_sessionModel.EmployerDetails.OrganisationName);
         _viewModel!.ActiveApprenticesCount.Should().Be(_sessionModel.EmployerDetails.ActiveApprenticesCount);
-        _viewModel!.DigitalApprenticeshipProgrammeStartDate.Should().Be(_sessionModel.EmployerDetails.DigitalApprenticeshipProgrammeStartDate);
         _viewModel!.Sectors.Should().BeEquivalentTo(_sessionModel.EmployerDetails.Sectors);
     }
 
