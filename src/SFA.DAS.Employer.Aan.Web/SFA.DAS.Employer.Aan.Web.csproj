@@ -18,7 +18,7 @@
     <PackageReference Include="SFA.DAS.Employer.Shared.UI" Version="17.1.50" />
     <PackageReference Include="SFA.DAS.Encoding" Version="1.1.76" />
     <PackageReference Include="SFA.DAS.Aan.SharedUi" Version="0.1.55" />
-    <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.55" />
+    <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.60" />
     <PackageReference Include="SFA.DAS.Configuration.AzureTableStorage" Version="3.0.84" />
     <PackageReference Include="SFA.DAS.Http" Version="3.2.69" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="6.0.4" />
