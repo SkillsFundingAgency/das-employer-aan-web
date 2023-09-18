@@ -64,6 +64,7 @@ public class ServiceController : Controller
     }
 
     //This is for LOCAL dev only
+#if DEBUG
     [HttpGet]
     [Route("account-details", Name = RouteNames.StubAccountDetailsGet)]
     public IActionResult AccountDetails([FromQuery] string returnUrl)
@@ -105,4 +106,5 @@ public class ServiceController : Controller
 
         return View(viewModel);
     }
+#endif
 }
