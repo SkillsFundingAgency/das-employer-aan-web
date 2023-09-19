@@ -69,7 +69,7 @@ public class PreviousEngagementController : Controller
             sessionModel.EmployerDetails.ActiveApprenticesCount = empSummary.Result.ActiveCount;
             sessionModel.EmployerDetails.Sectors = empSummary.Result.Sectors;
             var account = User.GetEmployerAccount(submitModel.EmployerAccountId.ToUpper());
-            if (account != null) sessionModel.EmployerDetails.OrganisationName = account.DasAccountName;
+            if (account != null) sessionModel.EmployerDetails.OrganisationName = account.EmployerName;
             sessionModel.EmployerDetails.AccountId = decodedEmployerAccountId;
         }
 

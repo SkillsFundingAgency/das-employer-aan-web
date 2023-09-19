@@ -132,7 +132,7 @@ public class PreviousEngagementControllerPostTests
             sessionModel.EmployerDetails.ActiveApprenticesCount.Should().Be(employerMemberSummary.ActiveCount);
             sessionModel.EmployerDetails.Sectors.Should().Equal(employerMemberSummary.Sectors);
             var account = user.GetEmployerAccount(submitmodel.EmployerAccountId);
-            sessionModel.EmployerDetails.OrganisationName.Should().Be(account.DasAccountName);
+            sessionModel.EmployerDetails.OrganisationName.Should().Be(account.EmployerName);
         }
 
         sut.ModelState.IsValid.Should().BeTrue();

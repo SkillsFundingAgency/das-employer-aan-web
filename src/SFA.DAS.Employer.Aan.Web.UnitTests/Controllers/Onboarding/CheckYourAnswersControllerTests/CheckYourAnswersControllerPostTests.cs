@@ -65,7 +65,7 @@ public class CheckYourAnswersControllerPostTests
 
         //Assert
         outerApiClientMock.Verify(o => o.PostEmployerMember(It.Is<CreateEmployerMemberRequest>(r =>
-            r.OrganisationName == user.GetEmployerAccount(employerAccountId).DasAccountName
+            r.OrganisationName == user.GetEmployerAccount(employerAccountId).EmployerName
             && r.JoinedDate.Date == DateTime.UtcNow.Date
             && r.AccountId == onboardingSessionModel.EmployerDetails.AccountId
             && r.UserRef == user.GetUserId()
