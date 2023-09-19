@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Extensions;
@@ -17,9 +18,12 @@ public class BeforeYouStartController : Controller
     public IActionResult Get([FromRoute] string employerAccountId)
     {
         var account = User.GetEmployerAccount(employerAccountId);
+        var userData = $"Name: {User.GetGivenName()} {User.GetFamilyName()} Email: {User.GetEmail()} Accounts: {User.FindFirstValue(EmployerClaims.AccountsClaimsTypeIdentifier)} Selected Account: {account.DasAccountName}";
+
         var model = new BeforeYouStartViewModel()
         {
-            OrganisationName = account.DasAccountName
+            OrganisationName = account.DasAccountName,
+            UserData = userData
         };
         return View(ViewPath, model);
     }
