@@ -12,7 +12,6 @@ public static class ClaimsPrincipalExtensions
     public static class ClaimTypes
     {
         //This is defined in the login service, so it should be exact match
-        public const string StagedEmployer = "is_staged_employer";
         public const string EmployerId = "employer_id";
     }
 
@@ -22,11 +21,6 @@ public static class ClaimsPrincipalExtensions
         var hasParsed = Guid.TryParse(memberId, out Guid value);
         return hasParsed ? value : Guid.Empty;
     }
-
-    public static void AddStagedApprenticeClaim(this ClaimsPrincipal principal) =>
-        principal.AddIdentity(new ClaimsIdentity(new[] { new Claim(ClaimTypes.StagedEmployer, true.ToString()) }));
-
-    public static bool IsStagedEmployer(this ClaimsPrincipal principal) => principal.FindFirst(ClaimTypes.StagedEmployer) != null;
 
     public static Dictionary<string, EmployerUserAccountItem> GetEmployerAccounts(this ClaimsPrincipal user)
     => JsonConvert.DeserializeObject<Dictionary<string, EmployerUserAccountItem>>(user.FindFirstValue(EmployerClaims.AccountsClaimsTypeIdentifier))!;
