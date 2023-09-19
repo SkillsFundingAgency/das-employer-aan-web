@@ -19,6 +19,6 @@ public class EmployerAccountsService : IEmployerAccountsService
         return Transform(result);
     }
 
-    public EmployerUserAccounts Transform(GetEmployerUserAccountsResponse response) =>
+    private static EmployerUserAccounts Transform(GetEmployerUserAccountsResponse response) =>
         new EmployerUserAccounts(response.IsSuspended, response.FirstName, response.LastName, response.EmployerUserId, response.UserAccountResponse.Select(u => new EmployerIdentifier(u.EncodedAccountId, u.DasAccountName, u.Role)).ToList());
 }
