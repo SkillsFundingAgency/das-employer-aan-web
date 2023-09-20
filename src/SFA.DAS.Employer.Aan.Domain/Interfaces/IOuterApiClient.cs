@@ -48,4 +48,7 @@ public interface IOuterApiClient
                    [Body] SetAttendanceStatusRequest newStatus,
                    CancellationToken cancellationToken);
 
+    [Get("/members")]
+    Task<GetMembersResponse> GetMembers([QueryMap] IDictionary<string, string[]> parameters, CancellationToken cancellationToken);
+
 }

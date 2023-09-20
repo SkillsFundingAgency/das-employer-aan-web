@@ -83,7 +83,7 @@ public class NetworkEventsControllerTests
         model!.FilterChoices.ToDate?.ToApiString().Should().Be(toDateFormatted);
         model!.FilterChoices.Keyword.Should().Be(keyword);
         model!.FilterChoices.EventFormatChecklistDetails.Lookups.Should().BeEquivalentTo(expectedEventFormatChecklistLookup);
-        model!.ClearSelectedFiltersLink.Should().Be(AllNetworksUrl);
+        model!.SelectedFiltersModel.ClearSelectedFiltersLink.Should().Be(AllNetworksUrl);
 
         outerApiMock.Verify(o => o.GetCalendarEvents(It.IsAny<Guid>(), It.IsAny<Dictionary<string, string[]>>(), It.IsAny<CancellationToken>()), Times.Once);
     }
