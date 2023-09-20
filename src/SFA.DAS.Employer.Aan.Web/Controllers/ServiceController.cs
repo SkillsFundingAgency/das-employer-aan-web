@@ -100,7 +100,7 @@ public class ServiceController : Controller
             Email = User.FindFirstValue(ClaimTypes.Email),
             Id = User.FindFirstValue(ClaimTypes.NameIdentifier),
             Accounts = employerAccounts,
-            ReturnUrl = Url.RouteUrl(RouteNames.Home, new { EmployerAccountId = employerAccounts[0].EncodedAccountId })!
+            ReturnUrl = Url.RouteUrl(RouteNames.Home, new { EmployerAccountId = employerAccounts[0].AccountId })!
         };
 
         return View(viewModel);

@@ -74,7 +74,7 @@ public class CheckYourAnswersController : Controller
 
         CreateEmployerMemberRequest request = new();
         request.JoinedDate = DateTime.UtcNow;
-        request.OrganisationName = account.DasAccountName;
+        request.OrganisationName = account.EmployerName;
         request.RegionId = source.IsMultiRegionalOrganisation.GetValueOrDefault() ? null : source.Regions.Find(x => x.IsConfirmed)!.Id;
         request.ProfileValues.AddRange(source.ProfileData.Where(p => !string.IsNullOrWhiteSpace(p.Value)).Select(p => new ProfileValue(p.Id, p.Value!)));
         request.Email = User.GetEmail();

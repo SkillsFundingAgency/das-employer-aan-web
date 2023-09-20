@@ -87,7 +87,7 @@ public class AndSessionModelIsPopulated
 
         user = UsersForTesting.GetUserWithClaims(_employerAccountId);
         var account = user.GetEmployerAccount(_employerAccountId);
-        _sessionModel.EmployerDetails.OrganisationName = account.DasAccountName;
+        _sessionModel.EmployerDetails.OrganisationName = account.EmployerName;
 
         _sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 

@@ -19,7 +19,7 @@ public interface IOuterApiClient
     Task<GetRegionsResult> GetRegions(CancellationToken cancellationToken);
 
     [Get("/employeraccounts/{userId}")]
-    Task<EmployerUserAccounts> GetUserAccounts([Path] string userId, [Query] string email, CancellationToken cancellationToken);
+    Task<GetEmployerUserAccountsResponse> GetUserAccounts([Path] string userId, [Query] string email, CancellationToken cancellationToken);
 
     [Get("/employers/{employerAccountId}/summary")]
     Task<EmployerMemberSummary> GetEmployerSummary([Path] string employerAccountId, CancellationToken cancellationToken);

@@ -12,11 +12,11 @@ namespace SFA.DAS.Employer.Aan.Web.Authentication;
 [ExcludeFromCodeCoverage]
 public class EmployerAccountPostAuthenticationClaimsHandler : ICustomClaims
 {
-    private readonly IOuterApiClient _outerApiClient;
+    private readonly IEmployerAccountsService _employerAccountsService;
 
-    public EmployerAccountPostAuthenticationClaimsHandler(IOuterApiClient outerApiClient)
+    public EmployerAccountPostAuthenticationClaimsHandler(IEmployerAccountsService employerAccountsService)
     {
-        _outerApiClient = outerApiClient;
+        _employerAccountsService = employerAccountsService;
     }
 
     public async Task<IEnumerable<Claim>> GetClaims(TokenValidatedContext tokenValidatedContext)
@@ -29,9 +29,9 @@ public class EmployerAccountPostAuthenticationClaimsHandler : ICustomClaims
                 .First(c => c.Type.Equals(ClaimTypes.Email))
                 .Value;
 
-        var result = await _outerApiClient.GetUserAccounts(userId!, email!, CancellationToken.None);
+        var result = await _employerAccountsService.GetEmployerUserAccounts(userId!, email!);
 
-        var accountsAsJson = JsonConvert.SerializeObject(result.UserAccountResponse.ToDictionary(k => k.EncodedAccountId));
+        var accountsAsJson = JsonConvert.SerializeObject(result.UserAccounts.ToDictionary(k => k.AccountId));
         var associatedAccountsClaim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, accountsAsJson, JsonClaimValueTypes.Json);
 
         if (result.IsSuspended)
@@ -48,9 +48,9 @@ public class EmployerAccountPostAuthenticationClaimsHandler : ICustomClaims
         claims.Add(new Claim(EmployerClaims.UserIdClaimTypeIdentifier, result.EmployerUserId));
         claims.Add(new Claim(EmployerClaims.UserEmailClaimTypeIdentifier, email!));
 
-        result.UserAccountResponse
+        result.UserAccounts
             .Where(c => c.Role.Equals("owner", StringComparison.CurrentCultureIgnoreCase) || c.Role.Equals("transactor", StringComparison.CurrentCultureIgnoreCase))
-            .ToList().ForEach(u => claims.Add(new Claim(EmployerClaims.Account, u.EncodedAccountId)));
+            .ToList().ForEach(u => claims.Add(new Claim(EmployerClaims.Account, u.AccountId)));
 
         claims.Add(associatedAccountsClaim);
 

@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
-using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
+using SFA.DAS.Employer.Aan.Domain.Models;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
@@ -18,8 +18,8 @@ public static class UsersForTesting
         var emailClaim = new Claim(ClaimTypes.Email, "valid_email");
         var userIdClaimTypeIdentifier = new Claim(EmployerClaims.UserIdClaimTypeIdentifier, Guid.NewGuid().ToString());
 
-        EmployerUserAccountItem employerIdentifier = new(employerAccountId.ToString().ToUpper(), "das_account_name", "role");
-        var employerAccounts = new Dictionary<string, EmployerUserAccountItem> { { employerIdentifier.EncodedAccountId, employerIdentifier } };
+        EmployerIdentifier employerIdentifier = new(employerAccountId.ToString().ToUpper(), "das_account_name", "role");
+        var employerAccounts = new Dictionary<string, EmployerIdentifier> { { employerIdentifier.AccountId, employerIdentifier } };
 
         var accountsClaim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, JsonSerializer.Serialize(employerAccounts));
 

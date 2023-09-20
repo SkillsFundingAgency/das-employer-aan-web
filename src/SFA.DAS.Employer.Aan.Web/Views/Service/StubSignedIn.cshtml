@@ -21,9 +21,9 @@
             @foreach (var account in Model.Accounts)
             {
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@account.EncodedAccountId</td>
+                    <td class="govuk-table__cell">@account.AccountId</td>
                     <td class="govuk-table__cell">@account.Role</td>
-                    <td class="govuk-table__cell">@account.DasAccountName</td>
+                    <td class="govuk-table__cell">@account.EmployerName</td>
                 </tr>
             }
             </tbody>

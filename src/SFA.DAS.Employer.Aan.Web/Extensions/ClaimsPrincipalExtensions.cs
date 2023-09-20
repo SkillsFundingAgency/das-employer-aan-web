@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 using Newtonsoft.Json;
-using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
+using SFA.DAS.Employer.Aan.Domain.Models;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 
 namespace SFA.DAS.Employer.Aan.Web.Extensions;
@@ -9,13 +9,6 @@ namespace SFA.DAS.Employer.Aan.Web.Extensions;
 [ExcludeFromCodeCoverage]
 public static class ClaimsPrincipalExtensions
 {
-    public static class ClaimTypes
-    {
-        //This is defined in the login service, so it should be exact match
-        public const string StagedEmployer = "is_staged_employer";
-        public const string EmployerId = "employer_id";
-    }
-
     private static Guid GetClaimValue(ClaimsPrincipal principal, string claimType)
     {
         var memberId = principal.FindFirstValue(claimType);
@@ -23,16 +16,12 @@ public static class ClaimsPrincipalExtensions
         return hasParsed ? value : Guid.Empty;
     }
 
-    public static void AddStagedApprenticeClaim(this ClaimsPrincipal principal) =>
-        principal.AddIdentity(new ClaimsIdentity(new[] { new Claim(ClaimTypes.StagedEmployer, true.ToString()) }));
+    public static Dictionary<string, EmployerIdentifier> GetEmployerAccounts(this ClaimsPrincipal user)
+    => JsonConvert.DeserializeObject<Dictionary<string, EmployerIdentifier>>(user.FindFirstValue(EmployerClaims.AccountsClaimsTypeIdentifier))!;
 
-    public static bool IsStagedEmployer(this ClaimsPrincipal principal) => principal.FindFirst(ClaimTypes.StagedEmployer) != null;
-
-    public static Dictionary<string, EmployerUserAccountItem> GetEmployerAccounts(this ClaimsPrincipal user)
-    => JsonConvert.DeserializeObject<Dictionary<string, EmployerUserAccountItem>>(user.FindFirstValue(EmployerClaims.AccountsClaimsTypeIdentifier))!;
-
-    public static EmployerUserAccountItem GetEmployerAccount(this ClaimsPrincipal user, string employerAccountId)
+    public static EmployerIdentifier GetEmployerAccount(this ClaimsPrincipal user, string employerAccountId)
         => GetEmployerAccounts(user)[employerAccountId.ToUpper()];
+
     public static Guid GetUserId(this ClaimsPrincipal principal) => GetClaimValue(principal, EmployerClaims.UserIdClaimTypeIdentifier);
     public static string GetUserDisplayName(this ClaimsPrincipal principal) => principal.FindFirstValue(EmployerClaims.UserDisplayNameClaimTypeIdentifier);
     public static string GetGivenName(this ClaimsPrincipal principal) => principal.FindFirstValue(EmployerClaims.GivenName);
