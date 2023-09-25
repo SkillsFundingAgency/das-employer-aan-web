@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Aan.SharedUi.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Controllers;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
@@ -9,15 +10,32 @@ public class NetworkHubControllerTests
 {
     private IActionResult _result = null!;
     static readonly string EventsHubUrl = Guid.NewGuid().ToString();
+    static readonly string NetworkDirectoryUrl = Guid.NewGuid().ToString();
     string accountId = Guid.NewGuid().ToString();
+    private string currentTestMethodName;
+    private NetworkHubViewModel model = null!;
 
     [SetUp]
     public void WhenGettingNetworkHub()
     {
         NetworkHubController sut = new();
-        sut.AddUrlHelperMock().AddUrlForRoute("EventsHub", EventsHubUrl);
+        currentTestMethodName = TestContext.CurrentContext.Test.Name;
+
+        if (currentTestMethodName == "ThenSetsEventsHubUrlInViewModel")
+        {
+            sut.AddUrlHelperMock().AddUrlForRoute(SharedRouteNames.EventsHub, EventsHubUrl);
+        }
+        else if (currentTestMethodName == "ThenSetsNetworkDirectoryUrlInViewModel")
+        {
+            sut.AddUrlHelperMock().AddUrlForRoute(SharedRouteNames.NetworkDirectory, NetworkDirectoryUrl);
+        }
+        else if (currentTestMethodName == "ThenReturnsView")
+        {
+            sut.AddUrlHelperMock().AddUrlForRoute(SharedRouteNames.EventsHub, EventsHubUrl);
+        }
 
         _result = sut.Index(accountId);
+        model = _result.As<ViewResult>().Model.As<NetworkHubViewModel>();
     }
 
     [Test]
@@ -29,7 +47,12 @@ public class NetworkHubControllerTests
     [Test]
     public void ThenSetsEventsHubUrlInViewModel()
     {
-        var model = _result.As<ViewResult>().Model.As<NetworkHubViewModel>();
         model.EventsHubUrl.Should().Be(EventsHubUrl);
+    }
+
+    [Test]
+    public void ThenSetsNetworkDirectoryUrlInViewModel()
+    {
+        model.NetworkDirectoryUrl.Should().Be(NetworkDirectoryUrl);
     }
 }
