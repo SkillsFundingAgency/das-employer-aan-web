@@ -36,25 +36,32 @@ public class NotificationsController : Controller
 
         var encodedEmployerAccountId = _encodingService.Encode(notification.EmployerAccountId.GetValueOrDefault(), EncodingType.AccountId);
 
+        var routeValues = new
+        {
+            employerAccountId = encodedEmployerAccountId,
+            id = notification.ReferenceId
+        };
+
         (string RouteName, object? RouteValues) route = notification.TemplateName switch
         {
             NotificationTemplateNames.AANEmployerOnboarding
-            or NotificationTemplateNames.AANEmployerEventCancel
-                => (RouteNames.NetworkHub, new
-                {
-                    employerAccountId = encodedEmployerAccountId
-                }),
+                => (RouteNames.NetworkHub, routeValues),
 
             NotificationTemplateNames.AANEmployerEventSignup
-                => (SharedRouteNames.NetworkEventDetails, new { id = notification.ReferenceId, employerAccountId = encodedEmployerAccountId }),
+            or NotificationTemplateNames.AANAdminEventUpdate
+            or NotificationTemplateNames.AANAdminEventCancel
+                => (SharedRouteNames.NetworkEventDetails, routeValues),
+
+            NotificationTemplateNames.AANEmployerEventCancel
+                => (SharedRouteNames.NetworkEvents, routeValues),
 
             NotificationTemplateNames.AANIndustryAdvice
             or NotificationTemplateNames.AANAskForHelp
             or NotificationTemplateNames.AANRequestCaseStudy
             or NotificationTemplateNames.AANGetInTouch
-                => (SharedRouteNames.MemberProfile, new { id = notification.ReferenceId, employerAccountId = encodedEmployerAccountId }),
+                => (SharedRouteNames.MemberProfile, routeValues),
 
-            _ => (RouteNames.Home, new { employerAccountId = encodedEmployerAccountId })
+            _ => (RouteNames.Home, routeValues)
         };
 
         return RedirectToRoute(route.RouteName, route.RouteValues);

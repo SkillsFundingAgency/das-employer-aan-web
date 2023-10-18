@@ -35,8 +35,10 @@ public class NotificationsControllerTests
 
     [Test]
     [InlineAutoData(NotificationTemplateNames.AANEmployerOnboarding, RouteNames.NetworkHub)]
-    [InlineAutoData(NotificationTemplateNames.AANEmployerEventCancel, RouteNames.NetworkHub)]
     [InlineAutoData(NotificationTemplateNames.AANEmployerEventSignup, SharedRouteNames.NetworkEventDetails)]
+    [InlineAutoData(NotificationTemplateNames.AANAdminEventUpdate, SharedRouteNames.NetworkEventDetails)]
+    [InlineAutoData(NotificationTemplateNames.AANAdminEventCancel, SharedRouteNames.NetworkEventDetails)]
+    [InlineAutoData(NotificationTemplateNames.AANEmployerEventCancel, SharedRouteNames.NetworkEvents)]
     [InlineAutoData(NotificationTemplateNames.AANIndustryAdvice, SharedRouteNames.MemberProfile)]
     [InlineAutoData(NotificationTemplateNames.AANAskForHelp, SharedRouteNames.MemberProfile)]
     [InlineAutoData(NotificationTemplateNames.AANRequestCaseStudy, SharedRouteNames.MemberProfile)]
