@@ -30,6 +30,10 @@ public interface IOuterApiClient
     [Get("calendarEvents")]
     Task<GetCalendarEventsQueryResult> GetCalendarEvents([Header(RequestHeaders.RequestedByMemberIdHeader)] Guid requestedByMemberId, [QueryMap] IDictionary<string, string[]> parameters, CancellationToken cancellationToken);
 
+    [Get("notifications/{id}")]
+    [AllowAnyStatusCode]
+    Task<Response<GetNotificationResult?>> GetNotification([Header(RequestHeaders.RequestedByMemberIdHeader)] Guid requestedByMemberId, [Path] Guid id, CancellationToken cancellationToken);
+
     [Get("/calendars")]
     Task<List<Calendar>> GetCalendars(CancellationToken cancellationToken);
 
