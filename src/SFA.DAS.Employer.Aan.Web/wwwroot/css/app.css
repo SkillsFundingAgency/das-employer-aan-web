@@ -437,3 +437,35 @@ a.das-show-hide__button[aria-expanded="false"]:after {
 .app-tag--RegionalChair {
     background-color: #5694ca;
 }
+
+.profile-job-title {
+    font-size: 28px;
+}
+
+.profile-about-me-section {
+    background: #F5F2ED;
+}
+
+.profile-govuk-radios {
+    font-size: 22px;
+}
+
+.profile-govuk-checkboxes {
+    font-size: 22px;
+}
+
+.profile-send-message {
+    background: #1D70B8;
+}
+
+.profile-send-message-section {
+    border: 1px solid #1D70B8;
+}
+
+.connect-section-heading {
+    color: #ffffff;
+}
+
+.apprenticeship-sector {
+    white-space: nowrap;
+}

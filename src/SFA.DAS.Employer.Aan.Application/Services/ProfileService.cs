@@ -1,5 +1,5 @@
-﻿using SFA.DAS.Employer.Aan.Domain.Interfaces;
-using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
+﻿using SFA.DAS.Aan.SharedUi.Models;
+using SFA.DAS.Employer.Aan.Domain.Interfaces;
 
 namespace SFA.DAS.Employer.Aan.Application.Services;
 
@@ -12,9 +12,9 @@ public class ProfileService : IProfileService
         _outerApiClient = outerApiClient;
     }
 
-    public async Task<List<Profile>> GetProfilesByUserType(string userType)
+    public async Task<List<Profile>> GetProfilesByUserType(string userType, CancellationToken? cancellationToken)
     {
-        var result = await _outerApiClient.GetProfilesByUserType(userType);
+        var result = await _outerApiClient.GetProfilesByUserType(userType, cancellationToken);
         return result.Profiles;
     }
 }

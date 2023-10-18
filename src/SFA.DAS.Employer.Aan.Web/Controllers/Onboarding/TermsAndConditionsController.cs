@@ -38,7 +38,7 @@ public class TermsAndConditionsController : Controller
     {
         if (!_sessionService.Contains<OnboardingSessionModel>())
         {
-            var profiles = await _profileService.GetProfilesByUserType("employer");
+            var profiles = await _profileService.GetProfilesByUserType("employer", null);
             OnboardingSessionModel sessionModel = new()
             {
                 ProfileData = profiles.Select(p => (ProfileModel)p).ToList(),

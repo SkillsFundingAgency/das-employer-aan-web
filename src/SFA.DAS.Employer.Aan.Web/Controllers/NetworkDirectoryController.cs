@@ -27,14 +27,14 @@ public class NetworkDirectoryController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index(NetworkDirectoryRequestModel request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index([FromRoute] string employerAccountId, NetworkDirectoryRequestModel request, CancellationToken cancellationToken)
     {
         var resultMembers = await _outerApiClient.GetMembers(QueryStringParameterBuilder.BuildQueryStringParameters(request), cancellationToken);
         var resultRegions = await _outerApiClient.GetRegions(cancellationToken);
 
         resultRegions.Regions!.Add(new Region() { Area = "Multi-regional", Id = 0, Ordering = resultRegions.Regions.Count + 1 });
 
-        var model = InitialiseViewModel(resultMembers);
+        var model = InitialiseViewModel(employerAccountId, resultMembers);
         var filterUrl = FilterBuilder.BuildFullQueryString(request, () => Url.RouteUrl(SharedRouteNames.NetworkDirectory)!);
         var filterChoices = PopulateFilterChoices(request, resultRegions.Regions);
 
@@ -45,7 +45,7 @@ public class NetworkDirectoryController : Controller
         return View(model);
     }
 
-    private static NetworkDirectoryViewModel InitialiseViewModel(GetMembersResponse result)
+    private NetworkDirectoryViewModel InitialiseViewModel(string employerAccountId, GetMembersResponse result)
     {
         var model = new NetworkDirectoryViewModel
         {
@@ -53,10 +53,13 @@ public class NetworkDirectoryController : Controller
 
         };
 
-        foreach (var networkDirectory in result.Members)
+        foreach (var member in result.Members)
         {
-            model.Members.Add(networkDirectory);
+            MembersViewModel vm = member;
+            vm.MemberProfileLink = Url.RouteUrl(SharedRouteNames.MemberProfile, new { employerAccountId = employerAccountId, id = member.MemberId })!;
+            model.Members.Add(vm);
         }
+
         return model;
     }
 

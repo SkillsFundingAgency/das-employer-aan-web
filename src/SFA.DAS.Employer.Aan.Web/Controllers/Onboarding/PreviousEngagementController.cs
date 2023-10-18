@@ -3,13 +3,13 @@ using FluentValidation.AspNetCore;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.Employer.Aan.Domain.Constants;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Encoding;
+using static SFA.DAS.Aan.SharedUi.Constants.ProfileConstants;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 
@@ -59,7 +59,7 @@ public class PreviousEngagementController : Controller
             return View(ViewPath, model);
         }
 
-        sessionModel.SetProfileValue(ProfileDataId.HasPreviousEngagement, submitModel.HasPreviousEngagement.ToString()!);
+        sessionModel.SetProfileValue(ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer, submitModel.HasPreviousEngagement.ToString()!);
 
         if (!sessionModel.HasSeenPreview)
         {
@@ -80,7 +80,7 @@ public class PreviousEngagementController : Controller
 
     private PreviousEngagementViewModel GetViewModel(OnboardingSessionModel sessionModel, string employerAccountId)
     {
-        var previousEngagement = sessionModel.GetProfileValue(ProfileDataId.HasPreviousEngagement);
+        var previousEngagement = sessionModel.GetProfileValue(ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer);
         return new PreviousEngagementViewModel()
         {
             HasPreviousEngagement = bool.TryParse(previousEngagement, out var result) ? result : null,

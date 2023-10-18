@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Constants;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
+using static SFA.DAS.Aan.SharedUi.Constants.ProfileConstants;
 
 namespace SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
@@ -35,7 +36,7 @@ public class CheckYourAnswersViewModel : CheckYourAnswersSubmitModel
         Support = GetSupport(sessionModel);
 
         PreviousEngagementChangeLink = url.RouteUrl(@RouteNames.Onboarding.PreviousEngagement, new { EmployerAccountId = employerAccountId })!;
-        PreviousEngagement = GetPreviousEngagementValue(sessionModel.GetProfileValue(ProfileDataId.HasPreviousEngagement))!;
+        PreviousEngagement = GetPreviousEngagementValue(sessionModel.GetProfileValue(ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer))!;
 
         ActiveApprenticesCount = sessionModel.EmployerDetails.ActiveApprenticesCount;
         Sectors = sessionModel.EmployerDetails.Sectors;

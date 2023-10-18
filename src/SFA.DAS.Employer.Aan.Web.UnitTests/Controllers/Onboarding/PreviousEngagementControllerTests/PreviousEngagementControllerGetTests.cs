@@ -3,7 +3,6 @@ using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using SFA.DAS.Employer.Aan.Domain.Constants;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
@@ -12,6 +11,7 @@ using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 using SFA.DAS.Encoding;
 using SFA.DAS.Testing.AutoFixture;
+using static SFA.DAS.Aan.SharedUi.Constants.ProfileConstants;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.PreviousEngagementControllerTests;
 
@@ -26,7 +26,7 @@ public class PreviousEngagementControllerGetTests
     {
         OnboardingSessionModel sessionModel = new();
         sessionModel.HasSeenPreview = false;
-        sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileDataId.HasPreviousEngagement, Value = "True" });
+        sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer, Value = "True" });
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.JoinTheNetwork, joinTheNetworkUrl);
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
@@ -44,7 +44,7 @@ public class PreviousEngagementControllerGetTests
     {
         OnboardingSessionModel sessionModel = new();
         sessionModel.HasSeenPreview = true;
-        sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileDataId.HasPreviousEngagement, Value = "True" });
+        sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer, Value = "True" });
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.CheckYourAnswers, checkYourAnswersUrl);
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
@@ -66,7 +66,7 @@ public class PreviousEngagementControllerGetTests
         sut.AddUrlHelperMock();
         OnboardingSessionModel sessionModel = new OnboardingSessionModel();
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
-        sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileDataId.HasPreviousEngagement, Value = hasPreviousEngagement_ValueInSession });
+        sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer, Value = hasPreviousEngagement_ValueInSession });
 
         var result = sut.Get(Guid.NewGuid().ToString());
 
