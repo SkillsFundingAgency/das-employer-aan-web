@@ -23,7 +23,7 @@ public class NotificationsController : Controller
         _encodingService = encodingService;
     }
 
-    [Route("[controller]/{id}")]
+    [Route("links/{id}")]
     public async Task<IActionResult> Index(Guid id, CancellationToken cancellationToken)
     {
         var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
