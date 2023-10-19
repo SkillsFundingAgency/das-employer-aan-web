@@ -31,11 +31,6 @@ public class MemberProfileController : Controller
         ProfileIds.UnderstandingTrainingProvidersAndResourcesOthersAreUsing,
         ProfileIds.UsingTheNetworkToBestBenefitMyOrganisation
     };
-    private static int linkedinProfileId = ProfileIds.EmployerLinkedIn;
-    private static int jobTitleProfileId = ProfileIds.EmployerJobTitle;
-    private static int biographyProfileId = ProfileIds.EmployerBiography;
-    private static int employerNameProfileId = ProfileIds.EmployerUserEmployerName;
-
     private static List<int> addressProfileIds = new List<int>()
     {
         ProfileIds.EmployerUserEmployerAddress1,
@@ -61,41 +56,44 @@ public class MemberProfileController : Controller
         var profiles = _outerApiClient.GetProfilesByUserType(MemberUserType.Employer.ToString(), cancellationToken);
         var memberProfiles = _outerApiClient.GetMemberProfile(memberId, id, true, cancellationToken);
         await Task.WhenAll(profiles, memberProfiles);
-
-        MemberProfileMappingModel memberProfileMappingModel = new()
+        if (memberProfiles.Result.ResponseMessage.IsSuccessStatusCode)
         {
-            LinkedinProfileId = linkedinProfileId,
-            JobTitleProfileId = jobTitleProfileId,
-            BiographyProfileId = biographyProfileId,
-            FirstSectionProfileIds = reasonToJoinProfileIds,
-            SecondSectionProfileIds = supportProfileIds,
-            AddressProfileIds = addressProfileIds,
-            EmployerNameProfileId = employerNameProfileId,
-            IsLoggedInUserMemberProfile = (id == memberId)
-        };
+            MemberProfileMappingModel memberProfileMappingModel = new()
+            {
+                LinkedinProfileId = ProfileIds.EmployerLinkedIn,
+                JobTitleProfileId = ProfileIds.EmployerJobTitle,
+                BiographyProfileId = ProfileIds.EmployerBiography,
+                FirstSectionProfileIds = reasonToJoinProfileIds,
+                SecondSectionProfileIds = supportProfileIds,
+                AddressProfileIds = addressProfileIds,
+                EmployerNameProfileId = ProfileIds.EmployerUserEmployerName,
+                IsLoggedInUserMemberProfile = (id == memberId)
+            };
 
-        MemberProfileViewModel model = new(MemberProfileDetailMapping(memberProfiles), profiles.Result.Profiles, memberProfileMappingModel);
-        return View(MemberProfileViewPath, model);
+            MemberProfileViewModel model = new(MemberProfileDetailMapping(memberProfiles.Result.GetContent()), profiles.Result.Profiles, memberProfileMappingModel);
+            return View(MemberProfileViewPath, model);
+        }
+        throw new InvalidOperationException($"A member with ID {id} was not found.");
     }
 
-    public static MemberProfileDetail MemberProfileDetailMapping(Task<GetMemberProfileResponse> memberProfiles)
+    public static MemberProfileDetail MemberProfileDetailMapping(GetMemberProfileResponse memberProfiles)
     {
         MemberProfileDetail memberProfileDetail = new MemberProfileDetail();
-        memberProfileDetail.FullName = memberProfiles.Result.FullName;
-        memberProfileDetail.Email = memberProfiles.Result.Email;
-        memberProfileDetail.FirstName = memberProfiles.Result.FirstName;
-        memberProfileDetail.LastName = memberProfiles.Result.LastName;
-        memberProfileDetail.OrganisationName = memberProfiles.Result.OrganisationName;
-        memberProfileDetail.RegionId = memberProfiles.Result.RegionId;
-        memberProfileDetail.RegionName = memberProfiles.Result.RegionName;
-        memberProfileDetail.UserType = memberProfiles.Result.UserType;
-        memberProfileDetail.IsRegionalChair = memberProfiles.Result.IsRegionalChair;
-        if (memberProfiles.Result.Apprenticeship != null)
+        memberProfileDetail.FullName = memberProfiles.FullName;
+        memberProfileDetail.Email = memberProfiles.Email;
+        memberProfileDetail.FirstName = memberProfiles.FirstName;
+        memberProfileDetail.LastName = memberProfiles.LastName;
+        memberProfileDetail.OrganisationName = memberProfiles.OrganisationName;
+        memberProfileDetail.RegionId = memberProfiles.RegionId;
+        memberProfileDetail.RegionName = memberProfiles.RegionName;
+        memberProfileDetail.UserType = memberProfiles.UserType;
+        memberProfileDetail.IsRegionalChair = memberProfiles.IsRegionalChair;
+        if (memberProfiles.Apprenticeship != null)
         {
-            memberProfileDetail.Sectors = memberProfiles.Result.Apprenticeship!.Sectors;
-            memberProfileDetail.ActiveApprenticesCount = memberProfiles.Result.Apprenticeship!.ActiveApprenticesCount;
+            memberProfileDetail.Sectors = memberProfiles.Apprenticeship!.Sectors;
+            memberProfileDetail.ActiveApprenticesCount = memberProfiles.Apprenticeship!.ActiveApprenticesCount;
         }
-        memberProfileDetail.Profiles = memberProfiles.Result.Profiles;
+        memberProfileDetail.Profiles = memberProfiles.Profiles;
         return memberProfileDetail;
     }
 }

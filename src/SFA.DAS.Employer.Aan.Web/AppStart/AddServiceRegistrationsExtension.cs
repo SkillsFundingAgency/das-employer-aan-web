@@ -26,7 +26,6 @@ public static class AddServiceRegistrationsExtension
         services.AddSingleton(encodingConfig!);
 
         services.AddTransient<ISessionService, SessionService>();
-        services.AddTransient<IProfileService, ProfileService>();
         services.AddTransient<IRegionService, RegionService>();
         services.AddTransient<IEncodingService, EncodingService>();
         services.AddTransient<IEmployerAccountsService, EmployerAccountsService>();

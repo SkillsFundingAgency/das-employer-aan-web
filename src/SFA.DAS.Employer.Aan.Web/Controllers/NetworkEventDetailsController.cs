@@ -39,26 +39,23 @@ public class NetworkEventDetailsController : Controller
         var eventDetailsResponse = await _outerApiClient.GetCalendarEventDetails(id, memberId, cancellationToken);
         if (eventDetailsResponse.ResponseMessage.IsSuccessStatusCode)
         {
-            var model = InitialiseViewModel(employerAccountId, eventDetailsResponse.GetContent());
+            CalendarEvent calendarEvent = eventDetailsResponse.GetContent();
+
+            List<Attendee> attendees = new List<Attendee>();
+            foreach (var attendee in calendarEvent.Attendees)
+            {
+                Attendee attendeeObject = attendee;
+                attendeeObject.MemberProfileLink = Url.RouteUrl(SharedRouteNames.MemberProfile, new { employerAccountId = employerAccountId, id = attendee.MemberId })!;
+                attendees.Add(attendeeObject);
+            }
+            calendarEvent.Attendees = attendees;
+
             return View(DetailsViewPath, new NetworkEventDetailsViewModel(
-                model,
+                calendarEvent,
                 memberId));
         }
 
         throw new InvalidOperationException($"An event with ID {id} was not found.");
-    }
-
-    private CalendarEvent InitialiseViewModel(string employerAccountId, CalendarEvent result)
-    {
-        List<Attendee> attendees = new List<Attendee>();
-        foreach (var attendee in result.Attendees)
-        {
-            Attendee attendeeObject = attendee;
-            attendeeObject.MemberProfileLink = Url.RouteUrl(SharedRouteNames.MemberProfile, new { employerAccountId = employerAccountId, id = attendee.MemberId })!;
-            attendees.Add(attendeeObject);
-        }
-        result.Attendees = attendees;
-        return result;
     }
 
     [HttpPost]

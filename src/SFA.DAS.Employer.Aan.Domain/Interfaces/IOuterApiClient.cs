@@ -57,5 +57,5 @@ public interface IOuterApiClient
 
     [Get("/members/{memberId}/profile")]
     [AllowAnyStatusCode]
-    Task<GetMemberProfileResponse> GetMemberProfile([Header(RequestHeaders.RequestedByMemberIdHeader)] Guid requestedByMemberId, [Path] Guid memberId, [Query] bool @public, CancellationToken cancellationToken);
+    Task<Response<GetMemberProfileResponse>> GetMemberProfile([Header(RequestHeaders.RequestedByMemberIdHeader)] Guid requestedByMemberId, [Path] Guid memberId, [Query] bool @public, CancellationToken cancellationToken);
 }

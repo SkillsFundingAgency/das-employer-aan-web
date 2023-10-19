@@ -1,7 +1,9 @@
-﻿using AutoFixture.NUnit3;
+﻿using System.Net;
+using AutoFixture.NUnit3;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using RestEase;
 using SFA.DAS.Aan.SharedUi.Models;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
@@ -25,8 +27,9 @@ public class MemberProfileControllerTests
         var memberId = Guid.NewGuid();
         var user = UsersForTesting.GetUserWithClaims(employerId);
         sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
+        var response = new Response<GetMemberProfileResponse>(string.Empty, new(HttpStatusCode.OK), () => memberProfile);
         outerApiMock.Setup(o => o.GetMemberProfile(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
-                    .Returns(Task.FromResult(memberProfile));
+                    .Returns(Task.FromResult(response));
 
         //Act
         var result = (ViewResult)sut.Get(employerId, memberId, new CancellationToken()).Result;
@@ -67,8 +70,9 @@ public class MemberProfileControllerTests
         string employerId = Guid.NewGuid().ToString();
         var memberId = Guid.NewGuid();
         var user = UsersForTesting.GetUserWithClaims(employerId);
+        var response = new Response<GetMemberProfileResponse>(string.Empty, new(HttpStatusCode.OK), () => getMemberProfileResponse);
         outerApiMock.Setup(o => o.GetMemberProfile(memberId, memberId, It.IsAny<bool>(), It.IsAny<CancellationToken>()))
-                    .Returns(Task.FromResult(getMemberProfileResponse));
+                    .Returns(Task.FromResult(response));
         Mock<ISessionService> sessionServiceMock = new();
         sessionServiceMock.Setup(s => s.Get(Constants.SessionKeys.MemberId)).Returns(memberId.ToString());
         MemberProfileController sut = new MemberProfileController(outerApiMock.Object, sessionServiceMock.Object);
@@ -85,9 +89,31 @@ public class MemberProfileControllerTests
         });
     }
 
+    [Test, MoqAutoData]
+    public void Get_MemberIdIsNotFound_ThrowsInvalidOperationException(
+    [Frozen] Mock<IOuterApiClient> outerApiMock,
+    GetMemberProfileResponse getMemberProfileResponse,
+    CancellationToken cancellationToken)
+    {
+        //Arrange
+        string employerId = Guid.NewGuid().ToString();
+        var memberId = Guid.Empty;
+        var user = UsersForTesting.GetUserWithClaims(employerId);
+        var response = new Response<GetMemberProfileResponse>(string.Empty, new(HttpStatusCode.InternalServerError), () => getMemberProfileResponse);
+        outerApiMock.Setup(o => o.GetMemberProfile(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+                    .Returns(Task.FromResult(response));
+        Mock<ISessionService> sessionServiceMock = new();
+        sessionServiceMock.Setup(s => s.Get(Constants.SessionKeys.MemberId)).Returns(memberId.ToString());
+        MemberProfileController sut = new MemberProfileController(outerApiMock.Object, sessionServiceMock.Object);
+        sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
+
+        //Assert
+        Assert.That(() => sut.Get(employerId, memberId, cancellationToken), Throws.InvalidOperationException);
+    }
+
     [Test]
     [MoqAutoData]
-    public void MemberProfileDetailMapping_ReturnsMemberProfileDetail(Task<GetMemberProfileResponse> memberProfiles)
+    public void MemberProfileDetailMapping_ReturnsMemberProfileDetail(GetMemberProfileResponse memberProfiles)
     {
         //Arrange
         MemberProfileDetail memberProfileDetail = new MemberProfileDetail();
@@ -99,19 +125,19 @@ public class MemberProfileControllerTests
         Assert.Multiple(() =>
         {
             Assert.That(sut, Is.InstanceOf(memberProfileDetail.GetType()));
-            Assert.That(sut.FullName, Is.EqualTo(memberProfiles.Result.FullName));
-            Assert.That(sut.FirstName, Is.EqualTo(memberProfiles.Result.FirstName));
-            Assert.That(sut.LastName, Is.EqualTo(memberProfiles.Result.LastName));
-            Assert.That(sut.Email, Is.EqualTo(memberProfiles.Result.Email));
-            Assert.That(sut.RegionId, Is.EqualTo(memberProfiles.Result.RegionId));
-            Assert.That(sut.OrganisationName, Is.EqualTo(memberProfiles.Result.OrganisationName));
-            Assert.That(sut.UserType, Is.EqualTo(memberProfiles.Result.UserType));
-            Assert.That(sut.IsRegionalChair, Is.EqualTo(memberProfiles.Result.IsRegionalChair));
-            Assert.That(sut.Profiles, Is.EqualTo(memberProfiles.Result.Profiles));
-            if (memberProfiles.Result.Apprenticeship != null)
+            Assert.That(sut.FullName, Is.EqualTo(memberProfiles.FullName));
+            Assert.That(sut.FirstName, Is.EqualTo(memberProfiles.FirstName));
+            Assert.That(sut.LastName, Is.EqualTo(memberProfiles.LastName));
+            Assert.That(sut.Email, Is.EqualTo(memberProfiles.Email));
+            Assert.That(sut.RegionId, Is.EqualTo(memberProfiles.RegionId));
+            Assert.That(sut.OrganisationName, Is.EqualTo(memberProfiles.OrganisationName));
+            Assert.That(sut.UserType, Is.EqualTo(memberProfiles.UserType));
+            Assert.That(sut.IsRegionalChair, Is.EqualTo(memberProfiles.IsRegionalChair));
+            Assert.That(sut.Profiles, Is.EqualTo(memberProfiles.Profiles));
+            if (memberProfiles.Apprenticeship != null)
             {
-                Assert.That(sut.Sectors, Is.EqualTo(memberProfiles.Result.Apprenticeship!.Sectors));
-                Assert.That(sut.ActiveApprenticesCount, Is.EqualTo(memberProfiles.Result.Apprenticeship!.ActiveApprenticesCount));
+                Assert.That(sut.Sectors, Is.EqualTo(memberProfiles.Apprenticeship!.Sectors));
+                Assert.That(sut.ActiveApprenticesCount, Is.EqualTo(memberProfiles.Apprenticeship!.ActiveApprenticesCount));
             }
         });
     }
