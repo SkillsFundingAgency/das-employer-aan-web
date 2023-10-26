@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RestEase;
 using SFA.DAS.Aan.SharedUi.Models;
+using SFA.DAS.Aan.SharedUi.Models.AmbassadorProfile;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Controllers;
@@ -16,8 +17,10 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers;
 public class MemberProfileControllerTests
 {
     [Test]
-    [MoqAutoData]
+    [MoqInlineAutoData(MemberUserType.Apprentice)]
+    [MoqInlineAutoData(MemberUserType.Employer)]
     public void MemberProfile_ReturnsMemberProfileViewModel(
+        MemberUserType memberUserType,
         [Frozen] Mock<IOuterApiClient> outerApiMock,
         [Greedy] MemberProfileController sut,
         GetMemberProfileResponse memberProfile)
@@ -27,6 +30,7 @@ public class MemberProfileControllerTests
         var memberId = Guid.NewGuid();
         var user = UsersForTesting.GetUserWithClaims(employerId);
         sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
+        memberProfile.UserType = memberUserType;
         var response = new Response<GetMemberProfileResponse>(string.Empty, new(HttpStatusCode.OK), () => memberProfile);
         outerApiMock.Setup(o => o.GetMemberProfile(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(response));
@@ -59,8 +63,10 @@ public class MemberProfileControllerTests
     }
 
     [Test]
-    [MoqAutoData]
+    [MoqInlineAutoData(MemberUserType.Apprentice)]
+    [MoqInlineAutoData(MemberUserType.Employer)]
     public void Get_ReturnsProfileView(
+        MemberUserType memberUserType,
         [Frozen] Mock<IOuterApiClient> outerApiMock,
         GetMemberProfileResponse getMemberProfileResponse,
         CancellationToken cancellationToken
@@ -70,6 +76,7 @@ public class MemberProfileControllerTests
         string employerId = Guid.NewGuid().ToString();
         var memberId = Guid.NewGuid();
         var user = UsersForTesting.GetUserWithClaims(employerId);
+        getMemberProfileResponse.UserType = memberUserType;
         var response = new Response<GetMemberProfileResponse>(string.Empty, new(HttpStatusCode.OK), () => getMemberProfileResponse);
         outerApiMock.Setup(o => o.GetMemberProfile(memberId, memberId, It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(response));
@@ -112,11 +119,19 @@ public class MemberProfileControllerTests
     }
 
     [Test]
-    [MoqAutoData]
-    public void MemberProfileDetailMapping_ReturnsMemberProfileDetail(GetMemberProfileResponse memberProfiles)
+    [MoqInlineAutoData(MemberUserType.Apprentice, true)]
+    [MoqInlineAutoData(MemberUserType.Apprentice, false)]
+    [MoqInlineAutoData(MemberUserType.Employer, true)]
+    [MoqInlineAutoData(MemberUserType.Employer, false)]
+    public void MemberProfileDetailMapping_ReturnsMemberProfileDetail(MemberUserType userType, bool isApprenticeShipAvailable, GetMemberProfileResponse memberProfiles)
     {
         //Arrange
         MemberProfileDetail memberProfileDetail = new MemberProfileDetail();
+        memberProfiles.UserType = userType;
+        if (!isApprenticeShipAvailable)
+        {
+            memberProfiles.Apprenticeship = null;
+        }
 
         //Act
         var sut = MemberProfileController.MemberProfileDetailMapping(memberProfiles);
@@ -134,7 +149,13 @@ public class MemberProfileControllerTests
             Assert.That(sut.UserType, Is.EqualTo(memberProfiles.UserType));
             Assert.That(sut.IsRegionalChair, Is.EqualTo(memberProfiles.IsRegionalChair));
             Assert.That(sut.Profiles, Is.EqualTo(memberProfiles.Profiles));
-            if (memberProfiles.Apprenticeship != null)
+            if (memberProfiles.UserType == MemberUserType.Apprentice && memberProfiles.Apprenticeship != null)
+            {
+                Assert.That(sut.Sector, Is.EqualTo(memberProfiles.Apprenticeship!.Sector));
+                Assert.That(sut.Programmes, Is.EqualTo(memberProfiles.Apprenticeship!.Programme));
+                Assert.That(sut.Level, Is.EqualTo(memberProfiles.Apprenticeship!.Level));
+            }
+            if (memberProfiles.UserType == MemberUserType.Employer && memberProfiles.Apprenticeship != null)
             {
                 Assert.That(sut.Sectors, Is.EqualTo(memberProfiles.Apprenticeship!.Sectors));
                 Assert.That(sut.ActiveApprenticesCount, Is.EqualTo(memberProfiles.Apprenticeship!.ActiveApprenticesCount));
