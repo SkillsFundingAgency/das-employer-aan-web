@@ -84,26 +84,35 @@ public class MemberProfileController : Controller
         {
             MemberProfileDetail memberProfileDetail = MemberProfileDetailMapping(memberProfiles.GetContent());
             MemberProfileMappingModel memberProfileMappingModel = new MemberProfileMappingModel();
-            memberProfileMappingModel = new()
-            {
-                LinkedinProfileId = (memberProfileDetail.UserType == MemberUserType.Apprentice) ? ProfileIds.LinkedIn : ProfileIds.EmployerLinkedIn,
-                JobTitleProfileId = (memberProfileDetail.UserType == MemberUserType.Apprentice) ? ProfileIds.JobTitle : ProfileIds.EmployerJobTitle,
-                BiographyProfileId = (memberProfileDetail.UserType == MemberUserType.Apprentice) ? ProfileIds.Biography : ProfileIds.EmployerBiography,
-                FirstSectionProfileIds = (memberProfileDetail.UserType == MemberUserType.Apprentice) ? eventsProfileIds : reasonToJoinProfileIds,
-                SecondSectionProfileIds = (memberProfileDetail.UserType == MemberUserType.Apprentice) ? promotionsProfileIds : supportProfileIds,
-                AddressProfileIds = (memberProfileDetail.UserType == MemberUserType.Apprentice) ? addressProfileIds : employerAddressProfileIds,
-                EmployerNameProfileId = (memberProfileDetail.UserType == MemberUserType.Apprentice) ? ProfileIds.EmployerName : ProfileIds.EmployerUserEmployerName,
-                IsLoggedInUserMemberProfile = (id == memberId)
-            };
+            GetProfilesResult profilesResult = await _outerApiClient.GetProfilesByUserType((memberProfileDetail.UserType == MemberUserType.Apprentice) ? MemberUserType.Apprentice.ToString() : MemberUserType.Employer.ToString(), cancellationToken);
 
-            GetProfilesResult profilesResult = new GetProfilesResult();
             if (memberProfileDetail.UserType == MemberUserType.Apprentice)
             {
-                profilesResult = await _outerApiClient.GetProfilesByUserType(MemberUserType.Apprentice.ToString(), cancellationToken);
+                memberProfileMappingModel = new()
+                {
+                    LinkedinProfileId = ProfileIds.LinkedIn,
+                    JobTitleProfileId = ProfileIds.JobTitle,
+                    BiographyProfileId = ProfileIds.Biography,
+                    FirstSectionProfileIds = eventsProfileIds,
+                    SecondSectionProfileIds = promotionsProfileIds,
+                    AddressProfileIds = addressProfileIds,
+                    EmployerNameProfileId = ProfileIds.EmployerName,
+                    IsLoggedInUserMemberProfile = (id == memberId)
+                };
             }
             else
             {
-                profilesResult = await _outerApiClient.GetProfilesByUserType(MemberUserType.Employer.ToString(), cancellationToken);
+                memberProfileMappingModel = new()
+                {
+                    LinkedinProfileId = ProfileIds.EmployerLinkedIn,
+                    JobTitleProfileId = ProfileIds.EmployerJobTitle,
+                    BiographyProfileId = ProfileIds.EmployerBiography,
+                    FirstSectionProfileIds = reasonToJoinProfileIds,
+                    SecondSectionProfileIds = supportProfileIds,
+                    AddressProfileIds = employerAddressProfileIds,
+                    EmployerNameProfileId = ProfileIds.EmployerUserEmployerName,
+                    IsLoggedInUserMemberProfile = (id == memberId)
+                };
             }
             MemberProfileViewModel model = new(memberProfileDetail, profilesResult.Profiles, memberProfileMappingModel);
             return View(MemberProfileViewPath, model);
