@@ -13,7 +13,7 @@ public interface IOuterApiClient
     Task<Response<EmployerMember>> GetEmployerMember([Path] Guid userRef, CancellationToken cancellationToken);
 
     [Get("/profiles/{userType}")]
-    Task<GetProfilesResult> GetProfilesByUserType([Path("userType")] string userType);
+    Task<GetProfilesResult> GetProfilesByUserType([Path("userType")] string userType, CancellationToken? cancellationToken);
 
     [Get("/regions")]
     Task<GetRegionsResult> GetRegions(CancellationToken cancellationToken);
@@ -55,4 +55,7 @@ public interface IOuterApiClient
     [Get("/members")]
     Task<GetMembersResponse> GetMembers([QueryMap] IDictionary<string, string[]> parameters, CancellationToken cancellationToken);
 
+    [Get("/members/{memberId}/profile")]
+    [AllowAnyStatusCode]
+    Task<Response<GetMemberProfileResponse>> GetMemberProfile([Header(RequestHeaders.RequestedByMemberIdHeader)] Guid requestedByMemberId, [Path] Guid memberId, [Query] bool @public, CancellationToken cancellationToken);
 }

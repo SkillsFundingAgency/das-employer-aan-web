@@ -24,6 +24,7 @@ public class NetworkDirectoryControllerTests
     private static readonly string AllNetworksUrl = Guid.NewGuid().ToString();
     private static GetMembersResponse expectedMembers = null!;
     private IActionResult result = null!;
+    string employerAccountId = Guid.NewGuid().ToString();
 
     [SetUp]
     public async Task SetupDependenciesAndSystemUnderTest()
@@ -43,7 +44,7 @@ public class NetworkDirectoryControllerTests
         _sut.AddUrlHelperMock().AddUrlForRoute(SharedRouteNames.NetworkDirectory, AllNetworksUrl);
         _sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
-        result = await _sut.Index(request, cancellationToken);
+        result = await _sut.Index(employerAccountId, request, cancellationToken);
     }
 
     [Test]
@@ -143,7 +144,7 @@ public class NetworkDirectoryControllerTests
         };
 
         //act
-        var actualResult = await _sut.Index(request, new CancellationToken());
+        var actualResult = await _sut.Index(employerAccountId, request, new CancellationToken());
         var viewResult = actualResult.As<ViewResult>();
         var sut = viewResult.Model as NetworkDirectoryViewModel;
 

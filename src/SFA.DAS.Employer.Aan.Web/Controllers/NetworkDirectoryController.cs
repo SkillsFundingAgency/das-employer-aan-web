@@ -27,14 +27,25 @@ public class NetworkDirectoryController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index(NetworkDirectoryRequestModel request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index([FromRoute] string employerAccountId, NetworkDirectoryRequestModel request, CancellationToken cancellationToken)
     {
         var resultMembers = await _outerApiClient.GetMembers(QueryStringParameterBuilder.BuildQueryStringParameters(request), cancellationToken);
         var resultRegions = await _outerApiClient.GetRegions(cancellationToken);
 
         resultRegions.Regions!.Add(new Region() { Area = "Multi-regional", Id = 0, Ordering = resultRegions.Regions.Count + 1 });
 
-        var model = InitialiseViewModel(resultMembers);
+        var model = new NetworkDirectoryViewModel
+        {
+            TotalCount = resultMembers.TotalCount,
+
+        };
+
+        foreach (var member in resultMembers.Members)
+        {
+            MembersViewModel vm = member;
+            vm.MemberProfileLink = Url.RouteUrl(SharedRouteNames.MemberProfile, new { employerAccountId = employerAccountId, id = member.MemberId })!;
+            model.Members.Add(vm);
+        }
         var filterUrl = FilterBuilder.BuildFullQueryString(request, () => Url.RouteUrl(SharedRouteNames.NetworkDirectory)!);
         var filterChoices = PopulateFilterChoices(request, resultRegions.Regions);
 
@@ -43,21 +54,6 @@ public class NetworkDirectoryController : Controller
         model.SelectedFiltersModel.SelectedFilters = FilterBuilder.Build(request, () => Url.RouteUrl(SharedRouteNames.NetworkDirectory)!, filterChoices.RoleChecklistDetails.Lookups, filterChoices.RegionChecklistDetails.Lookups);
         model.SelectedFiltersModel.ClearSelectedFiltersLink = Url.RouteUrl(SharedRouteNames.NetworkDirectory)!;
         return View(model);
-    }
-
-    private static NetworkDirectoryViewModel InitialiseViewModel(GetMembersResponse result)
-    {
-        var model = new NetworkDirectoryViewModel
-        {
-            TotalCount = result.TotalCount,
-
-        };
-
-        foreach (var networkDirectory in result.Members)
-        {
-            model.Members.Add(networkDirectory);
-        }
-        return model;
     }
 
     private static PaginationViewModel SetupPagination(GetMembersResponse result, string filterUrl)
