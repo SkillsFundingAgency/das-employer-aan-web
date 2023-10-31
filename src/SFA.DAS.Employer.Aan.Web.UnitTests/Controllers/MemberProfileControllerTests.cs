@@ -1,5 +1,4 @@
-﻿using System.Net;
-using AutoFixture.NUnit3;
+﻿using AutoFixture.NUnit3;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -9,8 +8,10 @@ using SFA.DAS.Aan.SharedUi.Models.AmbassadorProfile;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Controllers;
+using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 using SFA.DAS.Testing.AutoFixture;
+using System.Net;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers;
 
@@ -22,6 +23,7 @@ public class MemberProfileControllerTests
     public void MemberProfile_ReturnsMemberProfileViewModel(
         MemberUserType memberUserType,
         [Frozen] Mock<IOuterApiClient> outerApiMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] MemberProfileController sut,
         GetMemberProfileResponse memberProfile)
     {
@@ -34,6 +36,10 @@ public class MemberProfileControllerTests
         var response = new Response<GetMemberProfileResponse>(string.Empty, new(HttpStatusCode.OK), () => memberProfile);
         outerApiMock.Setup(o => o.GetMemberProfile(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(response));
+
+        var networkHubUrl = "http://test";
+        sessionServiceMock.Setup(s => s.Get(RouteNames.EventsHub)).Returns(networkHubUrl);
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.NetworkHub, networkHubUrl);
 
         //Act
         var result = (ViewResult)sut.Get(employerId, memberId, new CancellationToken()).Result;
@@ -85,6 +91,9 @@ public class MemberProfileControllerTests
         MemberProfileController sut = new MemberProfileController(outerApiMock.Object, sessionServiceMock.Object);
         sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
+        var networkHubUrl = "http://test";
+        sessionServiceMock.Setup(s => s.Get(RouteNames.EventsHub)).Returns(networkHubUrl);
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.NetworkHub, networkHubUrl);
         //Act
         var result = sut.Get(employerId, memberId, cancellationToken);
 
