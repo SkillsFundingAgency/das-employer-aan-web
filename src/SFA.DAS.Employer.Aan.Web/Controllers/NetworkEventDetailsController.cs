@@ -50,9 +50,12 @@ public class NetworkEventDetailsController : Controller
             }
             calendarEvent.Attendees = attendees;
 
-            return View(DetailsViewPath, new NetworkEventDetailsViewModel(
+            var model = new NetworkEventDetailsViewModel(
                 calendarEvent,
-                memberId));
+                memberId);
+
+            model.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId });
+            return View(DetailsViewPath, model);
         }
 
         throw new InvalidOperationException($"An event with ID {id} was not found.");

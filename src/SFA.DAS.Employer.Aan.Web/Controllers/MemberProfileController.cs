@@ -6,6 +6,7 @@ using SFA.DAS.Aan.SharedUi.Models.AmbassadorProfile;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Authentication;
+using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using static SFA.DAS.Aan.SharedUi.Constants.ProfileConstants;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers;
@@ -115,6 +116,7 @@ public class MemberProfileController : Controller
                 };
             }
             MemberProfileViewModel model = new(memberProfileDetail, profilesResult.Profiles, memberProfileMappingModel);
+            model.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId });
             return View(MemberProfileViewPath, model);
         }
         throw new InvalidOperationException($"A member with ID {id} was not found.");

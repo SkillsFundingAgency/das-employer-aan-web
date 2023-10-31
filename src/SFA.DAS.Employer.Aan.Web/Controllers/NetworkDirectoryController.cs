@@ -12,6 +12,7 @@ using SFA.DAS.ApprenticeAan.Web.Services;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Authentication;
+using SFA.DAS.Employer.Aan.Web.Infrastructure;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers;
 
@@ -37,7 +38,7 @@ public class NetworkDirectoryController : Controller
         var model = new NetworkDirectoryViewModel
         {
             TotalCount = resultMembers.TotalCount,
-
+            NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId })
         };
 
         foreach (var member in resultMembers.Members)
