@@ -1,5 +1,11 @@
 ﻿@using SFA.DAS.Employer.Aan.Web.Models
+@using SFA.DAS.Aan.SharedUi.Models
 @if (Model is IBackLink backlink)
 {
         <a href="@backlink.BackLink" title="Apprenticeship overview page" class="govuk-back-link">Back</a>
+}
+@if (Model is INetworkHubLink networkHubLink)
+{
+    <br/>
+    <a href="@networkHubLink.NetworkHubLink" title="Network hub page" class="govuk-link">Your network hub</a>
 }

@@ -24,7 +24,7 @@ builder.Services
 builder.Services.AddHealthChecks();
 
 builder.Services
-    .Configure<RouteOptions>(options => { options.LowercaseUrls = true; })
+    .Configure<RouteOptions>(options => { options.LowercaseUrls = false; })
     .AddMvc(options =>
     {
         options.Filters.Add<RequiresExistingMemberAttribute>();

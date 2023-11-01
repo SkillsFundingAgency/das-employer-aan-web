@@ -58,7 +58,8 @@ public class NetworkEventsController : Controller
     {
         var model = new NetworkEventsViewModel
         {
-            TotalCount = result.TotalCount
+            TotalCount = result.TotalCount,
+            NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId })
         };
 
         foreach (var calendarEvent in result.CalendarEvents)
