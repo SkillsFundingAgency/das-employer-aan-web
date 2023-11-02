@@ -88,7 +88,7 @@ public class MemberProfileController : Controller
 
         if (memberProfiles.ResponseMessage.IsSuccessStatusCode)
         {
-            MemberProfileViewModel model = await MemberProfileMapping(memberProfiles.GetContent(), (id == memberId), cancellationToken); ;
+            MemberProfileViewModel model = await MemberProfileMapping(memberProfiles.GetContent(), (id == memberId), cancellationToken);
             model.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId });
             return View(MemberProfileViewPath, model);
         }
@@ -99,7 +99,6 @@ public class MemberProfileController : Controller
     [Route("accounts/{employerAccountId}/member-profile/{id}", Name = SharedRouteNames.MemberProfile)]
     public async Task<IActionResult> Post([FromRoute] string employerAccountId, [FromRoute] Guid id, SubmitConnectionCommand command, CancellationToken cancellationToken)
     {
-
         var result = await _validator.ValidateAsync(command, cancellationToken);
         var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
         if (!result.IsValid)
