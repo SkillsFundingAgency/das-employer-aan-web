@@ -6,6 +6,9 @@
 }
 @if (Model is INetworkHubLink networkHubLink)
 {
-    <br/>
-    <a href="@networkHubLink.NetworkHubLink" title="Network hub page" class="govuk-link">Your network hub</a>
+    <div class="govuk-breadcrumbs">
+        <ol class="govuk-breadcrumbs__list">
+            <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="@networkHubLink.NetworkHubLink">Your network hub</a></li>
+        </ol>
+    </div>
 }
