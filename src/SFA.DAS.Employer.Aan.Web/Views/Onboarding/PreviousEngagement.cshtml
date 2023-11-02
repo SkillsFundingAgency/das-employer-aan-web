@@ -13,27 +13,31 @@
                 <div esfa-validation-marker-for="HasPreviousEngagement" class="govuk-form-group">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                         <h1 class="govuk-heading-l">
-                            Are you joining because you have engaged with an ambassador in the network?
+                            Did you previously engage with an ambassador before deciding to join the network?
                         </h1>
+                        <p>
+                            This could have been at a face-to-face or online event, on social media,through a training provider or talking to a current ambassador where you work.
+                        </p>
                     </legend>
-                <span asp-validation-for="HasPreviousEngagement" class="govuk-error-message"></span>
-                <div id="HasPreviousEngagement-options" class="govuk-radios" data-module="govuk-radios">
-                    <div class="govuk-radios__item">
-                        <input asp-for="HasPreviousEngagement"  class="govuk-radios__input" type="radio" value="true"
-                               sfa-validationerror-class="form-control-error">
-                        <label class="govuk-label govuk-radios__label" for="HasPreviousEngagement">
-                            Yes
-                        </label>
-                    </div>
-                    <div class="govuk-radios__item">
-                        <input asp-for="HasPreviousEngagement" id="No" class="govuk-radios__input" type="radio" value="false"
-                               sfa-validationerror-class="form-control-error">
-                        <label class="govuk-label govuk-radios__label" for="No">
-                            No
-                        </label>
+
+                    <span asp-validation-for="HasPreviousEngagement" class="govuk-error-message"></span>
+                    <div id="HasPreviousEngagement-options" class="govuk-radios" data-module="govuk-radios">
+                        <div class="govuk-radios__item">
+                            <input asp-for="HasPreviousEngagement" class="govuk-radios__input" type="radio" value="true"
+                                   sfa-validationerror-class="form-control-error">
+                            <label class="govuk-label govuk-radios__label" for="HasPreviousEngagement">
+                                Yes
+                            </label>
+                        </div>
+                        <div class="govuk-radios__item">
+                            <input asp-for="HasPreviousEngagement" id="No" class="govuk-radios__input" type="radio" value="false"
+                                   sfa-validationerror-class="form-control-error">
+                            <label class="govuk-label govuk-radios__label" for="No">
+                                No
+                            </label>
+                        </div>
                     </div>
                 </div>
-            </div>
             </fieldset>
             <div class="govuk-button-group">
                 <button id="continue" type="submit" class="govuk-button" data-module="govuk-button" data-disable-on-submit="true">

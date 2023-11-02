@@ -469,3 +469,7 @@ a.das-show-hide__button[aria-expanded="false"]:after {
 .apprenticeship-sector {
     white-space: nowrap;
 }
+
+.termsandcondition-font-size {
+    font-size: 20px;
+}

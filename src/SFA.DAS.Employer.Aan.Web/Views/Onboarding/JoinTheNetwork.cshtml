@@ -21,7 +21,7 @@
                         </legend>
                         <p />
                         <div id="reasonsToJoin-hint" class="govuk-hint">
-                            Outline your reasons for wanting to become a network ambassador. You can choose multiple options that are relevant to your application.
+                            You can choose multiple options.
                         </div>
                         <span asp-validation-for="@Model.ReasonToJoin" class="govuk-error-message"></span>
 
@@ -51,7 +51,7 @@
                         </legend>
                         <p />
                         <div id="Support-hint" class="govuk-hint">
-                            Outline what support you may need from the network in your role as an ambassador. You can choose multiple options that are relevant to your application.
+                            You can choose multiple options.
                         </div>
                         <span asp-validation-for="@Model.Support" class="govuk-error-message"></span>
 
@@ -75,7 +75,11 @@
                     </div>
                 </fieldset>
             </div>
+            <p>
+                You can change your selections at any time in your profile settings.
+            </p>
             <div class="govuk-button-group">
+
                 <button id="continue-button" type="submit" class="govuk-button" data-module="govuk-button" data-disable-on-submit="true" asp-page-handler="Submit">
                     Continue
                 </button>
