@@ -38,8 +38,4 @@
     <ProjectReference Include="..\SFA.DAS.Employer.Aan.Domain\SFA.DAS.Employer.Aan.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\assets\" />
-  </ItemGroup>
-
 </Project>

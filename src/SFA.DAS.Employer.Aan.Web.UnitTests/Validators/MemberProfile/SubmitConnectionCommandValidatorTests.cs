@@ -43,7 +43,7 @@ public class SubmitConnectionCommandValidatorTests
         var result = sut.TestValidate(model);
 
         //Assert
-        result.ShouldNotHaveValidationErrorFor("ReasonToGetInTouch");
+        result.ShouldNotHaveValidationErrorFor(x => x.ReasonToGetInTouch);
     }
 
     [Test]
@@ -82,7 +82,7 @@ public class SubmitConnectionCommandValidatorTests
         var result = sut.TestValidate(model);
 
         //Assert
-        result.ShouldNotHaveValidationErrorFor("CodeOfConduct");
+        result.ShouldNotHaveValidationErrorFor(x => x.CodeOfConduct);
     }
 
     [Test]
@@ -121,6 +121,6 @@ public class SubmitConnectionCommandValidatorTests
         var result = sut.TestValidate(model);
 
         //Assert
-        result.ShouldNotHaveValidationErrorFor("CodeOfConduct");
+        result.ShouldNotHaveValidationErrorFor(x => x.DetailShareAllowed);
     }
 }

@@ -110,13 +110,8 @@ public class MemberProfileController : Controller
             return View(MemberProfileViewPath, model);
         }
         CreateNotificationRequest createNotificationRequest = new CreateNotificationRequest(id, command.ReasonToGetInTouch);
-        var response = await _outerApiClient.PostNotification(memberId, createNotificationRequest, cancellationToken);
-
-        if (response.ResponseMessage.IsSuccessStatusCode)
-        {
-            return RedirectToAction(SharedRouteNames.NotificationSentConfirmation, new { employerAccountId });
-        }
-        throw new InvalidOperationException($"A problem occured while sending notification.");
+        await _outerApiClient.PostNotification(memberId, createNotificationRequest, cancellationToken);
+        return RedirectToAction(SharedRouteNames.NotificationSentConfirmation, new { employerAccountId });
     }
 
     [HttpGet]
