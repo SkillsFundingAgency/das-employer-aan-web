@@ -84,7 +84,7 @@ public class MemberProfileController : Controller
         if (memberProfiles.ResponseMessage.IsSuccessStatusCode)
         {
             MemberProfileDetail memberProfileDetail = MemberProfileDetailMapping(memberProfiles.GetContent());
-            MemberProfileMappingModel memberProfileMappingModel = new MemberProfileMappingModel();
+            MemberProfileMappingModel memberProfileMappingModel;
             GetProfilesResult profilesResult = await _outerApiClient.GetProfilesByUserType((memberProfileDetail.UserType == MemberUserType.Apprentice) ? MemberUserType.Apprentice.ToString() : MemberUserType.Employer.ToString(), cancellationToken);
 
             if (memberProfileDetail.UserType == MemberUserType.Apprentice)
@@ -124,16 +124,18 @@ public class MemberProfileController : Controller
 
     public static MemberProfileDetail MemberProfileDetailMapping(GetMemberProfileResponse memberProfiles)
     {
-        MemberProfileDetail memberProfileDetail = new MemberProfileDetail();
-        memberProfileDetail.FullName = memberProfiles.FullName;
-        memberProfileDetail.Email = memberProfiles.Email;
-        memberProfileDetail.FirstName = memberProfiles.FirstName;
-        memberProfileDetail.LastName = memberProfiles.LastName;
-        memberProfileDetail.OrganisationName = memberProfiles.OrganisationName;
-        memberProfileDetail.RegionId = memberProfiles.RegionId;
-        memberProfileDetail.RegionName = memberProfiles.RegionName;
-        memberProfileDetail.UserType = memberProfiles.UserType;
-        memberProfileDetail.IsRegionalChair = memberProfiles.IsRegionalChair;
+        MemberProfileDetail memberProfileDetail = new()
+        {
+            FullName = memberProfiles.FullName,
+            Email = memberProfiles.Email,
+            FirstName = memberProfiles.FirstName,
+            LastName = memberProfiles.LastName,
+            OrganisationName = memberProfiles.OrganisationName,
+            RegionId = memberProfiles.RegionId,
+            RegionName = memberProfiles.RegionName,
+            UserType = memberProfiles.UserType,
+            IsRegionalChair = memberProfiles.IsRegionalChair
+        };
         if (memberProfiles.Apprenticeship != null)
         {
             if (memberProfileDetail.UserType == MemberUserType.Employer)
