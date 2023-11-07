@@ -16,7 +16,7 @@ public class MemberProfileController : Controller
 {
     private readonly IOuterApiClient _outerApiClient;
     public const string MemberProfileViewPath = "~/Views/MemberProfile/Profile.cshtml";
-    private static List<int> eventsProfileIds = new List<int>()
+    private static readonly List<int> eventsProfileIds = new()
     {
         ProfileIds.NetworkingAtEventsInPerson,
         ProfileIds.PresentingAtEventsInPerson,
@@ -24,7 +24,7 @@ public class MemberProfileController : Controller
         ProfileIds.PresentingAtOnlineEvents,
         ProfileIds.ProjectManagementAndDeliveryOfRegionalEventsOrPlayingARoleInOrganisingNationalEvents
     };
-    private static List<int> promotionsProfileIds = new List<int>()
+    private static readonly List<int> promotionsProfileIds = new()
     {
         ProfileIds.CarryingOutAndWritingUpCaseStudies,
         ProfileIds.DesigningAndCreatingMarketingMaterialsToChampionTheNetwork,
@@ -32,7 +32,7 @@ public class MemberProfileController : Controller
         ProfileIds.EngagingWithStakeholdersToWorkOutHowToImproveTheNetwork,
         ProfileIds.PromotingTheNetworkOnSocialMediaChannels
     };
-    private static List<int> addressProfileIds = new List<int>()
+    private static readonly List<int> addressProfileIds = new()
     {
         ProfileIds.EmployerAddress1,
         ProfileIds.EmployerAddress2,
@@ -41,7 +41,7 @@ public class MemberProfileController : Controller
         ProfileIds.EmployerPostcode
     };
 
-    private static List<int> reasonToJoinProfileIds = new List<int>()
+    private static readonly List<int> reasonToJoinProfileIds = new()
     {
         ProfileIds.MeetOtherAmbassadorsAndGrowYourNetwork,
         ProfileIds.ShareYourKnowledgeExperienceAndBestPractice,
@@ -49,7 +49,7 @@ public class MemberProfileController : Controller
         ProfileIds.BeARoleModelAndActAsAnInformalMentor,
         ProfileIds.ChampionApprenticeshipDeliveryWithinYourNetworks
     };
-    private static List<int> supportProfileIds = new List<int>()
+    private static readonly List<int> supportProfileIds = new()
     {
         ProfileIds.BuildingApprenticeshipProfileOfMyOrganisation,
         ProfileIds.IncreasingEngagementWithSchoolsAndColleges,
@@ -57,7 +57,7 @@ public class MemberProfileController : Controller
         ProfileIds.UnderstandingTrainingProvidersAndResourcesOthersAreUsing,
         ProfileIds.UsingTheNetworkToBestBenefitMyOrganisation
     };
-    private static List<int> employerAddressProfileIds = new List<int>()
+    private static readonly List<int> employerAddressProfileIds = new()
     {
         ProfileIds.EmployerUserEmployerAddress1,
         ProfileIds.EmployerUserEmployerAddress2,
@@ -115,8 +115,10 @@ public class MemberProfileController : Controller
                     IsLoggedInUserMemberProfile = (id == memberId)
                 };
             }
-            MemberProfileViewModel model = new(memberProfileDetail, profilesResult.Profiles, memberProfileMappingModel);
-            model.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId });
+            MemberProfileViewModel model = new(memberProfileDetail, profilesResult.Profiles, memberProfileMappingModel)
+            {
+                NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId })
+            };
             return View(MemberProfileViewPath, model);
         }
         throw new InvalidOperationException($"A member with ID {id} was not found.");

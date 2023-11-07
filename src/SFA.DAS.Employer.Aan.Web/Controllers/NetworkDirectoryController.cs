@@ -65,7 +65,7 @@ public class NetworkDirectoryController : Controller
     }
 
     private static DirectoryFilterChoices PopulateFilterChoices(NetworkDirectoryRequestModel request, List<Region> regions)
-        => new DirectoryFilterChoices
+        => new()
         {
             Keyword = request.Keyword?.Trim(),
             RoleChecklistDetails = new ChecklistDetails
