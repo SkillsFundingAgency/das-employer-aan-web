@@ -58,4 +58,7 @@ public interface IOuterApiClient
     [Get("/members/{memberId}/profile")]
     [AllowAnyStatusCode]
     Task<Response<GetMemberProfileResponse>> GetMemberProfile([Header(RequestHeaders.RequestedByMemberIdHeader)] Guid requestedByMemberId, [Path] Guid memberId, [Query] bool @public, CancellationToken cancellationToken);
+
+    [Post("/notifications")]
+    Task<Response<CreateNotificationResponse>> PostNotification([Header(RequestHeaders.RequestedByMemberIdHeader)] Guid requestedByMemberId, [Body] CreateNotificationRequest request, CancellationToken cancellationToken);
 }

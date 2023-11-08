@@ -20,7 +20,7 @@
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.21" />
     <PackageReference Include="RestEase" Version="1.6.4" />
     <PackageReference Include="RestEase.HttpClientFactory" Version="1.6.4" />
-    <PackageReference Include="SFA.DAS.Aan.SharedUi" Version="0.1.65" />
+    <PackageReference Include="SFA.DAS.Aan.SharedUi" Version="0.1.63-prerelease-7" />
     <PackageReference Include="SFA.DAS.Employer.Shared.UI" Version="17.1.50" />
     <PackageReference Include="SFA.DAS.Encoding" Version="1.1.76" />
     <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.55" />
@@ -36,6 +36,10 @@
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.Employer.Aan.Application\SFA.DAS.Employer.Aan.Application.csproj" />
     <ProjectReference Include="..\SFA.DAS.Employer.Aan.Domain\SFA.DAS.Employer.Aan.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\assets\" />
   </ItemGroup>
 
 </Project>

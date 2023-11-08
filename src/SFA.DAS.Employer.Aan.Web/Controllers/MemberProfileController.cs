@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Aan.SharedUi.Infrastructure;
 using SFA.DAS.Aan.SharedUi.Models;
 using SFA.DAS.Aan.SharedUi.Models.AmbassadorProfile;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
+using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
@@ -16,7 +19,8 @@ public class MemberProfileController : Controller
 {
     private readonly IOuterApiClient _outerApiClient;
     public const string MemberProfileViewPath = "~/Views/MemberProfile/Profile.cshtml";
-    private static readonly List<int> eventsProfileIds = new()
+    public const string NotificationSentConfirmationViewPath = "~/Views/MemberProfile/NotificationSentConfirmation.cshtml";
+    private static List<int> eventsProfileIds = new List<int>()
     {
         ProfileIds.NetworkingAtEventsInPerson,
         ProfileIds.PresentingAtEventsInPerson,
@@ -66,11 +70,12 @@ public class MemberProfileController : Controller
         ProfileIds.EmployerUserEmployerPostcode
     };
     private readonly ISessionService _sessionService;
-
-    public MemberProfileController(IOuterApiClient outerApiClient, ISessionService sessionService)
+    private readonly IValidator<SubmitConnectionCommand> _validator;
+    public MemberProfileController(IOuterApiClient outerApiClient, ISessionService sessionService, IValidator<SubmitConnectionCommand> validator)
     {
         _outerApiClient = outerApiClient;
         _sessionService = sessionService;
+        _validator = validator;
     }
 
     [HttpGet]
@@ -83,45 +88,82 @@ public class MemberProfileController : Controller
 
         if (memberProfiles.ResponseMessage.IsSuccessStatusCode)
         {
-            MemberProfileDetail memberProfileDetail = MemberProfileDetailMapping(memberProfiles.GetContent());
-            MemberProfileMappingModel memberProfileMappingModel;
-            GetProfilesResult profilesResult = await _outerApiClient.GetProfilesByUserType((memberProfileDetail.UserType == MemberUserType.Apprentice) ? MemberUserType.Apprentice.ToString() : MemberUserType.Employer.ToString(), cancellationToken);
-
-            if (memberProfileDetail.UserType == MemberUserType.Apprentice)
-            {
-                memberProfileMappingModel = new()
-                {
-                    LinkedinProfileId = ProfileIds.LinkedIn,
-                    JobTitleProfileId = ProfileIds.JobTitle,
-                    BiographyProfileId = ProfileIds.Biography,
-                    FirstSectionProfileIds = eventsProfileIds,
-                    SecondSectionProfileIds = promotionsProfileIds,
-                    AddressProfileIds = addressProfileIds,
-                    EmployerNameProfileId = ProfileIds.EmployerName,
-                    IsLoggedInUserMemberProfile = (id == memberId)
-                };
-            }
-            else
-            {
-                memberProfileMappingModel = new()
-                {
-                    LinkedinProfileId = ProfileIds.EmployerLinkedIn,
-                    JobTitleProfileId = ProfileIds.EmployerJobTitle,
-                    BiographyProfileId = ProfileIds.EmployerBiography,
-                    FirstSectionProfileIds = reasonToJoinProfileIds,
-                    SecondSectionProfileIds = supportProfileIds,
-                    AddressProfileIds = employerAddressProfileIds,
-                    EmployerNameProfileId = ProfileIds.EmployerUserEmployerName,
-                    IsLoggedInUserMemberProfile = (id == memberId)
-                };
-            }
-            MemberProfileViewModel model = new(memberProfileDetail, profilesResult.Profiles, memberProfileMappingModel)
-            {
-                NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId })
-            };
+            MemberProfileViewModel model = await MemberProfileMapping(memberProfiles.GetContent(), (id == memberId), cancellationToken); ;
+            model.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId });
             return View(MemberProfileViewPath, model);
         }
         throw new InvalidOperationException($"A member with ID {id} was not found.");
+    }
+
+    [HttpPost]
+    [Route("accounts/{employerAccountId}/member-profile/{id}", Name = SharedRouteNames.MemberProfile)]
+    public async Task<IActionResult> Post([FromRoute] string employerAccountId, [FromRoute] Guid id, SubmitConnectionCommand command, CancellationToken cancellationToken)
+    {
+
+        var result = await _validator.ValidateAsync(command, cancellationToken);
+        var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
+        if (!result.IsValid)
+        {
+            var memberProfiles = await _outerApiClient.GetMemberProfile(id, memberId, true, cancellationToken);
+            MemberProfileViewModel model = await MemberProfileMapping(memberProfiles.GetContent(), (id == memberId), cancellationToken);
+            model.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId });
+            result.AddToModelState(ModelState);
+            return View(MemberProfileViewPath, model);
+        }
+        CreateNotificationRequest createNotificationRequest = new CreateNotificationRequest(id, command.ReasonToGetInTouch);
+        var response = await _outerApiClient.PostNotification(memberId, createNotificationRequest, cancellationToken);
+
+        if (response.ResponseMessage.IsSuccessStatusCode)
+        {
+            return RedirectToAction(SharedRouteNames.NotificationSentConfirmation, new { employerAccountId });
+        }
+        throw new InvalidOperationException($"A problem occured while sending notification.");
+    }
+
+    [HttpGet]
+    [Route("accounts/{employerAccountId}/member-profile/notificationsent-confirmation", Name = SharedRouteNames.NotificationSentConfirmation)]
+    public IActionResult NotificationSentConfirmation(string employerAccountId)
+    {
+        NotificationSentConfirmationViewModel model = new(Url.RouteUrl(SharedRouteNames.NetworkDirectory, new { employerAccountId })!);
+        return View(NotificationSentConfirmationViewPath, model);
+    }
+
+    public async Task<MemberProfileViewModel> MemberProfileMapping(GetMemberProfileResponse memberProfiles, bool isLoggedInUserMemberProfile, CancellationToken cancellationToken)
+    {
+        MemberProfileDetail memberProfileDetail = MemberProfileDetailMapping(memberProfiles);
+        MemberProfileMappingModel memberProfileMappingModel;
+        GetProfilesResult profilesResult;
+        if (memberProfileDetail.UserType == MemberUserType.Apprentice)
+        {
+            memberProfileMappingModel = new()
+            {
+                LinkedinProfileId = ProfileIds.LinkedIn,
+                JobTitleProfileId = ProfileIds.JobTitle,
+                BiographyProfileId = ProfileIds.Biography,
+                FirstSectionProfileIds = eventsProfileIds,
+                SecondSectionProfileIds = promotionsProfileIds,
+                AddressProfileIds = addressProfileIds,
+                EmployerNameProfileId = ProfileIds.EmployerName,
+                IsLoggedInUserMemberProfile = isLoggedInUserMemberProfile
+            };
+            profilesResult = await _outerApiClient.GetProfilesByUserType(MemberUserType.Apprentice.ToString(), cancellationToken);
+        }
+        else
+        {
+            memberProfileMappingModel = new()
+            {
+                LinkedinProfileId = ProfileIds.EmployerLinkedIn,
+                JobTitleProfileId = ProfileIds.EmployerJobTitle,
+                BiographyProfileId = ProfileIds.EmployerBiography,
+                FirstSectionProfileIds = reasonToJoinProfileIds,
+                SecondSectionProfileIds = supportProfileIds,
+                AddressProfileIds = employerAddressProfileIds,
+                EmployerNameProfileId = ProfileIds.EmployerUserEmployerName,
+                IsLoggedInUserMemberProfile = isLoggedInUserMemberProfile
+            };
+            profilesResult = await _outerApiClient.GetProfilesByUserType(MemberUserType.Employer.ToString(), cancellationToken);
+        }
+        return new(memberProfileDetail, profilesResult.Profiles, memberProfileMappingModel);
     }
 
     public static MemberProfileDetail MemberProfileDetailMapping(GetMemberProfileResponse memberProfiles)
@@ -133,7 +175,7 @@ public class MemberProfileController : Controller
             FirstName = memberProfiles.FirstName,
             LastName = memberProfiles.LastName,
             OrganisationName = memberProfiles.OrganisationName,
-            RegionId = memberProfiles.RegionId,
+            RegionId = memberProfiles.RegionId ?? 0,
             RegionName = memberProfiles.RegionName,
             UserType = memberProfiles.UserType,
             IsRegionalChair = memberProfiles.IsRegionalChair
