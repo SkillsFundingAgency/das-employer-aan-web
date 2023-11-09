@@ -1,4 +1,6 @@
-﻿using AutoFixture.NUnit3;
+﻿using System.Net;
+using AutoFixture.NUnit3;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -11,11 +13,10 @@ using SFA.DAS.Employer.Aan.Web.Controllers;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 using SFA.DAS.Testing.AutoFixture;
-using System.Net;
 
-namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers;
+namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.MemberProfileControllerTests;
 
-public class MemberProfileControllerTests
+public class MemberProfileControllerGetTests
 {
     [Test]
     [MoqInlineAutoData(MemberUserType.Apprentice)]
@@ -75,6 +76,7 @@ public class MemberProfileControllerTests
         MemberUserType memberUserType,
         [Frozen] Mock<IOuterApiClient> outerApiMock,
         GetMemberProfileResponse getMemberProfileResponse,
+        Mock<IValidator<SubmitConnectionCommand>> validatorMock,
         CancellationToken cancellationToken
     )
     {
@@ -88,7 +90,7 @@ public class MemberProfileControllerTests
                     .Returns(Task.FromResult(response));
         Mock<ISessionService> sessionServiceMock = new();
         sessionServiceMock.Setup(s => s.Get(Constants.SessionKeys.MemberId)).Returns(memberId.ToString());
-        MemberProfileController sut = new MemberProfileController(outerApiMock.Object, sessionServiceMock.Object);
+        MemberProfileController sut = new MemberProfileController(outerApiMock.Object, sessionServiceMock.Object, validatorMock.Object);
         sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
         var networkHubUrl = "http://test";
@@ -109,6 +111,7 @@ public class MemberProfileControllerTests
     public void Get_MemberIdIsNotFound_ThrowsInvalidOperationException(
     [Frozen] Mock<IOuterApiClient> outerApiMock,
     GetMemberProfileResponse getMemberProfileResponse,
+    Mock<IValidator<SubmitConnectionCommand>> validatorMock,
     CancellationToken cancellationToken)
     {
         //Arrange
@@ -120,7 +123,7 @@ public class MemberProfileControllerTests
                     .Returns(Task.FromResult(response));
         Mock<ISessionService> sessionServiceMock = new();
         sessionServiceMock.Setup(s => s.Get(Constants.SessionKeys.MemberId)).Returns(memberId.ToString());
-        MemberProfileController sut = new MemberProfileController(outerApiMock.Object, sessionServiceMock.Object);
+        MemberProfileController sut = new MemberProfileController(outerApiMock.Object, sessionServiceMock.Object, validatorMock.Object);
         sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
         //Assert
