@@ -74,8 +74,8 @@ public class MemberProfileControllerPostTests
         SubmitConnectionCommand command = new()
         {
             ReasonToGetInTouch = 2,
-            CodeOfConduct = true,
-            DetailShareAllowed = true
+            HasAgreedToCodeOfConduct = true,
+            HasAgreedToSharePersonalDetails = true
         };
         string employerId = Guid.NewGuid().ToString();
         var memberId = Guid.NewGuid();
