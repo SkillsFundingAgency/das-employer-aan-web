@@ -12,6 +12,7 @@ using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
+using static SFA.DAS.Aan.SharedUi.Constants.ProfileConstants;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.CheckYourAnswersControllerTests.WhenGetIsInvoked;
 
@@ -65,7 +66,7 @@ public class AndSessionModelIsPopulated
             new ProfileModel { Id = 4, Category = Category.Support, Value = Guid.NewGuid().ToString() },
             new ProfileModel { Id = 5, Category = Category.Support, Value = Guid.NewGuid().ToString() },
             new ProfileModel { Id = 6, Category = Category.Support, Value = null },
-            new ProfileModel { Id = ProfileDataId.HasPreviousEngagement, Value = IsPreviouslyEngagedWithNetwork }
+            new ProfileModel { Id = ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer, Value = IsPreviouslyEngagedWithNetwork }
         };
 
 
@@ -152,8 +153,8 @@ public class AndSessionModelIsPopulated
     {
         InvokeControllerGet();
         _viewModel!.ReasonChangeLink.Should().Be(ReasonToJoinTheNetworkUrl);
-        _viewModel.Reason.Should().Equal(ProfileValues.Where(x => (x.Category == Category.ReasonToJoin) && x.Value != null).Select(x => x.Description).ToList());
-        _viewModel.Support.Should().Equal(ProfileValues.Where(x => (x.Category == Category.Support) && x.Value != null).Select(x => x.Description).ToList());
+        _viewModel.Reason.Should().Equal(ProfileValues.Where(x => (x.Category == Category.ReasonToJoin) && x.Value != null).OrderBy(x => x.Ordering).Select(x => x.Description).ToList());
+        _viewModel.Support.Should().Equal(ProfileValues.Where(x => (x.Category == Category.Support) && x.Value != null).OrderBy(x => x.Ordering).Select(x => x.Description).ToList());
     }
 
     [TestCase("true")]
@@ -161,7 +162,7 @@ public class AndSessionModelIsPopulated
     [TestCase(null)]
     public void ThenSetsPreviousEngagementInViewModel(string isPreviouslyEngagged)
     {
-        _sessionModel.SetProfileValue(ProfileDataId.HasPreviousEngagement, isPreviouslyEngagged);
+        _sessionModel.SetProfileValue(ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer, isPreviouslyEngagged);
         _getResult = _sut.Get(_employerAccountId).As<ViewResult>();
         _viewModel = _getResult.Model.As<CheckYourAnswersViewModel>();
 

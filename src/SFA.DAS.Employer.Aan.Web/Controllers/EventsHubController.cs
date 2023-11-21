@@ -39,7 +39,8 @@ public class EventsHubController : Controller
 
         EventsHubViewModel model = new(firstDayOfTheMonth, Url, GetAppointments(response.Attendances, employerAccountId), () => Url.RouteUrl(@RouteNames.NetworkEvents, new { employerAccountId })!)
         {
-            AllNetworksUrl = Url.RouteUrl(@RouteNames.NetworkEvents, new { employerAccountId })!
+            AllNetworksUrl = Url.RouteUrl(@RouteNames.NetworkEvents, new { employerAccountId })!,
+            NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId })
         };
         return View(model);
     }

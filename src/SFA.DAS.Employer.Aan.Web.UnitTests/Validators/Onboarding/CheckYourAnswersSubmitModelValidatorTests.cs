@@ -2,11 +2,11 @@
 using FluentValidation.TestHelper;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using SFA.DAS.Employer.Aan.Domain.Constants;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Validators;
 using SFA.DAS.Testing.AutoFixture;
+using static SFA.DAS.Aan.SharedUi.Constants.ProfileConstants;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Validators.Onboarding;
 
@@ -27,7 +27,7 @@ public class CheckYourAnswersSubmitModelValidatorTests
         string employerAccountId)
     {
         OnboardingSessionModel sessionModel = new OnboardingSessionModel();
-        sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileDataId.HasPreviousEngagement, Value = "True" });
+        sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer, Value = "True" });
         sessionModel.Regions = new List<RegionModel> { new RegionModel { Id = int.MaxValue, IsSelected = true, IsConfirmed = isRegionConfirmed, Area = Guid.NewGuid().ToString() } };
         sessionModel.IsMultiRegionalOrganisation = isMultiRegionalOrganisationValue;
 

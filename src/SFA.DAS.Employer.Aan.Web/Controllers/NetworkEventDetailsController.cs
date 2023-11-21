@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Aan.SharedUi.Infrastructure;
 using SFA.DAS.Aan.SharedUi.Models;
+using SFA.DAS.Aan.SharedUi.OuterApi.Responses;
 using SFA.DAS.ApprenticeAan.Web.Models.NetworkEvents;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
@@ -36,12 +37,25 @@ public class NetworkEventDetailsController : Controller
     {
         var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
         var eventDetailsResponse = await _outerApiClient.GetCalendarEventDetails(id, memberId, cancellationToken);
-
         if (eventDetailsResponse.ResponseMessage.IsSuccessStatusCode)
         {
-            return View(DetailsViewPath, new NetworkEventDetailsViewModel(
-                eventDetailsResponse.GetContent(),
-                memberId));
+            CalendarEvent calendarEvent = eventDetailsResponse.GetContent();
+
+            List<Attendee> attendees = new List<Attendee>();
+            foreach (var attendee in calendarEvent.Attendees)
+            {
+                Attendee attendeeObject = attendee;
+                attendeeObject.MemberProfileLink = Url.RouteUrl(SharedRouteNames.MemberProfile, new { employerAccountId = employerAccountId, id = attendee.MemberId })!;
+                attendees.Add(attendeeObject);
+            }
+            calendarEvent.Attendees = attendees;
+
+            var model = new NetworkEventDetailsViewModel(
+                calendarEvent,
+                memberId);
+
+            model.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId });
+            return View(DetailsViewPath, model);
         }
 
         throw new InvalidOperationException($"An event with ID {id} was not found.");

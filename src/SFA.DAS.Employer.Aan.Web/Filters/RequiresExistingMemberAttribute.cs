@@ -1,9 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Microsoft.AspNetCore.Mvc.Controllers;
+﻿using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Controllers;
 using SFA.DAS.Employer.Aan.Web.Extensions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SFA.DAS.Employer.Aan.Web.Filters;
 
@@ -51,7 +51,7 @@ public class RequiresExistingMemberAttribute : ApplicationFilterAttribute
         {
             var response = await _outerApiClient.GetEmployerMember(userId, CancellationToken.None);
             sessionValue = response.ResponseMessage.IsSuccessStatusCode ? response.GetContent().MemberId.ToString() : Guid.Empty.ToString();
-            _sessionService.Set(Constants.SessionKeys.MemberId, sessionValue);
+            _sessionService.Set(Constants.SessionKeys.MemberId, sessionValue.ToUpper());
         }
 
         if (BypassCheck(controllerActionDescriptor)) return true;

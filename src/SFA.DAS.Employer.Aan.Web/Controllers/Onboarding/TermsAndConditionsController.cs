@@ -14,12 +14,12 @@ public class TermsAndConditionsController : Controller
 {
     public const string ViewPath = "~/Views/Onboarding/TermsAndConditions.cshtml";
     private readonly ISessionService _sessionService;
-    private readonly IProfileService _profileService;
+    private readonly IOuterApiClient _outerApiClient;
 
-    public TermsAndConditionsController(ISessionService sessionService, IProfileService profileService)
+    public TermsAndConditionsController(ISessionService sessionService, IOuterApiClient outerApiClient)
     {
         _sessionService = sessionService;
-        _profileService = profileService;
+        _outerApiClient = outerApiClient;
     }
 
     [HttpGet]
@@ -38,10 +38,10 @@ public class TermsAndConditionsController : Controller
     {
         if (!_sessionService.Contains<OnboardingSessionModel>())
         {
-            var profiles = await _profileService.GetProfilesByUserType("employer");
+            var profiles = await _outerApiClient.GetProfilesByUserType("employer", null);
             OnboardingSessionModel sessionModel = new()
             {
-                ProfileData = profiles.Select(p => (ProfileModel)p).ToList(),
+                ProfileData = profiles.Profiles.Select(p => (ProfileModel)p).ToList(),
                 HasAcceptedTerms = true
             };
             _sessionService.Set(sessionModel);

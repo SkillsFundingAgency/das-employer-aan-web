@@ -5,7 +5,6 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using SFA.DAS.Employer.Aan.Domain.Constants;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
@@ -16,7 +15,7 @@ using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 using SFA.DAS.Encoding;
 using SFA.DAS.Testing.AutoFixture;
-
+using static SFA.DAS.Aan.SharedUi.Constants.ProfileConstants;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.PreviousEngagementControllerTests;
 
@@ -32,7 +31,7 @@ public class PreviousEngagementControllerPostTests
         CancellationToken cancellationToken)
     {
         OnboardingSessionModel sessionModel = new();
-        sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileDataId.HasPreviousEngagement, Value = null });
+        sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer, Value = null });
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.JoinTheNetwork, joinTheNetworkUrl);
@@ -66,7 +65,7 @@ public class PreviousEngagementControllerPostTests
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.JoinTheNetwork);
 
         submitmodel.HasPreviousEngagement = Convert.ToBoolean(hasPreviousEngagementValue);
-        sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileDataId.HasPreviousEngagement, Value = null });
+        sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer, Value = null });
 
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
@@ -82,7 +81,7 @@ public class PreviousEngagementControllerPostTests
         sut.Post(submitmodel, cancellationToken);
 
         sessionServiceMock.Verify(s => s.Set(sessionModel));
-        sessionModel.ProfileData.FirstOrDefault(p => p.Id == ProfileDataId.HasPreviousEngagement)?.Value.Should().Be(submitmodel.HasPreviousEngagement.ToString());
+        sessionModel.ProfileData.FirstOrDefault(p => p.Id == ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer)?.Value.Should().Be(submitmodel.HasPreviousEngagement.ToString());
         sut.ModelState.IsValid.Should().BeTrue();
     }
 
@@ -104,7 +103,7 @@ public class PreviousEngagementControllerPostTests
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.JoinTheNetwork);
 
         sessionModel.HasSeenPreview = hasSeenPreview;
-        sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileDataId.HasPreviousEngagement, Value = null });
+        sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer, Value = null });
 
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
