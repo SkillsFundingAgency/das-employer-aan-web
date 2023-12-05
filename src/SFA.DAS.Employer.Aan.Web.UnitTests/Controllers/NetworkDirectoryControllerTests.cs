@@ -47,6 +47,12 @@ public class NetworkDirectoryControllerTests
         result = await _sut.Index(employerAccountId, request, cancellationToken);
     }
 
+    [TearDown]
+    public void TearDown()
+    {
+        if (_sut != null) _sut.Dispose();
+    }
+
     [Test]
     public void GetMembers_WithNoFilters_InvokesOuterApi()
         => _outerApiClientMock.Verify(a => a.GetMembers(It.IsAny<Dictionary<string, string[]>>(), cancellationToken), Times.Once);

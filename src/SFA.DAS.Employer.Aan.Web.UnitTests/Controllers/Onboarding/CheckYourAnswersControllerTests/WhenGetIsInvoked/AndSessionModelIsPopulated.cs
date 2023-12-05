@@ -159,14 +159,13 @@ public class AndSessionModelIsPopulated
 
     [TestCase("true")]
     [TestCase("false")]
-    [TestCase(null)]
-    public void ThenSetsPreviousEngagementInViewModel(string isPreviouslyEngagged)
+    public void ThenSetsPreviousEngagementInViewModel(string isPreviouslyEngaged)
     {
-        _sessionModel.SetProfileValue(ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer, isPreviouslyEngagged);
+        _sessionModel.SetProfileValue(ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer, isPreviouslyEngaged);
         _getResult = _sut.Get(_employerAccountId).As<ViewResult>();
         _viewModel = _getResult.Model.As<CheckYourAnswersViewModel>();
 
-        _viewModel.PreviousEngagement.Should().Be(CheckYourAnswersViewModel.GetPreviousEngagementValue(isPreviouslyEngagged));
+        _viewModel.PreviousEngagement.Should().Be(CheckYourAnswersViewModel.GetPreviousEngagementValue(isPreviouslyEngaged));
         _viewModel.PreviousEngagementChangeLink.Should().Be(PreviousEngagementUrl);
     }
 
