@@ -8,7 +8,6 @@ using SFA.DAS.Aan.SharedUi.Models.NetworkDirectory;
 using SFA.DAS.Aan.SharedUi.Models.NetworkEvents;
 using SFA.DAS.Aan.SharedUi.Services;
 using SFA.DAS.ApprenticeAan.Web.Models.NetworkDirectory;
-using SFA.DAS.ApprenticeAan.Web.Services;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Authentication;
@@ -30,7 +29,7 @@ public class NetworkDirectoryController : Controller
     [HttpGet]
     public async Task<IActionResult> Index([FromRoute] string employerAccountId, NetworkDirectoryRequestModel request, CancellationToken cancellationToken)
     {
-        var resultMembers = await _outerApiClient.GetMembers(QueryStringParameterBuilder.BuildQueryStringParameters(request), cancellationToken);
+        var resultMembers = await _outerApiClient.GetMembers(request.ToQueryStringParameters(), cancellationToken);
         var resultRegions = await _outerApiClient.GetRegions(cancellationToken);
 
         resultRegions.Regions!.Add(new Region() { Area = "Multi-regional", Id = 0, Ordering = resultRegions.Regions.Count + 1 });
