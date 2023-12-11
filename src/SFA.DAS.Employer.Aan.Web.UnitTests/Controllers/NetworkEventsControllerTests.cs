@@ -124,4 +124,32 @@ public class NetworkEventsControllerTests
         model.FilterChoices.Keyword.Should().BeNull();
         outerApiMock.Verify(o => o.GetCalendarEvents(It.IsAny<Guid>(), It.IsAny<Dictionary<string, string[]>>(), It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    [Test, MoqAutoData]
+    public void GetCalendarEvents_RegionLookup_NationalAddedWithIdZero(
+        [Frozen] Mock<IOuterApiClient> outerApiMock,
+        [Greedy] NetworkEventsController sut,
+        GetCalendarEventsQueryResult expectedResult,
+        GetRegionsResult regionsResult,
+        Guid employerId)
+    {
+        var request = new GetNetworkEventsRequest();
+
+        var regionCountFromApi = regionsResult.Regions.Count;
+        var user = UsersForTesting.GetUserWithClaims(employerId.ToString());
+        outerApiMock.Setup(o => o.GetCalendarEvents(It.IsAny<Guid>(), It.IsAny<Dictionary<string, string[]>>(), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
+        outerApiMock.Setup(o => o.GetRegions(It.IsAny<CancellationToken>())).ReturnsAsync(regionsResult);
+
+        sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
+        sut.AddUrlHelperMock().AddUrlForRoute(SharedRouteNames.NetworkEvents, AllNetworksUrl);
+
+        var actualResult = sut.Index(accountId, request, new CancellationToken());
+
+        var viewResult = actualResult.Result.As<ViewResult>();
+        var model = viewResult.Model as NetworkEventsViewModel;
+
+        var regionLookup = model!.FilterChoices.RegionChecklistDetails.Lookups;
+        regionLookup!.Count().Should().Be(regionCountFromApi + 1);
+        regionLookup!.First(x => x.Value == "0").Name.Should().Be("National");
+    }
 }
