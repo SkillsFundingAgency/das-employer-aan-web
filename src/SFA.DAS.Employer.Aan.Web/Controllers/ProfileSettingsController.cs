@@ -12,7 +12,7 @@ public class ProfileSettingsController : Controller
 {
     public IActionResult Index()
     {
-        ProfileSettingsViewModel model = new ProfileSettingsViewModel();
+        var model = new ProfileSettingsViewModel();
         return View(model);
     }
 }
