@@ -11,6 +11,7 @@ public class NetworkHubControllerTests
     private IActionResult _result = null!;
     static readonly string EventsHubUrl = Guid.NewGuid().ToString();
     static readonly string NetworkDirectoryUrl = Guid.NewGuid().ToString();
+    static readonly string ProfileSettingsUrl = Guid.NewGuid().ToString();
     string accountId = Guid.NewGuid().ToString();
     private string currentTestMethodName;
     private NetworkHubViewModel model = null!;
@@ -28,6 +29,14 @@ public class NetworkHubControllerTests
         else if (currentTestMethodName == "ThenSetsNetworkDirectoryUrlInViewModel")
         {
             sut.AddUrlHelperMock().AddUrlForRoute(SharedRouteNames.NetworkDirectory, NetworkDirectoryUrl);
+        }
+        else if (currentTestMethodName == "ThenSetsNetworkDirectoryUrlInViewModel")
+        {
+            sut.AddUrlHelperMock().AddUrlForRoute(SharedRouteNames.NetworkDirectory, NetworkDirectoryUrl);
+        }
+        else if (currentTestMethodName == "ThenSetsProfileSettingsUrlInViewModel")
+        {
+            sut.AddUrlHelperMock().AddUrlForRoute(SharedRouteNames.ProfileSettings, ProfileSettingsUrl);
         }
         else if (currentTestMethodName == "ThenReturnsView")
         {
@@ -54,5 +63,11 @@ public class NetworkHubControllerTests
     public void ThenSetsNetworkDirectoryUrlInViewModel()
     {
         model.NetworkDirectoryUrl.Should().Be(NetworkDirectoryUrl);
+    }
+
+    [Test]
+    public void ThenSetsProfileSettingsUrlInViewModel()
+    {
+        model.ProfileSettingsUrl.Should().Be(ProfileSettingsUrl);
     }
 }
