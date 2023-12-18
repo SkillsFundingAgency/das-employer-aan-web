@@ -15,4 +15,5 @@ public class GetMemberProfileResponse
     public bool IsRegionalChair { get; set; }
     public ApprenticeshipDetails? Apprenticeship { get; set; }
     public IEnumerable<MemberProfile> Profiles { get; set; } = null!;
+    public IEnumerable<MemberPreference> Preferences { get; set; } = null!;
 }
