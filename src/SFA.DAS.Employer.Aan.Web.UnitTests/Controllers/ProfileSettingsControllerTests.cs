@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Aan.SharedUi.Infrastructure;
 using SFA.DAS.Aan.SharedUi.Models;
 using SFA.DAS.Employer.Aan.Web.Controllers;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
@@ -8,6 +9,7 @@ using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers;
 public class ProfileSettingsControllerTests
 {
+    private static readonly string YourAmbassadorProfileUrl = Guid.NewGuid().ToString();
     private IActionResult _result = null!;
     private string employerAccountId = Guid.NewGuid().ToString();
     private string NetworkHubUrl = Guid.NewGuid().ToString();
@@ -16,7 +18,7 @@ public class ProfileSettingsControllerTests
     public void WhenGettingNetworkHub()
     {
         ProfileSettingsController sut = new();
-        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.NetworkHub, NetworkHubUrl);
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.NetworkHub, NetworkHubUrl).AddUrlForRoute(SharedRouteNames.YourAmbassadorProfile, YourAmbassadorProfileUrl);
         _result = sut.Index(employerAccountId);
     }
 
@@ -30,7 +32,7 @@ public class ProfileSettingsControllerTests
     public void ThenSetsYourAmbassadorProfileUrlInViewModel()
     {
         var model = _result.As<ViewResult>().Model.As<ProfileSettingsViewModel>();
-        model.YourAmbassadorProfileUrl.Should().Be("#");
+        model.YourAmbassadorProfileUrl.Should().Be(YourAmbassadorProfileUrl);
     }
 
     [Test]

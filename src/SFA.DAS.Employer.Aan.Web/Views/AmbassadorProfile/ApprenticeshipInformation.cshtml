@@ -1,0 +1,71 @@
+﻿@using SFA.DAS.Employer.Aan.Web.Models.AmbassadorProfile;
+@model ApprenticeshipDetailsViewModel
+
+<div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">Your apprenticeship information</h2>
+@*         <ul class="govuk-summary-card__actions">
+            <li class="govuk-summary-card__action">
+                <a class="govuk-link" href="#">
+                    Change<span class="govuk-visually-hidden"> your apprenticeship information</span>
+                </a>
+            </li>
+        </ul> *@
+        <a href="#" class="govuk-summary-card__actions ambassador-profile-url">Change</a>
+    </div>
+    <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Employer's name
+                </dt>
+                @if (!string.IsNullOrWhiteSpace(Model.EmployerName))
+                {
+                    <dd class="govuk-summary-list__value">
+                        @Model.EmployerName
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <strong class="@Model.ApprenticeshipDetailsDisplayClass">@Model.ApprenticeshipDetailsDisplayValue</strong>
+                    </dd>
+                }
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Apprenticeship sectors
+                </dt>
+                @{
+                    if (Model.ApprenticeshipSectors != null && Model.ApprenticeshipSectors.Count > 0)
+                    {
+                        <dd class="govuk-summary-list__value">
+                            <ul class="govuk-list govuk-list--bullet">
+                                @{
+                                    foreach (var sector in Model.ApprenticeshipSectors)
+                                    {
+                                        <li>@sector</li>
+                                    }
+                                }
+                            </ul>
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <strong class="@Model.ApprenticeshipDetailsDisplayClass">@Model.ApprenticeshipDetailsDisplayValue</strong>
+                        </dd>
+                    }
+                }
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Number of active apprentices
+                </dt>
+                @if (Model.ApprenticeshipActiveApprenticesCount != null && Model.ApprenticeshipActiveApprenticesCount > 0)
+                {
+                    <dd class="govuk-summary-list__value">
+                        @Model.ApprenticeshipActiveApprenticesCount
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <strong class="@Model.ApprenticeshipDetailsDisplayClass">@Model.ApprenticeshipDetailsDisplayValue</strong>
+                    </dd>
+                }
+            </div>
+        </dl>
+    </div>
+</div>
