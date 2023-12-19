@@ -13,11 +13,13 @@ using SFA.DAS.Employer.Aan.Web.Controllers;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models.AmbassadorProfile;
 using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
+using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers;
 public class AmbassadorProfileControllerTest
 {
     static readonly string YourAmbassadorProfileUrl = Guid.NewGuid().ToString();
+    static readonly string NetworkHubUrl = Guid.NewGuid().ToString();
     private IActionResult _result = null!;
     private Mock<IOuterApiClient> _outerApiClientMock = null!;
     private AmbassadorProfileController _sut = null!;
@@ -124,13 +126,16 @@ public class AmbassadorProfileControllerTest
     }
 
     [Test]
-    public async Task Index_SetApprenticeshipDetails_ReturnsView([ValueSource(nameof(GetApprenticeshipDetails))] ApprenticeshipDetails? apprenticeshipDetails)
+    [MoqInlineAutoData("organisationName")]
+    [MoqInlineAutoData("")]
+    public async Task Index_SetApprenticeshipDetails_ReturnsView(string organisationName, [ValueSource(nameof(GetApprenticeshipDetails))] ApprenticeshipDetails? apprenticeshipDetails)
     {
         //Arrange
         AmbassadorProfileController sut = null!;
         var memberId = Guid.NewGuid();
         Fixture fixture = new();
         memberProfileResponse = fixture.Create<GetMemberProfileResponse>();
+        memberProfileResponse.OrganisationName = organisationName;
         memberProfileResponse.Apprenticeship = apprenticeshipDetails;
         _outerApiClientMock = new();
         var response = new Response<GetMemberProfileResponse>(string.Empty, new(HttpStatusCode.OK), () => memberProfileResponse);
@@ -139,7 +144,35 @@ public class AmbassadorProfileControllerTest
         Mock<ISessionService> sessionServiceMock = new();
         sessionServiceMock.Setup(s => s.Get(Constants.SessionKeys.MemberId)).Returns(memberId.ToString());
         sut = new(_outerApiClientMock.Object, sessionServiceMock.Object);
-        sut.AddUrlHelperMock().AddUrlForRoute(SharedRouteNames.YourAmbassadorProfile, YourAmbassadorProfileUrl);
+        sut.AddUrlHelperMock().AddUrlForRoute(SharedRouteNames.YourAmbassadorProfile, YourAmbassadorProfileUrl).AddUrlForRoute(RouteNames.NetworkHub, NetworkHubUrl);
+
+        //Act
+        _result = await sut.Index(employerId, _cancellationToken);
+
+        //Assert
+        Assert.That(_result, Is.InstanceOf<ViewResult>());
+    }
+
+    [Test]
+    [MoqInlineAutoData("organisationName")]
+    [MoqInlineAutoData("")]
+    public async Task Index_SetApprenticeshipDetailsNull_ReturnsView(string organisationName, [ValueSource(nameof(GetApprenticeshipDetails))] ApprenticeshipDetails? apprenticeshipDetails)
+    {
+        //Arrange
+        AmbassadorProfileController sut = null!;
+        var memberId = Guid.NewGuid();
+        Fixture fixture = new();
+        memberProfileResponse = fixture.Create<GetMemberProfileResponse>();
+        memberProfileResponse.OrganisationName = organisationName;
+        memberProfileResponse.Apprenticeship = null;
+        _outerApiClientMock = new();
+        var response = new Response<GetMemberProfileResponse>(string.Empty, new(HttpStatusCode.OK), () => memberProfileResponse);
+        _outerApiClientMock.Setup(o => o.GetMemberProfile(memberId, memberId, false, _cancellationToken)).Returns(Task.FromResult(response));
+        _outerApiClientMock.Setup(o => o.GetProfilesByUserType(MemberUserType.Employer.ToString(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(new GetProfilesResult() { Profiles = profiles }));
+        Mock<ISessionService> sessionServiceMock = new();
+        sessionServiceMock.Setup(s => s.Get(Constants.SessionKeys.MemberId)).Returns(memberId.ToString());
+        sut = new(_outerApiClientMock.Object, sessionServiceMock.Object);
+        sut.AddUrlHelperMock().AddUrlForRoute(SharedRouteNames.YourAmbassadorProfile, YourAmbassadorProfileUrl).AddUrlForRoute(RouteNames.NetworkHub, NetworkHubUrl);
 
         //Act
         _result = await sut.Index(employerId, _cancellationToken);

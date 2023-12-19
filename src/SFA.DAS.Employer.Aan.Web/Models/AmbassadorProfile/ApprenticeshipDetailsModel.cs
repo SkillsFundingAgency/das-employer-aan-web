@@ -7,6 +7,6 @@ public class ApprenticeshipDetailsModel
         Sectors = sectors;
         ActiveApprenticesCount = activeApprenticesCount;
     }
-    public List<string>? Sectors { get; set; } = new List<string>();
+    public List<string>? Sectors { get; set; }
     public int? ActiveApprenticesCount { get; set; }
 }

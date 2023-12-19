@@ -42,10 +42,17 @@ public class ApprenticeshipDetailsViewModelTests
     {
         using (new AssertionScope())
         {
+            // Act
             sut.Should().NotBeNull();
             sut.EmployerName.Should().Be(memberProfileResponse!.OrganisationName);
-            Assert.That(sut.ApprenticeshipSectors!.Count, Is.EqualTo(apprenticeshipDetails?.Sectors!.Count));
-            Assert.That(sut.ApprenticeshipActiveApprenticesCount, Is.EqualTo(apprenticeshipDetails?.ActiveApprenticesCount));
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(sut.ApprenticeshipSectors, Has.Count.EqualTo(apprenticeshipDetails?.Sectors!.Count));
+                Assert.That(sut.ApprenticeshipSectors!.Count, Is.EqualTo(apprenticeshipDetails?.Sectors!.Count));
+                Assert.That(sut.ApprenticeshipActiveApprenticesCount, Is.EqualTo(apprenticeshipDetails?.ActiveApprenticesCount));
+            });
         }
     }
 
