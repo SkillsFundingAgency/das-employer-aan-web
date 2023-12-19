@@ -50,7 +50,6 @@ public class ApprenticeshipDetailsViewModelTests
             Assert.Multiple(() =>
             {
                 Assert.That(sut.ApprenticeshipSectors, Has.Count.EqualTo(apprenticeshipDetails?.Sectors!.Count));
-                Assert.That(sut.ApprenticeshipSectors!.Count, Is.EqualTo(apprenticeshipDetails?.Sectors!.Count));
                 Assert.That(sut.ApprenticeshipActiveApprenticesCount, Is.EqualTo(apprenticeshipDetails?.ActiveApprenticesCount));
             });
         }
