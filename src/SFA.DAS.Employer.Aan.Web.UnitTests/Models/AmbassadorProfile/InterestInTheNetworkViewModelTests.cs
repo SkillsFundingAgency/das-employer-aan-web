@@ -1,5 +1,4 @@
-﻿using AutoFixture;
-using FluentAssertions;
+﻿using FluentAssertions;
 using FluentAssertions.Execution;
 using SFA.DAS.Aan.SharedUi.Constants;
 using SFA.DAS.Aan.SharedUi.Models;
@@ -17,16 +16,13 @@ public class InterestInTheNetworkViewModelTests
     [SetUp]
     public void Setup()
     {
-        var fixture = new Fixture();
-        memberProfiles = fixture.CreateMany<MemberProfile>(4);
-        memberProfiles.ToArray()[0].ProfileId = 41;
-        memberProfiles.ToArray()[0].Value = "true";
-        memberProfiles.ToArray()[1].ProfileId = 42;
-        memberProfiles.ToArray()[1].Value = "true";
-        memberProfiles.ToArray()[2].ProfileId = 51;
-        memberProfiles.ToArray()[2].Value = "true";
-        memberProfiles.ToArray()[3].ProfileId = 52;
-        memberProfiles.ToArray()[3].Value = "true";
+        memberProfiles = new List<MemberProfile>()
+        {
+            new MemberProfile() { ProfileId=41, Value="true"},
+            new MemberProfile() { ProfileId=42, Value="true"},
+            new MemberProfile() { ProfileId=51, Value="true"},
+            new MemberProfile() { ProfileId=52, Value="true"},
+        };
         profiles = new List<Profile>()
         {
             new Profile { Id = 41, Description = "Meet other employer ambassadors and grow your network", Category = "ReasonToJoin", Ordering = 1 },
