@@ -10,7 +10,6 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Models.AmbassadorProfile;
 public class ApprenticeshipDetailsViewModelTests
 {
     private ApprenticeshipDetailsViewModel sut = null!;
-    private IEnumerable<MemberProfile> memberProfiles = null!;
     private ApprenticeshipDetailsModel? apprenticeshipDetails;
     private IEnumerable<MemberPreference> memberPreferences = null!;
     private GetMemberProfileResponse? memberProfileResponse;
@@ -19,20 +18,24 @@ public class ApprenticeshipDetailsViewModelTests
     public void Setup()
     {
         var fixture = new Fixture();
-        memberProfiles = fixture.CreateMany<MemberProfile>(4);
-        memberProfiles.ToArray()[0].ProfileId = 41;
-        memberProfiles.ToArray()[0].Value = "true";
-        memberProfiles.ToArray()[1].ProfileId = 42;
-        memberProfiles.ToArray()[1].Value = "true";
-        memberProfiles.ToArray()[2].ProfileId = 51;
-        memberProfiles.ToArray()[2].Value = "true";
-        memberProfiles.ToArray()[3].ProfileId = 52;
-        memberProfiles.ToArray()[3].Value = "true";
-        memberPreferences = fixture.CreateMany<MemberPreference>();
+
+        List<MemberProfile> memberProfiles = new()
+        {
+            new MemberProfile(){ProfileId=41, Value="true"},
+            new MemberProfile(){ProfileId=42, Value="true"},
+            new MemberProfile(){ProfileId=51, Value="true"},
+            new MemberProfile(){ProfileId=52, Value="true"},
+        };
+        memberPreferences = new List<MemberPreference>()
+        {
+            new MemberPreference(){PreferenceId=PreferenceConstants.PreferenceIds.Apprenticeship,Value=true}
+        };
+
+
         memberProfileResponse = fixture.Create<GetMemberProfileResponse>();
         memberProfileResponse.Profiles = memberProfiles;
         memberProfileResponse.Preferences = memberPreferences;
-        memberPreferences.ToArray()[0].PreferenceId = PreferenceConstants.PreferenceIds.Apprenticeship;
+
         apprenticeshipDetails = fixture.Create<ApprenticeshipDetailsModel>();
         sut = new ApprenticeshipDetailsViewModel(memberProfileResponse, apprenticeshipDetails);
     }
