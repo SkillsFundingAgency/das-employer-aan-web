@@ -20,11 +20,9 @@ public class AmbassadorProfileApprenticeshipDetailsTest
     private static readonly string NetworkHubUrl = Guid.NewGuid().ToString();
     private IActionResult _result = null!;
     private Mock<IOuterApiClient> _outerApiClientMock = null!;
-    private AmbassadorProfileController _sut = null!;
     private GetMemberProfileResponse memberProfileResponse = null!;
     private CancellationToken _cancellationToken;
     private string employerId = Guid.NewGuid().ToString();
-    private GetProfilesResult getProfilesResult = null!;
 
     private readonly List<Profile> profiles = new()
     {
@@ -40,6 +38,7 @@ public class AmbassadorProfileApprenticeshipDetailsTest
     public async Task Index_SetApprenticeshipDetails_ReturnsView(string organisationName, [ValueSource(nameof(GetApprenticeshipDetails))] ApprenticeshipDetails? apprenticeshipDetails)
     {
         //Arrange
+        _cancellationToken = new();
         AmbassadorProfileController sut = null!;
         var memberId = Guid.NewGuid();
         Fixture fixture = new();
@@ -68,6 +67,7 @@ public class AmbassadorProfileApprenticeshipDetailsTest
     public async Task Index_SetApprenticeshipDetailsNull_ReturnsView(string organisationName, [ValueSource(nameof(GetApprenticeshipDetails))] ApprenticeshipDetails? apprenticeshipDetails)
     {
         //Arrange
+        _cancellationToken = new();
         AmbassadorProfileController sut = null!;
         var memberId = Guid.NewGuid();
         Fixture fixture = new();
