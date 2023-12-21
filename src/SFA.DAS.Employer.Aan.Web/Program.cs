@@ -1,5 +1,6 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.ApprenticeAan.Web.Validators.MemberProfile;
 using SFA.DAS.Employer.Aan.Web.AppStart;
 using SFA.DAS.Employer.Aan.Web.Filters;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
@@ -19,6 +20,7 @@ builder.Services
     .AddAuthenticationServices(rootConfiguration)
     .AddSession(rootConfiguration)
     .AddValidatorsFromAssembly(typeof(RegionsSubmitModelValidator).Assembly)
+    .AddValidatorsFromAssembly(typeof(ConnectWithMemberSubmitModelValidator).Assembly)
     .AddMaMenuConfiguration(RouteNames.SignOut, rootConfiguration["ResourceEnvironmentName"]);
 
 builder.Services.AddHealthChecks();

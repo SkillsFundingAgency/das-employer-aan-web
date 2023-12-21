@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Aan.SharedUi.Infrastructure;
 using SFA.DAS.Aan.SharedUi.Models.AmbassadorProfile;
+using SFA.DAS.Aan.SharedUi.OuterApi.Responses;
 using SFA.DAS.Aan.SharedUi.Services;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
-using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models.AmbassadorProfile;
@@ -32,7 +32,7 @@ public class AmbassadorProfileController : Controller
         var profiles = _apiClient.GetProfilesByUserType(MemberUserType.Employer.ToString(), cancellationToken);
         var memberProfiles = _apiClient.GetMemberProfile(memberId, memberId, false, cancellationToken);
         await Task.WhenAll(profiles, memberProfiles);
-        var member = memberProfiles.Result.GetContent();
+        var member = memberProfiles.Result;
 
         var personalDetails = new PersonalDetailsModel(member.FullName, member.RegionName, member.UserType, string.Empty, string.Empty, string.Empty, string.Empty);
         var apprenticeshipDetails = member.Apprenticeship != null ? new ApprenticeshipDetailsModel(member.Apprenticeship!.Sectors, member.Apprenticeship!.ActiveApprenticesCount) : null;
@@ -44,7 +44,7 @@ public class AmbassadorProfileController : Controller
         model.ApprenticeshipDetails = new ApprenticeshipDetailsViewModel(member, apprenticeshipDetails);
         model.ShowApprenticeshipDetails = GetShowApprenticeshipDetails(model.ApprenticeshipDetails.EmployerName, apprenticeshipDetails);
         model.MemberProfileUrl = Url.RouteUrl(SharedRouteNames.MemberProfile, new { employerAccountId = employerAccountId, id = memberId })!;
-        model.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId });
+        model.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId });
         return View(model);
     }
 
