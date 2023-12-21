@@ -3,7 +3,7 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using SFA.DAS.Aan.SharedUi.Constants;
 using SFA.DAS.Aan.SharedUi.Models.AmbassadorProfile;
-using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
+using SFA.DAS.Aan.SharedUi.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Models.AmbassadorProfile;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Models.AmbassadorProfile;

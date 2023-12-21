@@ -5,12 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Aan.SharedUi.Infrastructure;
 using SFA.DAS.Aan.SharedUi.Models;
 using SFA.DAS.Aan.SharedUi.Models.AmbassadorProfile;
+using SFA.DAS.Aan.SharedUi.Models.PublicProfile;
+using SFA.DAS.Aan.SharedUi.Services;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
-using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
-using static SFA.DAS.Aan.SharedUi.Constants.ProfileConstants;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers;
 
@@ -18,60 +18,12 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers;
 public class MemberProfileController : Controller
 {
     private readonly IOuterApiClient _outerApiClient;
-    public const string MemberProfileViewPath = "~/Views/MemberProfile/Profile.cshtml";
+    public const string MemberProfileViewPath = "~/Views/MemberProfile/PublicProfile.cshtml";
     public const string NotificationSentConfirmationViewPath = "~/Views/MemberProfile/NotificationSentConfirmation.cshtml";
-    private static List<int> eventsProfileIds = new List<int>()
-    {
-        ProfileIds.NetworkingAtEventsInPerson,
-        ProfileIds.PresentingAtEventsInPerson,
-        ProfileIds.PresentingAtHybridEventsOnlineAndInPerson,
-        ProfileIds.PresentingAtOnlineEvents,
-        ProfileIds.ProjectManagementAndDeliveryOfRegionalEventsOrPlayingARoleInOrganisingNationalEvents
-    };
-    private static readonly List<int> promotionsProfileIds = new()
-    {
-        ProfileIds.CarryingOutAndWritingUpCaseStudies,
-        ProfileIds.DesigningAndCreatingMarketingMaterialsToChampionTheNetwork,
-        ProfileIds.DistributingCommunicationsToTheNetwork,
-        ProfileIds.EngagingWithStakeholdersToWorkOutHowToImproveTheNetwork,
-        ProfileIds.PromotingTheNetworkOnSocialMediaChannels
-    };
-    private static readonly List<int> addressProfileIds = new()
-    {
-        ProfileIds.EmployerAddress1,
-        ProfileIds.EmployerAddress2,
-        ProfileIds.EmployerTownOrCity,
-        ProfileIds.EmployerCounty,
-        ProfileIds.EmployerPostcode
-    };
 
-    private static readonly List<int> reasonToJoinProfileIds = new()
-    {
-        ProfileIds.MeetOtherAmbassadorsAndGrowYourNetwork,
-        ProfileIds.ShareYourKnowledgeExperienceAndBestPractice,
-        ProfileIds.ProjectManageAndDeliverNetworkEvents,
-        ProfileIds.BeARoleModelAndActAsAnInformalMentor,
-        ProfileIds.ChampionApprenticeshipDeliveryWithinYourNetworks
-    };
-    private static readonly List<int> supportProfileIds = new()
-    {
-        ProfileIds.BuildingApprenticeshipProfileOfMyOrganisation,
-        ProfileIds.IncreasingEngagementWithSchoolsAndColleges,
-        ProfileIds.GettingStartedWithApprenticeships,
-        ProfileIds.UnderstandingTrainingProvidersAndResourcesOthersAreUsing,
-        ProfileIds.UsingTheNetworkToBestBenefitMyOrganisation
-    };
-    private static readonly List<int> employerAddressProfileIds = new()
-    {
-        ProfileIds.EmployerUserEmployerAddress1,
-        ProfileIds.EmployerUserEmployerAddress2,
-        ProfileIds.EmployerUserEmployerTownOrCity,
-        ProfileIds.EmployerUserEmployerCounty,
-        ProfileIds.EmployerUserEmployerPostcode
-    };
     private readonly ISessionService _sessionService;
-    private readonly IValidator<SubmitConnectionCommand> _validator;
-    public MemberProfileController(IOuterApiClient outerApiClient, ISessionService sessionService, IValidator<SubmitConnectionCommand> validator)
+    private readonly IValidator<ConnectWithMemberSubmitModel> _validator;
+    public MemberProfileController(IOuterApiClient outerApiClient, ISessionService sessionService, IValidator<ConnectWithMemberSubmitModel> validator)
     {
         _outerApiClient = outerApiClient;
         _sessionService = sessionService;
@@ -82,36 +34,28 @@ public class MemberProfileController : Controller
     [Route("accounts/{employerAccountId}/member-profile/{id}", Name = SharedRouteNames.MemberProfile)]
     public async Task<IActionResult> Get([FromRoute] string employerAccountId, [FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
+        var model = await GetViewModel(id, employerAccountId, cancellationToken);
 
-        var memberProfiles = await _outerApiClient.GetMemberProfile(memberId, id, true, cancellationToken);
-
-        if (memberProfiles.ResponseMessage.IsSuccessStatusCode)
-        {
-            MemberProfileViewModel model = await MemberProfileMapping(memberProfiles.GetContent(), (id == memberId), cancellationToken);
-            model.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId });
-            return View(MemberProfileViewPath, model);
-        }
-        throw new InvalidOperationException($"A member with ID {id} was not found.");
+        return View(MemberProfileViewPath, model);
     }
 
     [HttpPost]
     [Route("accounts/{employerAccountId}/member-profile/{id}", Name = SharedRouteNames.MemberProfile)]
-    public async Task<IActionResult> Post([FromRoute] string employerAccountId, [FromRoute] Guid id, SubmitConnectionCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> Post([FromRoute] string employerAccountId, [FromRoute] Guid id, ConnectWithMemberSubmitModel command, CancellationToken cancellationToken)
     {
         var result = await _validator.ValidateAsync(command, cancellationToken);
-        var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
+        var userId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
+
         if (!result.IsValid)
         {
-            var memberProfiles = await _outerApiClient.GetMemberProfile(id, memberId, true, cancellationToken);
-            MemberProfileViewModel model = await MemberProfileMapping(memberProfiles.GetContent(), (id == memberId), cancellationToken);
-            model.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId });
             result.AddToModelState(ModelState);
+            var model = await GetViewModel(id, employerAccountId, cancellationToken);
             return View(MemberProfileViewPath, model);
         }
         CreateNotificationRequest createNotificationRequest = new CreateNotificationRequest(id, command.ReasonToGetInTouch);
-        await _outerApiClient.PostNotification(memberId, createNotificationRequest, cancellationToken);
-        return RedirectToAction(SharedRouteNames.NotificationSentConfirmation, new { employerAccountId });
+        await _outerApiClient.PostNotification(userId, createNotificationRequest, cancellationToken);
+
+        return RedirectToRoute(SharedRouteNames.NotificationSentConfirmation, new { employerAccountId });
     }
 
     [HttpGet]
@@ -122,73 +66,51 @@ public class MemberProfileController : Controller
         return View(NotificationSentConfirmationViewPath, model);
     }
 
-    public async Task<MemberProfileViewModel> MemberProfileMapping(GetMemberProfileResponse memberProfiles, bool isLoggedInUserMemberProfile, CancellationToken cancellationToken)
+    private async Task<MemberProfileViewModel> GetViewModel(Guid id, string employerAccountId, CancellationToken cancellationToken)
     {
-        MemberProfileDetail memberProfileDetail = MemberProfileDetailMapping(memberProfiles);
-        MemberProfileMappingModel memberProfileMappingModel;
-        GetProfilesResult profilesResult;
-        if (memberProfileDetail.UserType == MemberUserType.Apprentice)
-        {
-            memberProfileMappingModel = new()
-            {
-                LinkedinProfileId = ProfileIds.LinkedIn,
-                JobTitleProfileId = ProfileIds.JobTitle,
-                BiographyProfileId = ProfileIds.Biography,
-                FirstSectionProfileIds = eventsProfileIds,
-                SecondSectionProfileIds = promotionsProfileIds,
-                AddressProfileIds = addressProfileIds,
-                EmployerNameProfileId = ProfileIds.EmployerName,
-                IsLoggedInUserMemberProfile = isLoggedInUserMemberProfile
-            };
-            profilesResult = await _outerApiClient.GetProfilesByUserType(MemberUserType.Apprentice.ToString(), cancellationToken);
-        }
-        else
-        {
-            memberProfileMappingModel = new()
-            {
-                LinkedinProfileId = ProfileIds.EmployerLinkedIn,
-                JobTitleProfileId = ProfileIds.EmployerJobTitle,
-                BiographyProfileId = ProfileIds.EmployerBiography,
-                FirstSectionProfileIds = reasonToJoinProfileIds,
-                SecondSectionProfileIds = supportProfileIds,
-                AddressProfileIds = employerAddressProfileIds,
-                EmployerNameProfileId = ProfileIds.EmployerUserEmployerName,
-                IsLoggedInUserMemberProfile = isLoggedInUserMemberProfile
-            };
-            profilesResult = await _outerApiClient.GetProfilesByUserType(MemberUserType.Employer.ToString(), cancellationToken);
-        }
-        return new(memberProfileDetail, profilesResult.Profiles, memberProfileMappingModel);
-    }
+        var userId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
+        var memberProfiles = await _outerApiClient.GetMemberProfile(userId, id, true, cancellationToken);
+        var profilesResult = await _outerApiClient.GetProfilesByUserType(memberProfiles.UserType.ToString(), cancellationToken);
 
-    public static MemberProfileDetail MemberProfileDetailMapping(GetMemberProfileResponse memberProfiles)
-    {
-        MemberProfileDetail memberProfileDetail = new()
+        MemberProfileViewModel memberProfileViewModel = new();
+        memberProfileViewModel.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId });
+        memberProfileViewModel.MemberId = id;
+        memberProfileViewModel.IsLoggedInUserMemberProfile = id == userId;
+        memberProfileViewModel.IsConnectWithMemberVisible = true;
+
+        memberProfileViewModel.ConnectViaLinkedIn.LinkedInUrl = MemberProfileHelper.GetLinkedInUrl(profilesResult.Profiles, memberProfiles.Profiles);
+        memberProfileViewModel.FirstName = memberProfileViewModel.ConnectViaLinkedIn.FirstName = memberProfiles.FirstName;
+
+        memberProfileViewModel.MemberInformation.FullName = memberProfiles.FullName;
+        memberProfileViewModel.MemberInformation.RegionName = memberProfiles.RegionName;
+        memberProfileViewModel.MemberInformation.UserRole = memberProfiles.UserType.ConvertToRole(memberProfiles.IsRegionalChair);
+        memberProfileViewModel.MemberInformation.Biography = MemberProfileHelper.GetProfileValueByDescription(MemberProfileConstants.MemberProfileDescription.Biography, profilesResult.Profiles, memberProfiles.Profiles);
+        memberProfileViewModel.MemberInformation.JobTitle = MemberProfileHelper.GetProfileValueByDescription(MemberProfileConstants.MemberProfileDescription.JobTitle, profilesResult.Profiles, memberProfiles.Profiles);
+
+        memberProfileViewModel.ApprenticeshipInformation.IsEmployerInformationAvailable = memberProfiles.UserType == MemberUserType.Employer && MemberProfileHelper.IsApprenticeshipInformationShared(memberProfiles.Preferences);
+        memberProfileViewModel.ApprenticeshipInformation.IsApprenticeshipInformationAvailable = memberProfiles.UserType == MemberUserType.Apprentice && MemberProfileHelper.IsApprenticeshipInformationShared(memberProfiles.Preferences);
+
+        if (memberProfileViewModel.ApprenticeshipInformation.IsEmployerInformationAvailable || memberProfileViewModel.ApprenticeshipInformation.IsApprenticeshipInformationAvailable)
         {
-            FullName = memberProfiles.FullName,
-            Email = memberProfiles.Email,
-            FirstName = memberProfiles.FirstName,
-            LastName = memberProfiles.LastName,
-            OrganisationName = memberProfiles.OrganisationName,
-            RegionId = memberProfiles.RegionId ?? 0,
-            RegionName = memberProfiles.RegionName,
-            UserType = memberProfiles.UserType,
-            IsRegionalChair = memberProfiles.IsRegionalChair
-        };
-        if (memberProfiles.Apprenticeship != null)
-        {
-            if (memberProfileDetail.UserType == MemberUserType.Employer)
+            memberProfileViewModel.ApprenticeshipInformation.ApprenticeshipSectionTitle = MemberProfileHelper.GetApprenticeshipSectionTitle(memberProfiles.UserType, memberProfiles.FirstName);
+            memberProfileViewModel.ApprenticeshipInformation.EmployerName = memberProfiles.OrganisationName;
+            memberProfileViewModel.ApprenticeshipInformation.EmployerAddress = MemberProfileHelper.GetEmployerAddress(memberProfiles.Profiles);
+
+            if (memberProfiles.Apprenticeship != null)
             {
-                memberProfileDetail.Sectors = memberProfiles.Apprenticeship!.Sectors;
-                memberProfileDetail.ActiveApprenticesCount = memberProfiles.Apprenticeship!.ActiveApprenticesCount;
-            }
-            if (memberProfileDetail.UserType == MemberUserType.Apprentice)
-            {
-                memberProfileDetail.Sector = memberProfiles.Apprenticeship!.Sector;
-                memberProfileDetail.Programmes = memberProfiles.Apprenticeship!.Programme;
-                memberProfileDetail.Level = memberProfiles.Apprenticeship!.Level;
+                //following are only applicable to Apprentice user, the values are assumed to be null otherwise
+                memberProfileViewModel.ApprenticeshipInformation.Sector = memberProfiles.Apprenticeship.Sector;
+                memberProfileViewModel.ApprenticeshipInformation.Programme = memberProfiles.Apprenticeship.Programme;
+                memberProfileViewModel.ApprenticeshipInformation.Level = memberProfiles.Apprenticeship.Level;
+
+                //following are only applicable to Employer user, the values are assumed to be null otherwise
+                memberProfileViewModel.ApprenticeshipInformation.Sectors = memberProfiles.Apprenticeship.Sectors;
+                memberProfileViewModel.ApprenticeshipInformation.ActiveApprenticesCount = memberProfiles.Apprenticeship.ActiveApprenticesCount;
             }
         }
-        memberProfileDetail.Profiles = memberProfiles.Profiles;
-        return memberProfileDetail;
+
+        memberProfileViewModel.AreasOfInterest = MemberProfileHelper.CreateAreasOfInterestViewModel(memberProfiles.UserType, profilesResult.Profiles, memberProfiles.Profiles, memberProfiles.FirstName);
+
+        return memberProfileViewModel;
     }
 }

@@ -1,7 +1,7 @@
 ﻿using SFA.DAS.Aan.SharedUi.Constants;
 using SFA.DAS.Aan.SharedUi.Models.AmbassadorProfile;
+using SFA.DAS.Aan.SharedUi.OuterApi.Responses;
 using SFA.DAS.Aan.SharedUi.Services;
-using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 
 namespace SFA.DAS.Employer.Aan.Web.Models.AmbassadorProfile;
 

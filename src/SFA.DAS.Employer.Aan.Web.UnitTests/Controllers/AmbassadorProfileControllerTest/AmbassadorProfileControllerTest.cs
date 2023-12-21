@@ -1,12 +1,11 @@
-﻿using System.Net;
-using AutoFixture;
+﻿using AutoFixture;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using RestEase;
 using SFA.DAS.Aan.SharedUi.Infrastructure;
 using SFA.DAS.Aan.SharedUi.Models;
 using SFA.DAS.Aan.SharedUi.Models.AmbassadorProfile;
+using SFA.DAS.Aan.SharedUi.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Controllers;
@@ -45,8 +44,7 @@ public class AmbassadorProfileControllerTest
         getProfilesResult = fixture.Create<GetProfilesResult>();
         getProfilesResult.Profiles = profiles;
         _outerApiClientMock = new();
-        var response = new Response<GetMemberProfileResponse>(string.Empty, new(HttpStatusCode.OK), () => memberProfileResponse);
-        _outerApiClientMock.Setup(o => o.GetMemberProfile(memberId, memberId, false, _cancellationToken)).Returns(Task.FromResult(response));
+        _outerApiClientMock.Setup(o => o.GetMemberProfile(memberId, memberId, false, _cancellationToken)).ReturnsAsync(memberProfileResponse);
         _outerApiClientMock.Setup(o => o.GetProfilesByUserType(MemberUserType.Employer.ToString(), It.IsAny<CancellationToken>())).ReturnsAsync(new GetProfilesResult() { Profiles = profiles });
         Mock<ISessionService> sessionServiceMock = new();
         sessionServiceMock.Setup(s => s.Get(Constants.SessionKeys.MemberId)).Returns(memberId.ToString());
