@@ -7,8 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RestEase;
 using SFA.DAS.Aan.SharedUi.Infrastructure;
-using SFA.DAS.Aan.SharedUi.Models;
 using SFA.DAS.Aan.SharedUi.Models.AmbassadorProfile;
+using SFA.DAS.Aan.SharedUi.Models.PublicProfile;
+using SFA.DAS.Aan.SharedUi.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
@@ -26,10 +27,10 @@ public class MemberProfileControllerPostTests
     [MoqInlineAutoData(MemberUserType.Employer)]
     public async Task Post_InvalidCommand_ReturnsMemberProfileView(
        MemberUserType userType,
-       SubmitConnectionCommand command,
+       ConnectWithMemberSubmitModel command,
        Mock<IOuterApiClient> outerApiMock,
        GetMemberProfileResponse getMemberProfileResponse,
-       Mock<IValidator<SubmitConnectionCommand>> validatorMock,
+       Mock<IValidator<ConnectWithMemberSubmitModel>> validatorMock,
        CancellationToken cancellationToken)
     {
         //Arrange
@@ -37,12 +38,12 @@ public class MemberProfileControllerPostTests
         command.ReasonToGetInTouch = 0;
         var memberId = Guid.NewGuid();
         getMemberProfileResponse.UserType = userType;
+        getMemberProfileResponse.Preferences = Enumerable.Range(1, 4).Select(id => new MemberPreference { PreferenceId = id, Value = true });
         Mock<ISessionService> sessionServiceMock = new();
         sessionServiceMock.Setup(s => s.Get(Constants.SessionKeys.MemberId)).Returns(memberId.ToString());
         var user = UsersForTesting.GetUserWithClaims(employerId);
-        var response = new Response<GetMemberProfileResponse>(string.Empty, new(HttpStatusCode.OK), () => getMemberProfileResponse);
         outerApiMock.Setup(o => o.GetMemberProfile(memberId, memberId, It.IsAny<bool>(), It.IsAny<CancellationToken>()))
-                    .Returns(Task.FromResult(response));
+                    .ReturnsAsync(getMemberProfileResponse);
         MemberProfileController sut = new MemberProfileController(outerApiMock.Object, sessionServiceMock.Object, validatorMock.Object);
         var networkHubUrl = "http://test";
         sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
@@ -71,7 +72,7 @@ public class MemberProfileControllerPostTests
         CancellationToken cancellationToken)
     {
         //Arrange
-        SubmitConnectionCommand command = new()
+        ConnectWithMemberSubmitModel command = new()
         {
             ReasonToGetInTouch = 2,
             HasAgreedToCodeOfConduct = true,
@@ -80,13 +81,13 @@ public class MemberProfileControllerPostTests
         string employerId = Guid.NewGuid().ToString();
         var memberId = Guid.NewGuid();
         getMemberProfileResponse.UserType = userType;
+        getMemberProfileResponse.Preferences = Enumerable.Range(1, 4).Select(id => new MemberPreference { PreferenceId = id, Value = true });
         var user = UsersForTesting.GetUserWithClaims(employerId);
         var response = new Response<GetMemberProfileResponse>(string.Empty, new(HttpStatusCode.OK), () => getMemberProfileResponse);
-        outerApiMock.Setup(o => o.GetMemberProfile(memberId, memberId, It.IsAny<bool>(), It.IsAny<CancellationToken>()))
-                    .Returns(Task.FromResult(response));
-        var validatorMock = new Mock<IValidator<SubmitConnectionCommand>>();
+        outerApiMock.Setup(o => o.GetMemberProfile(memberId, memberId, It.IsAny<bool>(), It.IsAny<CancellationToken>())).ReturnsAsync(getMemberProfileResponse);
+        var validatorMock = new Mock<IValidator<ConnectWithMemberSubmitModel>>();
         var successfulValidationResult = new ValidationResult();
-        validatorMock.Setup(v => v.ValidateAsync(It.IsAny<SubmitConnectionCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(successfulValidationResult);
+        validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ConnectWithMemberSubmitModel>(), It.IsAny<CancellationToken>())).ReturnsAsync(successfulValidationResult);
         Mock<ISessionService> sessionServiceMock = new();
         sessionServiceMock.Setup(s => s.Get(Constants.SessionKeys.MemberId)).Returns(memberId.ToString());
         MemberProfileController sut = new MemberProfileController(outerApiMock.Object, sessionServiceMock.Object, validatorMock.Object);
@@ -100,9 +101,9 @@ public class MemberProfileControllerPostTests
         //Assert
         Assert.Multiple(() =>
         {
-            Assert.That(result, Is.TypeOf<RedirectToActionResult>());
-            var redirectToAction = (RedirectToActionResult)result;
-            Assert.That(redirectToAction.ActionName, Is.EqualTo(nameof(SharedRouteNames.NotificationSentConfirmation)));
+            Assert.That(result, Is.TypeOf<RedirectToRouteResult>());
+            var redirectToAction = (RedirectToRouteResult)result;
+            Assert.That(redirectToAction.RouteName, Is.EqualTo(nameof(SharedRouteNames.NotificationSentConfirmation)));
         });
     }
 
@@ -112,7 +113,7 @@ public class MemberProfileControllerPostTests
     {
         // Arrange
         string employerId = Guid.NewGuid().ToString();
-        var validatorMock = new Mock<IValidator<SubmitConnectionCommand>>();
+        var validatorMock = new Mock<IValidator<ConnectWithMemberSubmitModel>>();
         Mock<ISessionService> sessionServiceMock = new();
         MemberProfileController sut = new MemberProfileController(outerApiMock.Object, sessionServiceMock.Object, validatorMock.Object);
         string NetworkDirectoryUrl = Guid.NewGuid().ToString();
@@ -129,23 +130,5 @@ public class MemberProfileControllerPostTests
             var viewResult = result as ViewResult;
             Assert.That(viewResult!.ViewName, Does.Contain(nameof(SharedRouteNames.NotificationSentConfirmation)));
         });
-    }
-
-    [Test]
-    [MoqInlineAutoData(MemberUserType.Apprentice)]
-    [MoqInlineAutoData(MemberUserType.Employer)]
-    public async Task MemberProfileMapping_ReturnsMemberProfileViewModelObject(MemberUserType userType, [Frozen] Mock<IOuterApiClient> outerApiMock, GetMemberProfileResponse memberProfiles, bool isLoggedInUserMemberProfile, CancellationToken cancellationToken)
-    {
-        //Arrange
-        memberProfiles.UserType = userType;
-        var validatorMock = new Mock<IValidator<SubmitConnectionCommand>>();
-        Mock<ISessionService> sessionServiceMock = new();
-        MemberProfileController memberProfileController = new MemberProfileController(outerApiMock.Object, sessionServiceMock.Object, validatorMock.Object);
-
-        //Act
-        var sut = await memberProfileController.MemberProfileMapping(memberProfiles, isLoggedInUserMemberProfile, cancellationToken);
-
-        //Assert
-        Assert.That(sut, Is.InstanceOf<MemberProfileViewModel>());
     }
 }
