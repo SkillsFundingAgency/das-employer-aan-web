@@ -73,19 +73,19 @@ public class EditPersonalInformationController : Controller
 
     private EditPersonalInformationViewModel CreateViewModel(int regionId, IEnumerable<MemberProfile> memberProfiles, IEnumerable<MemberPreference> memberPreferences, MemberUserType userType, string? organisationName, string employerAccountId)
     {
-        EditPersonalInformationViewModel memberProfile = new EditPersonalInformationViewModel();
-        memberProfile.RegionId = regionId;
-        memberProfile.UserType = userType;
-        memberProfile.OrganisationName = organisationName ?? string.Empty;
+        EditPersonalInformationViewModel editPersonalInformationViewModel = new EditPersonalInformationViewModel();
+        editPersonalInformationViewModel.RegionId = regionId;
+        editPersonalInformationViewModel.UserType = userType;
+        editPersonalInformationViewModel.OrganisationName = organisationName ?? string.Empty;
 
-        memberProfile.Biography = MapProfilesAndPreferencesService.GetProfileValue(ProfileIds.EmployerBiography, memberProfiles);
-        memberProfile.ShowBiography = MapProfilesAndPreferencesService.GetPreferenceValue(PreferenceConstants.PreferenceIds.Biography, memberPreferences);
+        editPersonalInformationViewModel.Biography = MapProfilesAndPreferencesService.GetProfileValue(ProfileIds.EmployerBiography, memberProfiles);
+        editPersonalInformationViewModel.ShowBiography = MapProfilesAndPreferencesService.GetPreferenceValue(PreferenceConstants.PreferenceIds.Biography, memberPreferences);
 
-        memberProfile.JobTitle = MapProfilesAndPreferencesService.GetProfileValue(ProfileIds.EmployerJobTitle, memberProfiles);
-        memberProfile.ShowJobTitle = MapProfilesAndPreferencesService.GetPreferenceValue(PreferenceConstants.PreferenceIds.JobTitle, memberPreferences);
-        memberProfile.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId });
+        editPersonalInformationViewModel.JobTitle = MapProfilesAndPreferencesService.GetProfileValue(ProfileIds.EmployerJobTitle, memberProfiles);
+        editPersonalInformationViewModel.ShowJobTitle = MapProfilesAndPreferencesService.GetPreferenceValue(PreferenceConstants.PreferenceIds.JobTitle, memberPreferences);
+        editPersonalInformationViewModel.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId });
 
-        return memberProfile;
+        return editPersonalInformationViewModel;
     }
 
     private async Task<EditPersonalInformationViewModel> BuildMemberProfileModel(string employerAccountId, CancellationToken cancellationToken)
