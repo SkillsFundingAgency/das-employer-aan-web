@@ -13,6 +13,7 @@ using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Controllers;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
+using Region = SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Region;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.EditPersonalInformationControllerTests;
 public class EditPersonalInformationControllerGetTests
@@ -87,6 +88,68 @@ public class EditPersonalInformationControllerGetTests
         Assert.That(viewResult!.ViewName, Does.Contain(SharedRouteNames.EditPersonalInformation));
     }
 
+    [Test]
+    [TestCase("Organisation")]
+    [TestCase(null)]
+    public async Task Index_ReturnsExpectedOrganisationName(string? organisationName)
+    {
+        // Arrange
+        HappyPathSetUp();
+        getMemberProfileResponse = new()
+        {
+            Profiles = memberProfiles,
+            Preferences = memberPreferences,
+            RegionId = 1,
+            OrganisationName = organisationName
+        };
+        organisationName = organisationName ?? string.Empty;
+        var response = new Response<GetMemberProfileResponse>(string.Empty, new(HttpStatusCode.OK), () => getMemberProfileResponse);
+        outerApiMock.Setup(o => o.GetMemberProfile(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+                        .Returns(Task.FromResult(response));
+
+        // Act
+        var result = await sut.Index(employerId, new CancellationToken());
+        var viewResult = result as ViewResult;
+        var _sut = viewResult!.Model as EditPersonalInformationViewModel;
+
+        // Assert
+        Assert.That(_sut!.OrganisationName, Is.EqualTo(organisationName));
+    }
+
+    [Test]
+    public async Task Index_ReturnsExpectedRegionsInSequence()
+    {
+        // Arrange
+        HappyPathSetUp();
+        getRegionsResult = new()
+        {
+            Regions = new List<Region>()
+            {
+                new Region { Id=5, Area="Region 5", Ordering=5},
+                new Region { Id=1, Area="Region 1", Ordering=1},
+                new Region { Id=3, Area="Region 3", Ordering=3},
+                new Region { Id=2, Area="Region 2", Ordering=2}
+            }
+        };
+        outerApiMock.Setup(o => o.GetRegions(CancellationToken.None)).Returns(Task.FromResult(getRegionsResult));
+
+        // Act
+        var result = await sut.Index(employerId, new CancellationToken());
+        var viewResult = result as ViewResult;
+        var _sut = viewResult!.Model as EditPersonalInformationViewModel;
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(_sut!.Regions, Has.Count.EqualTo(getRegionsResult.Regions.Count));
+            Assert.That(_sut!.Regions, Is.InstanceOf<List<RegionViewModel>>());
+            Assert.That(_sut!.Regions[0].Id, Is.EqualTo(1));
+            Assert.That(_sut!.Regions[1].Id, Is.EqualTo(2));
+            Assert.That(_sut!.Regions[2].Id, Is.EqualTo(3));
+            Assert.That(_sut!.Regions[3].Id, Is.EqualTo(5));
+        });
+    }
+
     private void SetUpControllerWithContext()
     {
         sut = new(outerApiMock.Object, validatorMock.Object, sessionServiceMock.Object);
@@ -104,9 +167,9 @@ public class EditPersonalInformationControllerGetTests
         SetUpControllerWithContext();
 
         sut.AddUrlHelperMock()
-.AddUrlForRoute(SharedRouteNames.YourAmbassadorProfile, YourAmbassadorProfileUrl);
+    .AddUrlForRoute(SharedRouteNames.YourAmbassadorProfile, YourAmbassadorProfileUrl);
         sut.AddUrlHelperMock()
-.AddUrlForRoute(RouteNames.NetworkHub, NetworkHubLinkUrl);
+    .AddUrlForRoute(RouteNames.NetworkHub, NetworkHubLinkUrl);
 
         getMemberProfileResponse = new()
         {
