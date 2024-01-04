@@ -8,13 +8,9 @@ public class Region
     public string Area { get; set; } = null!;
     public int Ordering { get; set; }
 
-    public static List<RegionViewModel> RegionToRegionViewModelMapping(List<Region> regions)
+    public static implicit operator RegionViewModel(Region region) => new()
     {
-        List<RegionViewModel> regionList = new List<RegionViewModel>();
-        foreach (Region region in regions.OrderBy(x => x.Ordering))
-        {
-            regionList.Add(new RegionViewModel { Id = region.Id, Area = region.Area });
-        }
-        return regionList;
-    }
+        Id = region.Id,
+        Area = region.Area
+    };
 }

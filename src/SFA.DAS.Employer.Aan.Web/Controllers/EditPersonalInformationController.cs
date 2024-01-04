@@ -9,7 +9,6 @@ using SFA.DAS.Aan.SharedUi.Models.AmbassadorProfile;
 using SFA.DAS.Aan.SharedUi.Services;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
-using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using static SFA.DAS.Aan.SharedUi.Constants.ProfileConstants;
@@ -72,7 +71,7 @@ public class EditPersonalInformationController : Controller
         return RedirectToRoute(SharedRouteNames.YourAmbassadorProfile, new { employerAccountId });
     }
 
-    public EditPersonalInformationViewModel EditPersonalInformationViewModelMapping(int regionId, IEnumerable<MemberProfile> memberProfiles, IEnumerable<MemberPreference> memberPreferences, MemberUserType userType, string? organisationName, string employerAccountId)
+    private EditPersonalInformationViewModel CreateViewModel(int regionId, IEnumerable<MemberProfile> memberProfiles, IEnumerable<MemberPreference> memberPreferences, MemberUserType userType, string? organisationName, string employerAccountId)
     {
         EditPersonalInformationViewModel memberProfile = new EditPersonalInformationViewModel();
         memberProfile.RegionId = regionId;
@@ -96,11 +95,10 @@ public class EditPersonalInformationController : Controller
         var memberProfiles = await _apiClient.GetMemberProfile(memberId, memberId, false, cancellationToken);
         var regions = await _apiClient.GetRegions(cancellationToken);
         int regionId = memberProfiles.RegionId ?? 0;
+        EditPersonalInformationViewModel editPersonalInformationViewModel = CreateViewModel(regionId, memberProfiles.Profiles, memberProfiles.Preferences, memberProfiles.UserType, memberProfiles.OrganisationName, employerAccountId);
 
-        EditPersonalInformationViewModel memberProfile = EditPersonalInformationViewModelMapping(regionId, memberProfiles.Profiles, memberProfiles.Preferences, memberProfiles.UserType, memberProfiles.OrganisationName, employerAccountId);
-
-        memberProfile.Regions = Region.RegionToRegionViewModelMapping(regions.Regions);
-        memberProfile.YourAmbassadorProfileUrl = Url.RouteUrl(SharedRouteNames.YourAmbassadorProfile, new { employerAccountId })!;
-        return memberProfile;
+        editPersonalInformationViewModel.Regions = regions.Regions.OrderBy(x => x.Ordering).Select(a => (RegionViewModel)a).ToList();
+        editPersonalInformationViewModel.YourAmbassadorProfileUrl = Url.RouteUrl(SharedRouteNames.YourAmbassadorProfile, new { employerAccountId })!;
+        return editPersonalInformationViewModel;
     }
 }

@@ -18,6 +18,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.AmbassadorProfileContro
 public class AmbassadorProfileControllerTest
 {
     private static readonly string YourAmbassadorProfileUrl = Guid.NewGuid().ToString();
+    private static readonly string EditPersonalInformtionUrl = Guid.NewGuid().ToString();
     private IActionResult _result = null!;
     private Mock<IOuterApiClient> _outerApiClientMock = null!;
     private AmbassadorProfileController _sut = null!;
@@ -108,6 +109,10 @@ public class AmbassadorProfileControllerTest
     [Test]
     public void ThenSetsViewModelWithNetworkHubLink()
     => _result.Invoking(r => r.As<ViewResult>().Model.As<AmbassadorProfileViewModel>().NetworkHubLink.Should().Contain(RouteNames.NetworkHub));
+
+    [Test]
+    public void ThenSetsViewModelWithPersonalDetailsChangeUrl()
+    => _result.Invoking(r => r.As<ViewResult>().Model.As<AmbassadorProfileViewModel>().PersonalDetails.PersonalDetailsChangeUrl.Should().Contain(SharedRouteNames.EditPersonalInformation));
 
     [Test]
     public void Index_ShouldInvokeGetMemberProfile()

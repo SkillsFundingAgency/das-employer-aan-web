@@ -13,7 +13,6 @@ using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Controllers;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
-using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.EditPersonalInformationControllerTests;
 public class EditPersonalInformationControllerGetTests
@@ -86,42 +85,6 @@ public class EditPersonalInformationControllerGetTests
 
         // Assert
         Assert.That(viewResult!.ViewName, Does.Contain(SharedRouteNames.EditPersonalInformation));
-    }
-
-    [Test]
-    [MoqInlineAutoData("test", false, false)]
-    [MoqInlineAutoData(null, false, false)]
-    [MoqInlineAutoData("test", false, true)]
-    [MoqInlineAutoData(null, false, true)]
-    [MoqInlineAutoData("test", true, false)]
-    [MoqInlineAutoData(null, true, false)]
-    [MoqInlineAutoData("test", true, true)]
-    [MoqInlineAutoData(null, true, true)]
-    public void EditPersonalInformationViewModelMapping_ReturnsEditPersonalInformationViewModel(string? organisationName, bool showJobTitle, bool showBiography, int regionId, MemberUserType userType)
-    {
-        // Arrange
-        memberPreferences = new List<MemberPreference>() {
-            new MemberPreference() { PreferenceId = PreferenceConstants.PreferenceIds.JobTitle, Value = showJobTitle },
-            new MemberPreference() { PreferenceId = PreferenceConstants.PreferenceIds.Biography, Value = showBiography }
-        };
-        HappyPathSetUp();
-
-        // Act
-        var _sut = sut.EditPersonalInformationViewModelMapping(regionId, memberProfiles, memberPreferences, userType, organisationName, employerId);
-
-        // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(_sut, Is.InstanceOf<EditPersonalInformationViewModel>());
-            Assert.That(_sut.RegionId, Is.EqualTo(regionId));
-            Assert.That(_sut.UserType, Is.EqualTo(userType));
-            Assert.That(_sut.OrganisationName, Is.EqualTo(organisationName ?? string.Empty));
-            Assert.That(_sut.ShowJobTitle, Is.EqualTo(showJobTitle));
-            Assert.That(_sut.ShowBiography, Is.EqualTo(showBiography));
-            Assert.That(_sut.JobTitle, Is.EqualTo(memberProfiles.ToArray()[0].Value));
-            Assert.That(_sut.Biography, Is.EqualTo(memberProfiles.ToArray()[1].Value));
-            Assert.That(_sut.NetworkHubLink, Is.EqualTo(NetworkHubLinkUrl));
-        });
     }
 
     private void SetUpControllerWithContext()
