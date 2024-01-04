@@ -9,6 +9,7 @@ using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models.AmbassadorProfile;
 using static SFA.DAS.Aan.SharedUi.Constants.ProfileConstants;
+using static SFA.DAS.Employer.Aan.Web.Constants;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers;
 

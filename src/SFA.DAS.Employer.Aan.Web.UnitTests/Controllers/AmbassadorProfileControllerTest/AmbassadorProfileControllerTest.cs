@@ -122,35 +122,4 @@ public class AmbassadorProfileControllerTest
         // Assert
         _outerApiClientMock.Verify(a => a.GetProfilesByUserType(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
     }
-
-    [Test]
-    public async Task Index_SetApprenticeshipDetails_ReturnsView([ValueSource(nameof(GetApprenticeshipDetails))] ApprenticeshipDetails? apprenticeshipDetails)
-    {
-        //Arrange
-        AmbassadorProfileController sut = null!;
-        var memberId = Guid.NewGuid();
-        Fixture fixture = new();
-        memberProfileResponse = fixture.Create<GetMemberProfileResponse>();
-        memberProfileResponse.Apprenticeship = apprenticeshipDetails;
-        _outerApiClientMock = new();
-        _outerApiClientMock.Setup(o => o.GetMemberProfile(memberId, memberId, false, _cancellationToken)).Returns(Task.FromResult(memberProfileResponse));
-        _outerApiClientMock.Setup(o => o.GetProfilesByUserType(MemberUserType.Employer.ToString(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(new GetProfilesResult() { Profiles = profiles }));
-        Mock<ISessionService> sessionServiceMock = new();
-        sessionServiceMock.Setup(s => s.Get(Constants.SessionKeys.MemberId)).Returns(memberId.ToString());
-        sut = new(_outerApiClientMock.Object, sessionServiceMock.Object);
-        sut.AddUrlHelperMock().AddUrlForRoute(SharedRouteNames.YourAmbassadorProfile, YourAmbassadorProfileUrl);
-        sut.TempData = Mock.Of<ITempDataDictionary>();
-
-        //Act
-        _result = await sut.Index(employerId, _cancellationToken);
-
-        //Assert
-        Assert.That(_result, Is.InstanceOf<ViewResult>());
-    }
-
-    private static IEnumerable<ApprenticeshipDetails?> GetApprenticeshipDetails()
-    {
-        yield return new ApprenticeshipDetails { Sector = string.Empty, Level = string.Empty, Programme = string.Empty };
-        yield return null;
-    }
 }

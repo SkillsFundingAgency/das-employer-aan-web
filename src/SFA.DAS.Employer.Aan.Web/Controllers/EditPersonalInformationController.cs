@@ -13,6 +13,7 @@ using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using static SFA.DAS.Aan.SharedUi.Constants.ProfileConstants;
+using static SFA.DAS.Employer.Aan.Web.Constants;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers;
 
@@ -36,7 +37,8 @@ public class EditPersonalInformationController : Controller
     [Route("accounts/{employerAccountId}/edit-personal-information", Name = SharedRouteNames.EditPersonalInformation)]
     public async Task<IActionResult> Index([FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
-        return View(ChangePersonalDetailViewPath, await BuildMemberProfileModel(employerAccountId, cancellationToken));
+        EditPersonalInformationViewModel editPersonalInformationViewModel = await BuildMemberProfileModel(employerAccountId, cancellationToken);
+        return View(ChangePersonalDetailViewPath, editPersonalInformationViewModel);
     }
 
     [HttpPost]
