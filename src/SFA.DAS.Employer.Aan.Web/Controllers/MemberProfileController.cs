@@ -63,6 +63,7 @@ public class MemberProfileController : Controller
     public IActionResult NotificationSentConfirmation(string employerAccountId)
     {
         NotificationSentConfirmationViewModel model = new(Url.RouteUrl(SharedRouteNames.NetworkDirectory, new { employerAccountId })!);
+        model.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId });
         return View(NotificationSentConfirmationViewPath, model);
     }
 

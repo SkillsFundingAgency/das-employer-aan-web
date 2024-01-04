@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using AutoFixture;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using RestEase;
 using SFA.DAS.Aan.SharedUi.Infrastructure;
@@ -54,6 +55,7 @@ public class AmbassadorProfileApprenticeshipDetailsTest
         sessionServiceMock.Setup(s => s.Get(Constants.SessionKeys.MemberId)).Returns(memberId.ToString());
         sut = new(_outerApiClientMock.Object, sessionServiceMock.Object);
         sut.AddUrlHelperMock().AddUrlForRoute(SharedRouteNames.YourAmbassadorProfile, YourAmbassadorProfileUrl).AddUrlForRoute(RouteNames.NetworkHub, NetworkHubUrl);
+        sut.TempData = Mock.Of<ITempDataDictionary>();
 
         //Act
         _result = await sut.Index(employerId, _cancellationToken);
@@ -83,6 +85,7 @@ public class AmbassadorProfileApprenticeshipDetailsTest
         sessionServiceMock.Setup(s => s.Get(Constants.SessionKeys.MemberId)).Returns(memberId.ToString());
         sut = new(_outerApiClientMock.Object, sessionServiceMock.Object);
         sut.AddUrlHelperMock().AddUrlForRoute(SharedRouteNames.YourAmbassadorProfile, YourAmbassadorProfileUrl).AddUrlForRoute(RouteNames.NetworkHub, NetworkHubUrl);
+        sut.TempData = Mock.Of<ITempDataDictionary>();
 
         //Act
         _result = await sut.Index(employerId, _cancellationToken);
