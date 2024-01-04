@@ -103,9 +103,8 @@ public class EditPersonalInformationControllerGetTests
             OrganisationName = organisationName
         };
         organisationName = organisationName ?? string.Empty;
-        var response = new Response<GetMemberProfileResponse>(string.Empty, new(HttpStatusCode.OK), () => getMemberProfileResponse);
         outerApiMock.Setup(o => o.GetMemberProfile(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
-                        .Returns(Task.FromResult(response));
+                        .Returns(Task.FromResult(getMemberProfileResponse));
 
         // Act
         var result = await sut.Index(employerId, new CancellationToken());
