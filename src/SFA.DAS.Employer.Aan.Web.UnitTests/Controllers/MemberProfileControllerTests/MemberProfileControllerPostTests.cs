@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RestEase;
 using SFA.DAS.Aan.SharedUi.Infrastructure;
+using SFA.DAS.Aan.SharedUi.Models;
 using SFA.DAS.Aan.SharedUi.Models.AmbassadorProfile;
 using SFA.DAS.Aan.SharedUi.Models.PublicProfile;
 using SFA.DAS.Aan.SharedUi.OuterApi.Responses;
@@ -107,8 +108,7 @@ public class MemberProfileControllerPostTests
         });
     }
 
-    [Test]
-    [MoqAutoData]
+    [Test, MoqAutoData]
     public void NotificationSentConfirmation_Returns_View([Frozen] Mock<IOuterApiClient> outerApiMock)
     {
         // Arrange
@@ -130,5 +130,26 @@ public class MemberProfileControllerPostTests
             var viewResult = result as ViewResult;
             Assert.That(viewResult!.ViewName, Does.Contain(nameof(SharedRouteNames.NotificationSentConfirmation)));
         });
+    }
+
+    [Test, MoqAutoData]
+    public void NotificationSentConfirmation_ShouldReturnExpectedValueForNetworkHubLink([Frozen] Mock<IOuterApiClient> outerApiMock)
+    {
+        // Arrange
+        string employerId = Guid.NewGuid().ToString();
+        var validatorMock = new Mock<IValidator<ConnectWithMemberSubmitModel>>();
+        Mock<ISessionService> sessionServiceMock = new();
+        MemberProfileController sut = new MemberProfileController(outerApiMock.Object, sessionServiceMock.Object, validatorMock.Object);
+        string networkHubUrl = Guid.NewGuid().ToString();
+        sut.AddUrlHelperMock()
+            .AddUrlForRoute(RouteNames.NetworkHub, networkHubUrl);
+
+        // Act
+        IActionResult result = sut.NotificationSentConfirmation(employerId);
+        var viewResult = result as ViewResult;
+        var _sut = viewResult!.Model as NotificationSentConfirmationViewModel;
+
+        // Assert
+        Assert.That(_sut!.NetworkHubLink, Is.EqualTo(networkHubUrl));
     }
 }

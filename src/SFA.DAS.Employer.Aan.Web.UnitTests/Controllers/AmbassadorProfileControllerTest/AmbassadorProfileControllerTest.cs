@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using SFA.DAS.Aan.SharedUi.Infrastructure;
 using SFA.DAS.Aan.SharedUi.Models;
@@ -17,6 +18,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.AmbassadorProfileContro
 public class AmbassadorProfileControllerTest
 {
     private static readonly string YourAmbassadorProfileUrl = Guid.NewGuid().ToString();
+    private static readonly string EditPersonalInformtionUrl = Guid.NewGuid().ToString();
     private IActionResult _result = null!;
     private Mock<IOuterApiClient> _outerApiClientMock = null!;
     private AmbassadorProfileController _sut = null!;
@@ -50,6 +52,7 @@ public class AmbassadorProfileControllerTest
         sessionServiceMock.Setup(s => s.Get(Constants.SessionKeys.MemberId)).Returns(memberId.ToString());
         _sut = new(_outerApiClientMock.Object, sessionServiceMock.Object);
         _sut.AddUrlHelperMock().AddUrlForRoute(SharedRouteNames.YourAmbassadorProfile, YourAmbassadorProfileUrl);
+        _sut.TempData = Mock.Of<ITempDataDictionary>();
 
         _result = await _sut.Index(employerId, _cancellationToken);
     }
@@ -106,6 +109,10 @@ public class AmbassadorProfileControllerTest
     [Test]
     public void ThenSetsViewModelWithNetworkHubLink()
     => _result.Invoking(r => r.As<ViewResult>().Model.As<AmbassadorProfileViewModel>().NetworkHubLink.Should().Contain(RouteNames.NetworkHub));
+
+    [Test]
+    public void ThenSetsViewModelWithPersonalDetailsChangeUrl()
+    => _result.Invoking(r => r.As<ViewResult>().Model.As<AmbassadorProfileViewModel>().PersonalDetails.PersonalDetailsChangeUrl.Should().Contain(SharedRouteNames.EditPersonalInformation));
 
     [Test]
     public void Index_ShouldInvokeGetMemberProfile()

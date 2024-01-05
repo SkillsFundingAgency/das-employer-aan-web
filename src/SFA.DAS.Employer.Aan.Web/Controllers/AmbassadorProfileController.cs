@@ -9,6 +9,7 @@ using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models.AmbassadorProfile;
 using static SFA.DAS.Aan.SharedUi.Constants.ProfileConstants;
+using static SFA.DAS.Employer.Aan.Web.Constants;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers;
 
@@ -34,7 +35,7 @@ public class AmbassadorProfileController : Controller
         await Task.WhenAll(profiles, memberProfiles);
         var member = memberProfiles.Result;
 
-        var personalDetails = new PersonalDetailsModel(member.FullName, member.RegionName, member.UserType, string.Empty, string.Empty, string.Empty, string.Empty);
+        var personalDetails = new PersonalDetailsModel(member.FullName, member.RegionName, member.UserType, Url.RouteUrl(SharedRouteNames.EditPersonalInformation, new { employerAccountId = employerAccountId })!, string.Empty, string.Empty, string.Empty);
         var apprenticeshipDetails = member.Apprenticeship != null ? new ApprenticeshipDetailsModel(member.Apprenticeship!.Sectors, member.Apprenticeship!.ActiveApprenticesCount) : null;
 
         AmbassadorProfileViewModel model = new AmbassadorProfileViewModel();
@@ -45,6 +46,7 @@ public class AmbassadorProfileController : Controller
         model.ShowApprenticeshipDetails = GetShowApprenticeshipDetails(model.ApprenticeshipDetails.EmployerName, apprenticeshipDetails);
         model.MemberProfileUrl = Url.RouteUrl(SharedRouteNames.MemberProfile, new { employerAccountId = employerAccountId, id = memberId })!;
         model.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId });
+        ViewBag.YourAmbassadorProfileSuccessMessage = TempData[TempDataKeys.YourAmbassadorProfileSuccessMessage];
         return View(model);
     }
 
@@ -93,7 +95,7 @@ public class AmbassadorProfileController : Controller
         personalDetailsViewModel.BiographyDisplayClass = biographyTuple.displayClass;
 
         personalDetailsViewModel.UserType = personalDetails.UserType;
-        personalDetailsViewModel.PersonalDetailsChangeUrl = string.Empty;
+        personalDetailsViewModel.PersonalDetailsChangeUrl = personalDetails.PersonalDetailChangeUrl;
 
         return personalDetailsViewModel;
     }
