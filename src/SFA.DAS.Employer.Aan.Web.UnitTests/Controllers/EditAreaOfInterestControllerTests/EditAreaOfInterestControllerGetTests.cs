@@ -9,6 +9,7 @@ using SFA.DAS.Aan.SharedUi.Models;
 using SFA.DAS.Aan.SharedUi.Models.AmbassadorProfile;
 using SFA.DAS.Aan.SharedUi.Models.EditAreaOfInterest;
 using SFA.DAS.Aan.SharedUi.OuterApi.Responses;
+using SFA.DAS.Employer.Aan.Domain.Constants;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Controllers;
@@ -161,8 +162,8 @@ public class EditAreaOfInterestControllerGetTests
 
         getProfilesResult = new()
         {
-            Profiles = new List<Profile>() { new Profile() { Id = 41, Description = "Description 1", Category = "ReasonToJoin" },
-            new Profile() { Id = 42, Description = "Description 2", Category = "Support" }}
+            Profiles = new List<Profile>() { new Profile() { Id = 41, Description = "Description 1", Category = Category.ReasonToJoin },
+            new Profile() { Id = 42, Description = "Description 2", Category = Category.Support }}
         };
 
         outerApiMock.Setup(o => o.GetMemberProfile(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))

@@ -2,11 +2,13 @@
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Aan.SharedUi.Constants;
 using SFA.DAS.Aan.SharedUi.Infrastructure;
 using SFA.DAS.Aan.SharedUi.Models;
 using SFA.DAS.Aan.SharedUi.Models.AmbassadorProfile;
 using SFA.DAS.Aan.SharedUi.Models.EditAreaOfInterest;
 using SFA.DAS.Aan.SharedUi.Services;
+using SFA.DAS.Employer.Aan.Domain.Constants;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.Aan.Web.Authentication;
@@ -69,11 +71,11 @@ public class EditAreaOfInterestController : Controller
         var memberProfiles = await _outerApiClient.GetMemberProfile(memberId, memberId, false, cancellationToken);
         var profilesResult = await _outerApiClient.GetProfilesByUserType(MemberUserType.Employer.ToString(), cancellationToken);
 
-        editAreaOfInterestViewModel.FirstSectionInterests = SelectProfileViewModelMapping(profilesResult.Profiles.Where(x => x.Category == "ReasonToJoin").ToList(), memberProfiles.Profiles);
+        editAreaOfInterestViewModel.FirstSectionInterests = SelectProfileViewModelMapping(profilesResult.Profiles.Where(x => x.Category == Category.ReasonToJoin).ToList(), memberProfiles.Profiles);
 
-        editAreaOfInterestViewModel.SecondSectionInterests = SelectProfileViewModelMapping(profilesResult.Profiles.Where(x => x.Category == "Support").ToList(), memberProfiles.Profiles);
-        editAreaOfInterestViewModel.FirstSectionTitle = "Why do you want to join the network?";
-        editAreaOfInterestViewModel.SecondSectionTitle = "What support would you need from the network?";
+        editAreaOfInterestViewModel.SecondSectionInterests = SelectProfileViewModelMapping(profilesResult.Profiles.Where(x => x.Category == Category.Support).ToList(), memberProfiles.Profiles);
+        editAreaOfInterestViewModel.FirstSectionTitle = AreaOfInterestTitleConstant.FirstSectionTitleForEmployer;
+        editAreaOfInterestViewModel.SecondSectionTitle = AreaOfInterestTitleConstant.SecondSectionTitleForEmployer;
         editAreaOfInterestViewModel.YourAmbassadorProfileUrl = Url.RouteUrl(SharedRouteNames.YourAmbassadorProfile, new { employerAccountId })!;
         editAreaOfInterestViewModel.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId });
         return editAreaOfInterestViewModel;
