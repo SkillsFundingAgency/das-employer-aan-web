@@ -41,7 +41,7 @@ public class AmbassadorProfileController : Controller
         AmbassadorProfileViewModel model = new AmbassadorProfileViewModel();
         model.PersonalDetails = PersonalDetailsViewModelMapping(personalDetails, member);
         model.ContactDetails = ContactDetailsViewModelMapping(member);
-        model.InterestInTheNetwork = new InterestInTheNetworkViewModel(member.Profiles, profiles.Result.Profiles, string.Empty);
+        model.InterestInTheNetwork = new InterestInTheNetworkViewModel(member.Profiles, profiles.Result.Profiles, Url.RouteUrl(SharedRouteNames.EditAreaOfInterest, new { employerAccountId = employerAccountId })!);
         model.ApprenticeshipDetails = new ApprenticeshipDetailsViewModel(member, apprenticeshipDetails);
         model.ShowApprenticeshipDetails = GetShowApprenticeshipDetails(model.ApprenticeshipDetails.EmployerName, apprenticeshipDetails);
         model.MemberProfileUrl = Url.RouteUrl(SharedRouteNames.MemberProfile, new { employerAccountId = employerAccountId, id = memberId })!;
