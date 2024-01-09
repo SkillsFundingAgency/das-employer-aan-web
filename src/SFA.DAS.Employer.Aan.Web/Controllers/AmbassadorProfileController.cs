@@ -29,7 +29,6 @@ public class AmbassadorProfileController : Controller
     public async Task<IActionResult> Index([FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
         var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
-
         var profiles = _apiClient.GetProfilesByUserType(MemberUserType.Employer.ToString(), cancellationToken);
         var memberProfiles = _apiClient.GetMemberProfile(memberId, memberId, false, cancellationToken);
         await Task.WhenAll(profiles, memberProfiles);
@@ -42,7 +41,7 @@ public class AmbassadorProfileController : Controller
         model.PersonalDetails = PersonalDetailsViewModelMapping(personalDetails, member);
         model.ContactDetails = ContactDetailsViewModelMapping(member);
         model.InterestInTheNetwork = new InterestInTheNetworkViewModel(member.Profiles, profiles.Result.Profiles, Url.RouteUrl(SharedRouteNames.EditAreaOfInterest, new { employerAccountId = employerAccountId })!);
-        model.ApprenticeshipDetails = new ApprenticeshipDetailsViewModel(member, apprenticeshipDetails);
+        model.ApprenticeshipDetails = new ApprenticeshipDetailsViewModel(member, apprenticeshipDetails, Url.RouteUrl(SharedRouteNames.EditApprenticeshipInformation, new { employerAccountId = employerAccountId })!);
         model.ShowApprenticeshipDetails = GetShowApprenticeshipDetails(model.ApprenticeshipDetails.EmployerName, apprenticeshipDetails);
         model.MemberProfileUrl = Url.RouteUrl(SharedRouteNames.MemberProfile, new { employerAccountId = employerAccountId, id = memberId })!;
         model.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId });

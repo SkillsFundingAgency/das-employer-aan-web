@@ -7,7 +7,7 @@ namespace SFA.DAS.Employer.Aan.Web.Models.AmbassadorProfile;
 
 public class ApprenticeshipDetailsViewModel
 {
-    public ApprenticeshipDetailsViewModel(GetMemberProfileResponse member, ApprenticeshipDetailsModel? apprenticeshipDetails)
+    public ApprenticeshipDetailsViewModel(GetMemberProfileResponse member, ApprenticeshipDetailsModel? apprenticeshipDetails, string apprenticeshipInformationChangeUrl)
     {
         EmployerName = member.OrganisationName;
         ApprenticeshipSectors = apprenticeshipDetails?.Sectors;
@@ -15,7 +15,7 @@ public class ApprenticeshipDetailsViewModel
         var (apprenticeshipDetailsDisplayValue, apprenticeshipDetailsDisplayClass) = MapProfilesAndPreferencesService.SetDisplayValue(GetApprenticeshipDetailsPreference(member.Preferences));
         ApprenticeshipDetailsDisplayValue = apprenticeshipDetailsDisplayValue;
         ApprenticeshipDetailsDisplayClass = apprenticeshipDetailsDisplayClass;
-        ApprenticeshipInformationChangeUrl = string.Empty;
+        ApprenticeshipInformationChangeUrl = apprenticeshipInformationChangeUrl;
     }
 
     public string? EmployerName { get; set; }
