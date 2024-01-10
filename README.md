@@ -12,7 +12,8 @@
 This web solution is part of Apprentice Ambassador Network (AAN) project. Here the employer users can onboard to become ambassadors, find and sign-up for network events, find and collaborate with other ambassadors.
 
 ## How It Works
-Users are expected to register themselves in the Apprentice portal. Once registered they will have access to on-boarding journey for AAN. Users who are already apprentices will also have access to on-board.  
+Users are expected to register themselves in the Employer portal. Once registered they will have access to on-boarding journey for AAN. Users who are already apprentices will also have access to on-board. 
+When running this locally, with stub sign-in enabled, the launch url should be `https://localhost:5003/accounts/v6gr7d/`, where `v6gr7d` is a random account id. Once logged in the correct account id will automatically replace this.
 
 ## 🚀 Installation
 
