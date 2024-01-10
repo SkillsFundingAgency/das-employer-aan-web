@@ -34,12 +34,12 @@ public class AmbassadorProfileController : Controller
         await Task.WhenAll(profiles, memberProfiles);
         var member = memberProfiles.Result;
 
-        var personalDetails = new PersonalDetailsModel(member.FullName, member.RegionName, member.UserType, Url.RouteUrl(SharedRouteNames.EditPersonalInformation, new { employerAccountId = employerAccountId })!, string.Empty, string.Empty, string.Empty);
+        var personalDetails = new PersonalDetailsModel(member.FullName, member.RegionName, member.UserType, Url.RouteUrl(SharedRouteNames.EditPersonalInformation, new { employerAccountId = employerAccountId })!, string.Empty, Url.RouteUrl(SharedRouteNames.EditContactDetail, new { employerAccountId = employerAccountId })!, string.Empty);
         var apprenticeshipDetails = member.Apprenticeship != null ? new ApprenticeshipDetailsModel(member.Apprenticeship!.Sectors, member.Apprenticeship!.ActiveApprenticesCount) : null;
 
         AmbassadorProfileViewModel model = new AmbassadorProfileViewModel();
         model.PersonalDetails = PersonalDetailsViewModelMapping(personalDetails, member);
-        model.ContactDetails = ContactDetailsViewModelMapping(member);
+        model.ContactDetails = ContactDetailsViewModelMapping(member, personalDetails.ContactDetailChangeUrl);
         model.InterestInTheNetwork = new InterestInTheNetworkViewModel(member.Profiles, profiles.Result.Profiles, Url.RouteUrl(SharedRouteNames.EditAreaOfInterest, new { employerAccountId = employerAccountId })!);
         model.ApprenticeshipDetails = new ApprenticeshipDetailsViewModel(member, apprenticeshipDetails, Url.RouteUrl(SharedRouteNames.EditApprenticeshipInformation, new { employerAccountId = employerAccountId })!);
         model.ShowApprenticeshipDetails = GetShowApprenticeshipDetails(model.ApprenticeshipDetails.EmployerName, apprenticeshipDetails);
@@ -54,7 +54,7 @@ public class AmbassadorProfileController : Controller
         return !(string.IsNullOrEmpty(employerName) && (apprenticeshipDetails == null));
     }
 
-    private static ContactDetailsViewModel ContactDetailsViewModelMapping(GetMemberProfileResponse member)
+    private static ContactDetailsViewModel ContactDetailsViewModelMapping(GetMemberProfileResponse member, string contactDetailChangeUrl)
     {
         ContactDetailsViewModel contactDetailsViewModel = new ContactDetailsViewModel();
         contactDetailsViewModel.EmailAddress = member.Email;
@@ -63,7 +63,7 @@ public class AmbassadorProfileController : Controller
         (string displayValue, string displayClass) linkedinTuple = MapProfilesAndPreferencesService.SetDisplayValue(profileValueWithPreferenceForLinkedIn.isDisplayed);
         contactDetailsViewModel.LinkedInDisplayValue = linkedinTuple.displayValue;
         contactDetailsViewModel.LinkedInDisplayClass = linkedinTuple.displayClass;
-        contactDetailsViewModel.ContactDetailChangeUrl = string.Empty;
+        contactDetailsViewModel.ContactDetailChangeUrl = contactDetailChangeUrl;
         return contactDetailsViewModel;
     }
 
