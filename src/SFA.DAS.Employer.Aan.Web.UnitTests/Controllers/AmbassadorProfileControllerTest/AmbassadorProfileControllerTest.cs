@@ -7,6 +7,7 @@ using SFA.DAS.Aan.SharedUi.Infrastructure;
 using SFA.DAS.Aan.SharedUi.Models;
 using SFA.DAS.Aan.SharedUi.Models.AmbassadorProfile;
 using SFA.DAS.Aan.SharedUi.OuterApi.Responses;
+using SFA.DAS.Employer.Aan.Domain.Constants;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Controllers;
@@ -29,10 +30,10 @@ public class AmbassadorProfileControllerTest
 
     private readonly List<Profile> profiles = new()
     {
-        new Profile { Id = 41, Description = "Meet other employer ambassadors and grow your network", Category = "ReasonToJoin", Ordering = 1 },
-        new Profile { Id = 42, Description = "Share your knowledge, experience and best practice", Category = "ReasonToJoin", Ordering = 2 },
-        new Profile { Id = 51, Description = "Building apprenticeship profile of my organisation", Category = "Support", Ordering = 1 },
-        new Profile { Id = 52, Description = "Increasing engagement with schools and colleges", Category = "Support", Ordering = 2 }
+        new Profile { Id = 41, Description = "Meet other employer ambassadors and grow your network", Category = Category.ReasonToJoin, Ordering = 1 },
+        new Profile { Id = 42, Description = "Share your knowledge, experience and best practice", Category = Category.ReasonToJoin, Ordering = 2 },
+        new Profile { Id = 51, Description = "Building apprenticeship profile of my organisation", Category = Category.Support, Ordering = 1 },
+        new Profile { Id = 52, Description = "Increasing engagement with schools and colleges", Category = Category.Support, Ordering = 2 }
     };
 
     [SetUp]

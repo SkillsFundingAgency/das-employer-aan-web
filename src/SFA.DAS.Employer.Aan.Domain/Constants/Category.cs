@@ -4,7 +4,7 @@ namespace SFA.DAS.Employer.Aan.Domain.Constants;
 [ExcludeFromCodeCoverage]
 public static class Category
 {
-    public const string ReasonToJoin = "ReasonToJoin";
-    public const string Support = "Support";
+    public const string ReasonToJoin = nameof(ReasonToJoin);
+    public const string Support = nameof(Support);
 }
 

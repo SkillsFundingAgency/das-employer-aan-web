@@ -1,0 +1,90 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using SFA.DAS.Aan.SharedUi.Constants;
+@using SFA.DAS.Aan.SharedUi.Extensions;
+@using SFA.DAS.Aan.SharedUi.Infrastructure;
+@using SFA.DAS.Aan.SharedUi.Models;
+@using SFA.DAS.Aan.SharedUi.Models.AmbassadorProfile;
+@using SFA.DAS.Aan.SharedUi.Models.EditApprenticeshipInformation;
+@using SFA.DAS.Aan.SharedUi.TagHelpers;
+@using SFA.DAS.Employer.Aan.Web.Models.AmbassadorProfile.EditApprenticeshipInformation;
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, SFA.DAS.Aan.SharedUi
+
+
+@model EditApprenticeshipDetailViewModel;
+
+@{
+    ViewData["Title"] = "Edit Apprenticeship Information";
+}
+<partial name="_validationSummary" />
+<div class="govuk-grid-row govuk-body">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l govuk-!-margin-top-4 govuk-!-margin-bottom-4">Your apprenticeship information</h1>
+        <p class="personal-section-description">
+            Here is the current information the network holds about your employer. You can edit your employer’s name and address. Your apprenticeship sector, programme and level is taken from your existing apprenticeship account and cannot be changed on this page.
+        </p>
+        <form method="post" enctype="multipart/form-data" novalidate>
+            <div id="JobTitle" class="govuk-form-group">
+                <h3 class="govuk-label-wrapper govuk-!-margin-top-4 govuk-!-margin-bottom-4">
+                    <label class="govuk-label govuk-label--m" for="EmployerName">
+                        Employer's name
+                    </label>
+                </h3>
+                <span>
+                    @Model.EmployerName
+                </span>
+            </div>
+            <hr />
+            @if (Model.Sectors!.Count > 0)
+            {
+                <div id="sector" class="govuk-form-group">
+                    <h3 class="govuk-label-wrapper govuk-!-margin-top-4 govuk-!-margin-bottom-4">
+                        <label class="govuk-label govuk-label--m" for="apprenticeship-sector">
+                            Apprenticeship sectors
+                        </label>
+                    </h3>
+                    <span>
+                        <ul class="govuk-list govuk-list--bullet">
+                            @{
+                                foreach (var sector in Model.Sectors)
+                                {
+                                    <li>@sector</li>
+                                }
+                            }
+                        </ul>
+                    </span>
+                </div>
+                <hr />
+            }
+            @if (Model.ActiveApprenticesCount > 0)
+            {
+                <div id="programmes" class="govuk-form-group">
+                    <h3 class="govuk-label-wrapper govuk-!-margin-top-4 govuk-!-margin-bottom-4">
+                        <label class="govuk-label govuk-label--m" for="apprenticeship-programme">
+                            Number of active apprentices
+                        </label>
+                    </h3>
+                    <span>
+                        @Model.ActiveApprenticesCount
+                    </span>
+                </div>
+                <hr />
+            }
+
+            <div class="govuk-checkboxes__item govuk-!-margin-top-6 govuk-!-margin-bottom-6">
+                <input class="govuk-checkboxes__input" type="checkbox" asp-for=@Model.ShowApprenticeshipInformation>
+                <label class="govuk-label govuk-checkboxes__label profile-govuk-checkboxes" for="ShowApprenticeshipInformation">
+                    Display all my organisation information on my profile
+                </label>
+            </div>
+            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+            <div class="govuk-button-group">
+                <button id="saveChanges" type="submit" data-disable-on-submit="true" class="govuk-button" data-module="govuk-button">
+                    Save changes
+                </button>
+                <a class="govuk-link" href="@Model.YourAmbassadorProfileUrl">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

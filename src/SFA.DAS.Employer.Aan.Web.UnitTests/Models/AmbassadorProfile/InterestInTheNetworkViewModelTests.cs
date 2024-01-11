@@ -3,6 +3,7 @@ using FluentAssertions.Execution;
 using SFA.DAS.Aan.SharedUi.Constants;
 using SFA.DAS.Aan.SharedUi.Models;
 using SFA.DAS.Aan.SharedUi.Models.AmbassadorProfile;
+using SFA.DAS.Employer.Aan.Domain.Constants;
 using SFA.DAS.Employer.Aan.Web.Models.AmbassadorProfile;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Models.AmbassadorProfile;
@@ -25,10 +26,10 @@ public class InterestInTheNetworkViewModelTests
         };
         profiles = new List<Profile>()
         {
-            new Profile { Id = 41, Description = "Meet other employer ambassadors and grow your network", Category = "ReasonToJoin", Ordering = 1 },
-            new Profile { Id = 42, Description = "Share your knowledge, experience and best practice", Category = "ReasonToJoin", Ordering = 2 },
-            new Profile { Id = 51, Description = "Building apprenticeship profile of my organisation", Category = "Support", Ordering = 1 },
-            new Profile { Id = 52, Description = "Increasing engagement with schools and colleges", Category = "Support", Ordering = 2 }
+            new Profile { Id = 41, Description = "Meet other employer ambassadors and grow your network", Category = Category.ReasonToJoin, Ordering = 1 },
+            new Profile { Id = 42, Description = "Share your knowledge, experience and best practice", Category = Category.ReasonToJoin, Ordering = 2 },
+            new Profile { Id = 51, Description = "Building apprenticeship profile of my organisation", Category = Category.Support, Ordering = 1 },
+            new Profile { Id = 52, Description = "Increasing engagement with schools and colleges", Category = Category.Support, Ordering = 2 }
         };
         sut = new InterestInTheNetworkViewModel(memberProfiles, profiles, areaOfInterestChangeUrl);
     }

@@ -13,6 +13,7 @@ public class ApprenticeshipDetailsViewModelTests
     private ApprenticeshipDetailsModel? apprenticeshipDetails;
     private IEnumerable<MemberPreference> memberPreferences = null!;
     private GetMemberProfileResponse? memberProfileResponse;
+    private static string editApprenticeshipInformationUrl = Guid.NewGuid().ToString();
 
     [SetUp]
     public void Setup()
@@ -21,23 +22,20 @@ public class ApprenticeshipDetailsViewModelTests
 
         List<MemberProfile> memberProfiles = new()
         {
-            new MemberProfile(){ProfileId=41, Value="true"},
-            new MemberProfile(){ProfileId=42, Value="true"},
-            new MemberProfile(){ProfileId=51, Value="true"},
-            new MemberProfile(){ProfileId=52, Value="true"},
+            new MemberProfile() { ProfileId=41, Value="true"},
+            new MemberProfile() { ProfileId=42, Value="true"},
+            new MemberProfile() { ProfileId=51, Value="true"},
+            new MemberProfile() { ProfileId=52, Value="true"},
         };
         memberPreferences = new List<MemberPreference>()
         {
             new MemberPreference(){PreferenceId=PreferenceConstants.PreferenceIds.Apprenticeship,Value=true}
         };
-
-
         memberProfileResponse = fixture.Create<GetMemberProfileResponse>();
         memberProfileResponse.Profiles = memberProfiles;
         memberProfileResponse.Preferences = memberPreferences;
-
         apprenticeshipDetails = fixture.Create<ApprenticeshipDetailsModel>();
-        sut = new ApprenticeshipDetailsViewModel(memberProfileResponse, apprenticeshipDetails);
+        sut = new ApprenticeshipDetailsViewModel(memberProfileResponse, apprenticeshipDetails, editApprenticeshipInformationUrl);
     }
 
     [Test]
@@ -73,6 +71,16 @@ public class ApprenticeshipDetailsViewModelTests
                 sut.ApprenticeshipDetailsDisplayClass.Should().Be("govuk-tag--blue");
                 sut.ApprenticeshipDetailsDisplayValue.Should().Be("Hidden");
             }
+        }
+    }
+
+    [Test]
+    public void ApprenticeshipInformationUrlIsSet()
+    {
+        using (new AssertionScope())
+        {
+            // Assert
+            Assert.That(sut.ApprenticeshipInformationChangeUrl, Is.EqualTo(editApprenticeshipInformationUrl));
         }
     }
 }
