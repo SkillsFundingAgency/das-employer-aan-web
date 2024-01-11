@@ -75,7 +75,6 @@ public class EditAreaOfInterestControllerGetTests
         // Arrange
         HappyPathSetUp();
 
-
         // Act
         var result = await sut.Get(employerId, CancellationToken.None);
         var viewResult = result as ViewResult;
