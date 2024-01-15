@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using SFA.DAS.Configuration.AzureTableStorage;
+using SFA.DAS.Employer.Aan.Web.Configuration;
 
 namespace SFA.DAS.Employer.Aan.Web.AppStart;
 
@@ -8,7 +9,7 @@ public static class LoadConfigurationExtension
 {
     private const string EncodingConfigKey = "SFA.DAS.Encoding";
 
-    public static IConfigurationRoot LoadConfiguration(this IConfiguration config)
+    public static IConfigurationRoot LoadConfiguration(this IConfiguration config, IServiceCollection services)
     {
         var configBuilder = new ConfigurationBuilder()
             .AddConfiguration(config)
@@ -28,6 +29,11 @@ public static class LoadConfigurationExtension
             });
         }
 
-        return configBuilder.Build();
+        var configuration = configBuilder.Build();
+
+        var appConfig = configuration.Get<ApplicationConfiguration>();
+        services.AddSingleton(appConfig);
+
+        return configuration;
     }
 }

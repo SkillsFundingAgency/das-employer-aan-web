@@ -9,7 +9,7 @@ using SFA.DAS.Employer.Shared.UI;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var rootConfiguration = builder.Configuration.LoadConfiguration();
+var rootConfiguration = builder.Configuration.LoadConfiguration(builder.Services);
 
 builder.Services
     .AddOptions()
