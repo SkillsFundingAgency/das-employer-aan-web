@@ -60,9 +60,8 @@ public class LeavingTheNetworkTests
         });
     }
 
-    [TestCase(0)]
-    [TestCase(ExperienceReason400Selected)]
-    public void Post_SetSessionModelAndRedirectToLeaveTheNetworkConfirmation(int experienceRatingSelected)
+    [Test]
+    public void Post_SetSessionModelAndRedirectToLeaveTheNetworkConfirmation()
     {
         var sessionServiceMock = new Mock<ISessionService>();
 
@@ -73,7 +72,7 @@ public class LeavingTheNetworkTests
             LeavingReasons = GetLeavingCategoryReasons().LeavingReasons,
             LeavingBenefits = GetLeavingCategoryBenefits().LeavingReasons,
             LeavingExperience = GetLeavingCategoryExperience().LeavingReasons,
-            SelectedLeavingExperienceRating = experienceRatingSelected
+            SelectedLeavingExperienceRating = ExperienceReason400Selected
         };
 
         var memberId = Guid.NewGuid();
@@ -91,21 +90,47 @@ public class LeavingTheNetworkTests
 
         actualResult!.RouteName.Should().Be(SharedRouteNames.LeaveTheNetworkConfirmation);
 
-        if (experienceRatingSelected == 0)
+        sessionServiceMock.Verify(x => x.Set(
+            It.Is<ReasonsForLeavingSessionModel>(m => m.ReasonsForLeaving.Count == 2
+                                                      && m.ReasonsForLeaving.Contains(Reason20Selected)
+                                                      && m.ReasonsForLeaving.Contains(ExperienceReason400Selected)
+            )));
+    }
+
+    [Test]
+    public void Post_SetSessionModelAndRedirectToLeaveTheNetworkConfirmationWithExpectedReasons()
+    {
+        var sessionServiceMock = new Mock<ISessionService>();
+
+        var sut = new LeaveTheNetworkController(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object);
+
+        var model = new SubmitLeaveTheNetworkViewModel
         {
-            sessionServiceMock.Verify(x => x.Set(
-                It.Is<ReasonsForLeavingSessionModel>(m => m.ReasonsForLeaving.Count == 1
-                                                          && m.ReasonsForLeaving.Contains(Reason20Selected)
-                )));
-        }
-        else
-        {
-            sessionServiceMock.Verify(x => x.Set(
-                It.Is<ReasonsForLeavingSessionModel>(m => m.ReasonsForLeaving.Count == 2
-                                                          && m.ReasonsForLeaving.Contains(Reason20Selected)
-                                                          && m.ReasonsForLeaving.Contains(ExperienceReason400Selected)
-                )));
-        }
+            LeavingReasons = GetLeavingCategoryReasons().LeavingReasons,
+            LeavingBenefits = GetLeavingCategoryBenefits().LeavingReasons,
+            LeavingExperience = GetLeavingCategoryExperience().LeavingReasons,
+            SelectedLeavingExperienceRating = 0
+        };
+
+        var memberId = Guid.NewGuid();
+
+        sut.ControllerContext = new ControllerContext();
+
+        sut.AddUrlHelperMock()
+            .AddUrlForRoute(SharedRouteNames.LeaveTheNetworkConfirmation, LeaveTheNetworkConfirmationUrl);
+
+        var result = sut.Post(_accountId, model);
+
+        result.Should().BeOfType<RedirectToRouteResult>();
+
+        var actualResult = result as RedirectToRouteResult;
+
+        actualResult!.RouteName.Should().Be(SharedRouteNames.LeaveTheNetworkConfirmation);
+
+        sessionServiceMock.Verify(x => x.Set(
+            It.Is<ReasonsForLeavingSessionModel>(m => m.ReasonsForLeaving.Count == 1
+                                                      && m.ReasonsForLeaving.Contains(Reason20Selected)
+            )));
     }
 
     private static LeavingCategory GetLeavingCategoryExperience()
