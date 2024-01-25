@@ -9,6 +9,7 @@ using SFA.DAS.Aan.SharedUi.Services;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.Aan.Web.Authentication;
+using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using static SFA.DAS.Aan.SharedUi.Constants.ProfileConstants;
 using static SFA.DAS.Employer.Aan.Web.Constants;
@@ -41,7 +42,7 @@ public class EditContactDetailController : Controller
     [Route("accounts/{employerAccountId}/edit-contact-detail", Name = SharedRouteNames.EditContactDetail)]
     public async Task<IActionResult> Post([FromRoute] string employerAccountId, SubmitContactDetailModel submitContactDetailModel, CancellationToken cancellationToken)
     {
-        var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
+        var memberId = _sessionService.GetMemberId();
         var result = await _validator.ValidateAsync(submitContactDetailModel, cancellationToken);
 
         if (!result.IsValid)
@@ -70,7 +71,7 @@ public class EditContactDetailController : Controller
 
     public async Task<EditContactDetailViewModel> GetContactDetailViewModel(string employerAccountId, CancellationToken cancellationToken)
     {
-        var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
+        var memberId = _sessionService.GetMemberId();
         var memberProfile = await _apiClient.GetMemberProfile(memberId, memberId, false, cancellationToken);
 
         EditContactDetailViewModel editContactDetailViewModel = new EditContactDetailViewModel();

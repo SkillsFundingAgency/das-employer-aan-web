@@ -10,6 +10,7 @@ using SFA.DAS.Aan.SharedUi.Services;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.Aan.Web.Authentication;
+using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers;
@@ -44,7 +45,7 @@ public class MemberProfileController : Controller
     public async Task<IActionResult> Post([FromRoute] string employerAccountId, [FromRoute] Guid id, ConnectWithMemberSubmitModel command, CancellationToken cancellationToken)
     {
         var result = await _validator.ValidateAsync(command, cancellationToken);
-        var userId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
+        var userId = _sessionService.GetMemberId();
 
         if (!result.IsValid)
         {
@@ -69,7 +70,7 @@ public class MemberProfileController : Controller
 
     private async Task<MemberProfileViewModel> GetViewModel(Guid id, string employerAccountId, CancellationToken cancellationToken)
     {
-        var userId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
+        var userId = _sessionService.GetMemberId();
         var memberProfiles = await _outerApiClient.GetMemberProfile(userId, id, true, cancellationToken);
         var profilesResult = await _outerApiClient.GetProfilesByUserType(memberProfiles.UserType.ToString(), cancellationToken);
 

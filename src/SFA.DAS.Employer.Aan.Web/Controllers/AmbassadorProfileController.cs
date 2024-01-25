@@ -6,6 +6,7 @@ using SFA.DAS.Aan.SharedUi.OuterApi.Responses;
 using SFA.DAS.Aan.SharedUi.Services;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Authentication;
+using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models.AmbassadorProfile;
 using static SFA.DAS.Aan.SharedUi.Constants.ProfileConstants;
@@ -28,7 +29,7 @@ public class AmbassadorProfileController : Controller
 
     public async Task<IActionResult> Index([FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
-        var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
+        var memberId = _sessionService.GetMemberId();
         var profiles = _apiClient.GetProfilesByUserType(MemberUserType.Employer.ToString(), cancellationToken);
         var memberProfiles = _apiClient.GetMemberProfile(memberId, memberId, false, cancellationToken);
         await Task.WhenAll(profiles, memberProfiles);

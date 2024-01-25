@@ -12,6 +12,7 @@ using SFA.DAS.Employer.Aan.Domain.Constants;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.Aan.Web.Authentication;
+using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using static SFA.DAS.Employer.Aan.Web.Constants;
 
@@ -58,7 +59,7 @@ public class EditAreaOfInterestController : Controller
             Value = x.IsSelected ? true.ToString() : null!
         }).ToList();
 
-        var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
+        var memberId = _sessionService.GetMemberId();
         await _outerApiClient.UpdateMemberProfileAndPreferences(memberId, updateMemberProfileAndPreferencesRequest, cancellationToken);
         TempData[TempDataKeys.YourAmbassadorProfileSuccessMessage] = true;
         return RedirectToRoute(SharedRouteNames.YourAmbassadorProfile, new { employerAccountId });
@@ -67,7 +68,7 @@ public class EditAreaOfInterestController : Controller
     public async Task<EditAreaOfInterestViewModel> GetAreaOfInterests(string employerAccountId, CancellationToken cancellationToken)
     {
         EditAreaOfInterestViewModel editAreaOfInterestViewModel = new EditAreaOfInterestViewModel();
-        var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
+        var memberId = _sessionService.GetMemberId();
         var memberProfiles = await _outerApiClient.GetMemberProfile(memberId, memberId, false, cancellationToken);
         var profilesResult = await _outerApiClient.GetProfilesByUserType(MemberUserType.Employer.ToString(), cancellationToken);
 

@@ -10,6 +10,7 @@ using SFA.DAS.Aan.SharedUi.Services;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.Aan.Web.Authentication;
+using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using static SFA.DAS.Aan.SharedUi.Constants.ProfileConstants;
 using static SFA.DAS.Employer.Aan.Web.Constants;
@@ -44,7 +45,7 @@ public class EditPersonalInformationController : Controller
     [Route("accounts/{employerAccountId}/edit-personal-information", Name = SharedRouteNames.EditPersonalInformation)]
     public async Task<IActionResult> Post([FromRoute] string employerAccountId, SubmitPersonalDetailModel submitPersonalDetailModel, CancellationToken cancellationToken)
     {
-        var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
+        var memberId = _sessionService.GetMemberId();
         var result = await _validator.ValidateAsync(submitPersonalDetailModel, cancellationToken);
 
         if (!result.IsValid)
@@ -90,8 +91,7 @@ public class EditPersonalInformationController : Controller
 
     private async Task<EditPersonalInformationViewModel> BuildMemberProfileModel(string employerAccountId, CancellationToken cancellationToken)
     {
-        var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
-
+        var memberId = _sessionService.GetMemberId();
         var memberProfiles = await _apiClient.GetMemberProfile(memberId, memberId, false, cancellationToken);
         var regions = await _apiClient.GetRegions(cancellationToken);
         int regionId = memberProfiles.RegionId ?? 0;

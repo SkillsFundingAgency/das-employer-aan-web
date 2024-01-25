@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Aan.SharedUi.Infrastructure;
 using SFA.DAS.Employer.Aan.Domain.Constants;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
+using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Encoding;
 
@@ -26,8 +27,7 @@ public class NotificationsController : Controller
     [Route("links/{id}")]
     public async Task<IActionResult> Index(Guid id, CancellationToken cancellationToken)
     {
-        var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
-
+        var memberId = _sessionService.GetMemberId();
         var response = await _outerApiClient.GetNotification(memberId, id, cancellationToken);
 
         if (response.ResponseMessage.StatusCode != HttpStatusCode.OK) return RedirectToRoute(RouteNames.Home);

@@ -29,7 +29,7 @@ public class EventsHubController : Controller
         month = month ?? DateTime.Today.Month;
         year = year ?? DateTime.Today.Year;
 
-        var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
+        var memberId = _sessionService.GetMemberId();
 
         // throws ArgumentOutOfRangeException if the month is invalid, which will navigate user to an error page
         var firstDayOfTheMonth = new DateOnly(year.GetValueOrDefault(), month.GetValueOrDefault(), 1);
