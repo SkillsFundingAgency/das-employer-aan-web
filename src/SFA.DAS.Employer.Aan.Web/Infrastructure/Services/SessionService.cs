@@ -28,7 +28,7 @@ public class SessionService : ISessionService
             _httpContextAccessor.HttpContext.Session.Remove(key);
     }
 
-    public void Delete<T>(T model) => Delete(typeof(T).Name);
+    public void Delete<T>() => Delete(typeof(T).Name);
 
     public void Clear() => _httpContextAccessor.HttpContext?.Session.Clear();
 

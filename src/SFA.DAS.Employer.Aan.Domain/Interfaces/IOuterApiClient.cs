@@ -1,5 +1,6 @@
 ﻿using RestEase;
 using SFA.DAS.Aan.SharedUi.Constants;
+using SFA.DAS.Aan.SharedUi.Models.LeaveTheNetwork;
 using SFA.DAS.Aan.SharedUi.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
@@ -63,4 +64,15 @@ public interface IOuterApiClient
 
     [Put("/members/{memberId}")]
     Task UpdateMemberProfileAndPreferences([Path] Guid memberId, [Body] UpdateMemberProfileAndPreferencesRequest request, CancellationToken cancellationToken);
+
+    [Get("/LeavingReasons")]
+    Task<List<LeavingCategory>> GetLeavingReasons();
+
+    [Post("/members/{memberId}/leaving")]
+    [AllowAnyStatusCode]
+    Task PostMemberLeaving([Path] Guid memberId, [Body] MemberLeavingRequest request, CancellationToken cancellationToken);
+
+    [Post("/members/{memberId}/reinstate")]
+    [AllowAnyStatusCode]
+    Task PostMemberReinstate([Path] Guid memberId, CancellationToken cancellationToken);
 }

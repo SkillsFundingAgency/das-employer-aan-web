@@ -7,7 +7,7 @@ public interface ISessionService
     string? Get(string key);
     T Get<T>();
     void Delete(string key);
-    void Delete<T>(T model);
+    void Delete<T>();
     void Clear();
     bool Contains<T>();
 }
