@@ -13,12 +13,14 @@ public class ProfileSettingsControllerTests
     private IActionResult _result = null!;
     private string employerAccountId = Guid.NewGuid().ToString();
     private string NetworkHubUrl = Guid.NewGuid().ToString();
+    private string LeavingTheNetworkUrl = Guid.NewGuid().ToString();
 
     [SetUp]
     public void WhenGettingNetworkHub()
     {
         ProfileSettingsController sut = new();
-        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.NetworkHub, NetworkHubUrl).AddUrlForRoute(SharedRouteNames.YourAmbassadorProfile, YourAmbassadorProfileUrl);
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.NetworkHub, NetworkHubUrl).AddUrlForRoute(SharedRouteNames.YourAmbassadorProfile,
+            YourAmbassadorProfileUrl).AddUrlForRoute(SharedRouteNames.LeaveTheNetwork, LeavingTheNetworkUrl);
         _result = sut.Index(employerAccountId);
     }
 
@@ -39,7 +41,7 @@ public class ProfileSettingsControllerTests
     public void ThenSetsLeaveTheNetworkUrlInViewModel()
     {
         var model = _result.As<ViewResult>().Model.As<ProfileSettingsViewModel>();
-        model.LeaveTheNetworkUrl.Should().Be("#");
+        model.LeaveTheNetworkUrl.Should().Be(LeavingTheNetworkUrl);
     }
 
     [Test]

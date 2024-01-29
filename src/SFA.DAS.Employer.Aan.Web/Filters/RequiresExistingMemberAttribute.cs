@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc.Controllers;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
+using SFA.DAS.Aan.SharedUi.Constants;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Controllers;
 using SFA.DAS.Employer.Aan.Web.Extensions;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SFA.DAS.Employer.Aan.Web.Filters;
 
@@ -36,7 +37,7 @@ public class RequiresExistingMemberAttribute : ApplicationFilterAttribute
 
     private bool BypassCheck(ControllerActionDescriptor controllerActionDescriptor)
     {
-        var controllersToByPass = new[] { nameof(HomeController), nameof(ServiceController), nameof(AccessDeniedController) };
+        var controllersToByPass = new[] { nameof(HomeController), nameof(ServiceController), nameof(AccessDeniedController), nameof(LeavingTheNetworkConfirmationController), nameof(RejoinTheNetworkController) };
 
         return controllersToByPass.Contains(controllerActionDescriptor.ControllerTypeInfo.Name);
     }
@@ -47,11 +48,18 @@ public class RequiresExistingMemberAttribute : ApplicationFilterAttribute
         if (userId == Guid.Empty) return true;
 
         var sessionValue = _sessionService.Get(Constants.SessionKeys.MemberId);
+        var isLive = _sessionService.GetMemberStatus() == MemberStatus.Live;
+
         if (sessionValue == null)
         {
             var response = await _outerApiClient.GetEmployerMember(userId, CancellationToken.None);
-            sessionValue = response.ResponseMessage.IsSuccessStatusCode ? response.GetContent().MemberId.ToString() : Guid.Empty.ToString();
+
+            var employer = response.GetContent();
+            sessionValue = response.ResponseMessage.IsSuccessStatusCode ? employer.MemberId.ToString() : Guid.Empty.ToString();
             _sessionService.Set(Constants.SessionKeys.MemberId, sessionValue.ToUpper());
+            var memberStatus = employer.Status;
+            _sessionService.Set(Constants.SessionKeys.MemberStatus, memberStatus);
+            isLive = memberStatus == MemberStatus.Live.ToString();
         }
 
         if (BypassCheck(controllerActionDescriptor)) return true;
@@ -60,6 +68,7 @@ public class RequiresExistingMemberAttribute : ApplicationFilterAttribute
 
         var isRequestingOnboardingPage = IsRequestForOnboardingAction(controllerActionDescriptor);
 
-        return (isMember && !isRequestingOnboardingPage) || (!isMember && isRequestingOnboardingPage);
+        return (isMember && isLive && !isRequestingOnboardingPage)
+               || (!isMember && isRequestingOnboardingPage);
     }
 }

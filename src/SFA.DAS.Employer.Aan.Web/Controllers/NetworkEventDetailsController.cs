@@ -9,6 +9,7 @@ using SFA.DAS.ApprenticeAan.Web.Models.NetworkEvents;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.Aan.Web.Authentication;
+using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers;
@@ -35,7 +36,7 @@ public class NetworkEventDetailsController : Controller
     [Route("accounts/{employerAccountId}/network-events/{id}", Name = SharedRouteNames.NetworkEventDetails)]
     public async Task<IActionResult> Get([FromRoute] string employerAccountId, [FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
+        var memberId = _sessionService.GetMemberId();
         var eventDetailsResponse = await _outerApiClient.GetCalendarEventDetails(id, memberId, cancellationToken);
         if (eventDetailsResponse.ResponseMessage.IsSuccessStatusCode)
         {
@@ -65,7 +66,7 @@ public class NetworkEventDetailsController : Controller
     [Route("accounts/{employerAccountId}/network-events/{id}", Name = SharedRouteNames.NetworkEventDetails)]
     public async Task<IActionResult> Post([FromRoute] string employerAccountId, SubmitAttendanceCommand command, CancellationToken cancellationToken)
     {
-        var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
+        var memberId = _sessionService.GetMemberId();
         var result = await _validator.ValidateAsync(command, cancellationToken);
 
         if (!result.IsValid)

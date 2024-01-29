@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Aan.SharedUi.Constants;
+using SFA.DAS.Aan.SharedUi.Infrastructure;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Authentication;
+using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers;
@@ -19,9 +22,18 @@ public class HomeController : Controller
 
     public IActionResult Index([FromRoute] string employerAccountId)
     {
-        var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
-        return memberId == Guid.Empty
-            ? new RedirectToRouteResult(RouteNames.Onboarding.BeforeYouStart, new { EmployerAccountId = employerAccountId })
-            : new RedirectToRouteResult(RouteNames.NetworkHub, new { EmployerAccountId = employerAccountId });
+        if (_sessionService.GetMemberId() == Guid.Empty)
+        {
+            return new RedirectToRouteResult(RouteNames.Onboarding.BeforeYouStart, new { EmployerAccountId = employerAccountId });
+        }
+
+        var status = _sessionService.GetMemberStatus();
+
+        return status switch
+        {
+            MemberStatus.Withdrawn or MemberStatus.Deleted => new RedirectToRouteResult(SharedRouteNames.RejoinTheNetwork, new { EmployerAccountId = employerAccountId }),
+            MemberStatus.Removed => new RedirectToRouteResult(SharedRouteNames.RemovedShutter, new { EmployerAccountId = employerAccountId }),
+            _ => new RedirectToRouteResult(RouteNames.NetworkHub, new { EmployerAccountId = employerAccountId }),
+        };
     }
 }

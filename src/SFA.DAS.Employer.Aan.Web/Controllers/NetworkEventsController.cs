@@ -11,6 +11,7 @@ using SFA.DAS.ApprenticeAan.Web.Services;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Authentication;
+using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers;
@@ -31,7 +32,7 @@ public class NetworkEventsController : Controller
     [HttpGet]
     public async Task<IActionResult> Index([FromRoute] string employerAccountId, GetNetworkEventsRequest request, CancellationToken cancellationToken)
     {
-        var memberId = Guid.Parse(_sessionService.Get(Constants.SessionKeys.MemberId)!);
+        var memberId = _sessionService.GetMemberId();
         var calendarEventsTask = _outerApiClient.GetCalendarEvents(memberId, QueryStringParameterBuilder.BuildQueryStringParameters(request), cancellationToken);
         var calendarTask = _outerApiClient.GetCalendars(cancellationToken);
         var regionTask = _outerApiClient.GetRegions(cancellationToken);
