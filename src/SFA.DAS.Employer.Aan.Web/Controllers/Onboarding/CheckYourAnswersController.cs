@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Aan.SharedUi.Constants;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.Aan.Web.Authentication;
@@ -64,6 +65,7 @@ public class CheckYourAnswersController : Controller
         var response = await _outerApiClient.PostEmployerMember(PopulateCreateEmployerMemberRequest(sessionModel, employerAccountId), cancellationToken);
 
         _sessionService.Set(Constants.SessionKeys.MemberId, response.MemberId.ToString());
+        _sessionService.Set(Constants.SessionKeys.MemberStatus, MemberStatus.Live.ToString());
 
         return View(ApplicationSubmittedViewPath, new ApplicationSubmittedViewModel(Url.RouteUrl(@RouteNames.NetworkHub, new { EmployerAccountId = employerAccountId })!));
     }
