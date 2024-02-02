@@ -8,8 +8,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
+using SFA.DAS.Aan.SharedUi.Constants;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
+using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Models;
@@ -27,12 +29,15 @@ public class CheckYourAnswersControllerPostTests
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Frozen] Mock<IOuterApiClient> outerApiClientMock,
         [Frozen] Mock<IValidator<CheckYourAnswersSubmitModel>> validatorMock,
-        [Frozen] CheckYourAnswersSubmitModel submitmodel,
+        [Frozen] CheckYourAnswersSubmitModel submitModel,
+        CreateEmployerMemberResponse createEmployerMemberResponse,
         OnboardingSessionModel onboardingSessionModel,
         string employerAccountId,
         CancellationToken cancellationToken)
     {
         //Arrange
+        outerApiClientMock.Setup(o => o.PostEmployerMember(It.IsAny<CreateEmployerMemberRequest>(), cancellationToken)).ReturnsAsync(createEmployerMemberResponse);
+
         onboardingSessionModel.ProfileData.Add(new ProfileModel { Id = ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer, Value = "True" });
         onboardingSessionModel.Regions = new List<RegionModel> { new RegionModel { Id = int.MaxValue, IsSelected = true, IsConfirmed = true } };
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(onboardingSessionModel);
@@ -53,7 +58,7 @@ public class CheckYourAnswersControllerPostTests
             .Returns(new Mock<ITempDataDictionaryFactory>().Object);
 
         ValidationResult validationResult = new();
-        validatorMock.Setup(v => v.Validate(submitmodel)).Returns(validationResult);
+        validatorMock.Setup(v => v.Validate(submitModel)).Returns(validationResult);
 
         CheckYourAnswersController sut = new CheckYourAnswersController(sessionServiceMock.Object, outerApiClientMock.Object, validatorMock.Object);
         sut.AddUrlHelperMock();
@@ -61,7 +66,7 @@ public class CheckYourAnswersControllerPostTests
         sut.ControllerContext = new() { HttpContext = new DefaultHttpContext() { User = user, RequestServices = serviceProviderMock.Object } };
 
         //Act
-        var result = await sut.Post(employerAccountId, submitmodel, cancellationToken);
+        var result = await sut.Post(employerAccountId, submitModel, cancellationToken);
 
         //Assert
         outerApiClientMock.Verify(o => o.PostEmployerMember(It.Is<CreateEmployerMemberRequest>(r =>
@@ -74,6 +79,9 @@ public class CheckYourAnswersControllerPostTests
             && r.FirstName == user.GetGivenName()
             && r.LastName == user.GetFamilyName()
         ), cancellationToken));
+
+        sessionServiceMock.Verify(o => o.Set(Constants.SessionKeys.MemberId, createEmployerMemberResponse.MemberId.ToString()), Times.Once);
+        sessionServiceMock.Verify(o => o.Set(Constants.SessionKeys.MemberStatus, MemberStatus.Live.ToString()), Times.Once);
 
         result.As<ViewResult>().ViewName.Should().Be(CheckYourAnswersController.ApplicationSubmittedViewPath);
     }
