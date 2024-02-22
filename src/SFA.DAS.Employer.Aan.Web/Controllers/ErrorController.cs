@@ -28,10 +28,10 @@ public class ErrorController : Controller
             case 404:
                 return View("PageNotFound");
             default:
-                var feature = HttpContext?.Features?.Get<IExceptionHandlerPathFeature>();
+                var feature = HttpContext!.Features!.Get<IExceptionHandlerPathFeature>();
                 ErrorViewModel errorViewModel = new()
                 {
-                    HomePageUrl = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = feature?.RouteValues?["employerAccountId"]?.ToString()! })!
+                    HomePageUrl = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = feature!.RouteValues!["employerAccountId"]!.ToString()! })!
                 };
                 return View("ErrorInService", errorViewModel);
         }
@@ -45,7 +45,7 @@ public class ErrorController : Controller
 
         ErrorViewModel errorViewModel = new()
         {
-            HomePageUrl = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = feature?.RouteValues?["employerAccountId"]?.ToString()! })!
+            HomePageUrl = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = feature!.RouteValues!["employerAccountId"]!.ToString()! })!
         };
 
         if (User.Identity!.IsAuthenticated)

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Employer.Aan.Web.Controllers;
@@ -21,6 +22,7 @@ public class ErrorInServiceTests
     private const string path = "/providers/10012002";
     private ErrorController sut;
     private readonly string NetworkHubLink = Guid.NewGuid().ToString();
+    private readonly string employerAccountId = Guid.NewGuid().ToString();
 
     [SetUp]
     public void Before_Each_Test()
@@ -31,7 +33,9 @@ public class ErrorInServiceTests
             .Returns(new ExceptionHandlerFeature
             {
                 Path = path,
-                Error = exception
+                Error = exception,
+                RouteValues = new RouteValueDictionary { { "employerAccountId", employerAccountId }
+                }
             });
         httpContextMock.Setup(p => p.Features).Returns(featuresMock.Object);
 
