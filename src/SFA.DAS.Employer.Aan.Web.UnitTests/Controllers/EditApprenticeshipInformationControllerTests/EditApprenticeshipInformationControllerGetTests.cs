@@ -132,7 +132,7 @@ public class EditApprenticeshipInformationControllerGetTests
     public async Task Index_EditApprenticeshipDetailViewModel_ShouldHaveExpectedValueForSectors()
     {
         // Arrange
-        List<string> sectors = new() { "sector 1", "sector 2", "sector 3" };
+        List<string> sectors = ["sector 1", "sector 2", "sector 3"];
         SetUpOuterApiMock();
         getMemberProfileResponse.Apprenticeship = new ApprenticeshipDetails()
         {
@@ -182,14 +182,16 @@ public class EditApprenticeshipInformationControllerGetTests
     [TearDown]
     public void TearDown()
     {
-        if (sut != null) sut.Dispose();
+        sut?.Dispose();
     }
 
     private void SetUpControllerWithContext()
     {
         var user = UsersForTesting.GetUserWithClaims(employerId);
-        sut = new EditApprenticeshipInformationController(outerApiMock.Object, sessionServiceMock.Object);
-        sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
+        sut = new EditApprenticeshipInformationController(outerApiMock.Object, sessionServiceMock.Object)
+        {
+            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
+        };
         sut.AddUrlHelperMock()
             .AddUrlForRoute(SharedRouteNames.YourAmbassadorProfile, YourAmbassadorProfileUrl).AddUrlForRoute(RouteNames.NetworkHub, NetworkHubLinkUrl);
     }

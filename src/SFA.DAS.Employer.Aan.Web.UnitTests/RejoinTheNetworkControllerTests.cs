@@ -10,6 +10,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests;
 public class RejoinTheNetworkControllerTests
 {
     private readonly string _accountId = Guid.NewGuid().ToString();
+
     [Test]
     public void WhenGettingRejoinTheNetwork_ReturnsViewResult()
     {

@@ -37,7 +37,7 @@ public class NetworkDirectoryController : Controller
         var model = new NetworkDirectoryViewModel
         {
             TotalCount = resultMembers.TotalCount,
-            NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId })
+            NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId })
         };
 
         foreach (var member in resultMembers.Members)

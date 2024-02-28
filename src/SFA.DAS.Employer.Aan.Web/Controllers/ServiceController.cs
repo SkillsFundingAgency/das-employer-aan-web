@@ -53,7 +53,7 @@ public class ServiceController : Controller
     [HttpGet]
     public IActionResult SignedOut()
     {
-        return View("SignedOut", new SignedOutViewModel(_configuration["ResourceEnvironmentName"]));
+        return View("SignedOut", new SignedOutViewModel(_configuration["ResourceEnvironmentName"]!));
     }
 
     [Authorize(Policy = nameof(PolicyNames.IsAuthenticated))]
@@ -90,15 +90,15 @@ public class ServiceController : Controller
     [HttpGet]
     [Authorize(Policy = nameof(PolicyNames.IsAuthenticated))]
     [Route("Stub-Auth", Name = RouteNames.StubSignedIn)]
-    public IActionResult StubSignedIn([FromQuery] string returnUrl)
+    public IActionResult StubSignedIn()
     {
 
         var employerAccounts = User.GetEmployerAccounts().Values.ToList();
 
         var viewModel = new AccountStubViewModel
         {
-            Email = User.FindFirstValue(ClaimTypes.Email),
-            Id = User.FindFirstValue(ClaimTypes.NameIdentifier),
+            Email = User.FindFirstValue(ClaimTypes.Email)!,
+            Id = User.FindFirstValue(ClaimTypes.NameIdentifier)!,
             Accounts = employerAccounts,
             ReturnUrl = Url.RouteUrl(RouteNames.Home, new { EmployerAccountId = employerAccounts[0].AccountId })!
         };

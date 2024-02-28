@@ -11,7 +11,8 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Extensions;
 
 public class AttendanceExtensionTests
 {
-    string accountId = Guid.NewGuid().ToString();
+    readonly string accountId = Guid.NewGuid().ToString();
+
     [Test, AutoData]
     public void ToAppointment_ReturnsAppointment(Attendance attendance)
     {

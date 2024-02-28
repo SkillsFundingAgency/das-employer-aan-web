@@ -45,7 +45,7 @@ public class MemberProfileControllerPostTests
         var user = UsersForTesting.GetUserWithClaims(employerId);
         outerApiMock.Setup(o => o.GetMemberProfile(memberId, memberId, It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                     .ReturnsAsync(getMemberProfileResponse);
-        MemberProfileController sut = new MemberProfileController(outerApiMock.Object, sessionServiceMock.Object, validatorMock.Object);
+        MemberProfileController sut = new(outerApiMock.Object, sessionServiceMock.Object, validatorMock.Object);
         var networkHubUrl = "http://test";
         sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.NetworkHub, networkHubUrl);
@@ -91,9 +91,10 @@ public class MemberProfileControllerPostTests
         validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ConnectWithMemberSubmitModel>(), It.IsAny<CancellationToken>())).ReturnsAsync(successfulValidationResult);
         Mock<ISessionService> sessionServiceMock = new();
         sessionServiceMock.Setup(s => s.Get(Constants.SessionKeys.MemberId)).Returns(memberId.ToString());
-        MemberProfileController sut = new MemberProfileController(outerApiMock.Object, sessionServiceMock.Object, validatorMock.Object);
-
-        sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
+        MemberProfileController sut = new(outerApiMock.Object, sessionServiceMock.Object, validatorMock.Object)
+        {
+            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
+        };
         outerApiMock.Setup(c => c.PostNotification(It.IsAny<Guid>(), It.IsAny<CreateNotificationRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(createNotificationResponse);
 
         //Act
@@ -115,7 +116,7 @@ public class MemberProfileControllerPostTests
         string employerId = Guid.NewGuid().ToString();
         var validatorMock = new Mock<IValidator<ConnectWithMemberSubmitModel>>();
         Mock<ISessionService> sessionServiceMock = new();
-        MemberProfileController sut = new MemberProfileController(outerApiMock.Object, sessionServiceMock.Object, validatorMock.Object);
+        MemberProfileController sut = new(outerApiMock.Object, sessionServiceMock.Object, validatorMock.Object);
         string NetworkDirectoryUrl = Guid.NewGuid().ToString();
         sut.AddUrlHelperMock()
             .AddUrlForRoute(SharedRouteNames.NetworkDirectory, NetworkDirectoryUrl);
@@ -139,7 +140,7 @@ public class MemberProfileControllerPostTests
         string employerId = Guid.NewGuid().ToString();
         var validatorMock = new Mock<IValidator<ConnectWithMemberSubmitModel>>();
         Mock<ISessionService> sessionServiceMock = new();
-        MemberProfileController sut = new MemberProfileController(outerApiMock.Object, sessionServiceMock.Object, validatorMock.Object);
+        MemberProfileController sut = new(outerApiMock.Object, sessionServiceMock.Object, validatorMock.Object);
         string networkHubUrl = Guid.NewGuid().ToString();
         sut.AddUrlHelperMock()
             .AddUrlForRoute(RouteNames.NetworkHub, networkHubUrl);

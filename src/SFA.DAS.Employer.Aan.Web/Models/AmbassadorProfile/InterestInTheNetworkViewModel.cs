@@ -25,7 +25,7 @@ public class InterestInTheNetworkViewModel
     private static Dictionary<string, IEnumerable<ProfileValue>> GetInterests(IEnumerable<MemberProfile> memberProfiles, List<Profile> profiles)
     {
         var categories = profiles.Select(x => x.Category).Distinct().ToArray();
-        Dictionary<string, IEnumerable<ProfileValue>> result = new();
+        Dictionary<string, IEnumerable<ProfileValue>> result = [];
         foreach (var category in categories)
         {
             var profileValues = profiles.Where(p => p.Category == category).Select(x => new ProfileValue(x.Description, memberProfiles.Where(m => m.ProfileId == x.Id).Select(m => m.Value).FirstOrDefault()));
@@ -34,8 +34,11 @@ public class InterestInTheNetworkViewModel
         return result;
     }
 
-    private static IEnumerable<string> SetInterests(string category, Dictionary<string, IEnumerable<ProfileValue>> interests) => interests[category]
+    private static List<string> SetInterests(string category, Dictionary<string, IEnumerable<ProfileValue>> interests)
+    {
+        return interests[category]
         .Where(x => x.IsSelected?.ToLower() == "true")
         .Select(x => x.Description)
         .ToList();
+    }
 }

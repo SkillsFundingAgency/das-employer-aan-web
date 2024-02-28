@@ -51,15 +51,19 @@ public class EditContactDetailController : Controller
             return View(ChangeContactDetailViewPath, GetContactDetailViewModel(employerAccountId, cancellationToken).Result);
         }
 
-        UpdateMemberProfileAndPreferencesRequest updateMemberProfileAndPreferencesRequest = new UpdateMemberProfileAndPreferencesRequest();
+        UpdateMemberProfileAndPreferencesRequest updateMemberProfileAndPreferencesRequest = new();
 
-        List<UpdatePreferenceModel> updatePreferenceModels = new List<UpdatePreferenceModel>();
-        updatePreferenceModels.Add(new UpdatePreferenceModel() { PreferenceId = PreferenceConstants.PreferenceIds.LinkedIn, Value = submitContactDetailModel.ShowLinkedinUrl });
+        List<UpdatePreferenceModel> updatePreferenceModels =
+        [
+            new UpdatePreferenceModel() { PreferenceId = PreferenceConstants.PreferenceIds.LinkedIn, Value = submitContactDetailModel.ShowLinkedinUrl },
+        ];
 
         updateMemberProfileAndPreferencesRequest.UpdateMemberProfileRequest.MemberPreferences = updatePreferenceModels;
 
-        List<UpdateProfileModel> updateProfileModels = new List<UpdateProfileModel>();
-        updateProfileModels.Add(new UpdateProfileModel() { MemberProfileId = ProfileIds.EmployerLinkedIn, Value = submitContactDetailModel.LinkedinUrl?.Trim() });
+        List<UpdateProfileModel> updateProfileModels =
+        [
+            new UpdateProfileModel() { MemberProfileId = ProfileIds.EmployerLinkedIn, Value = submitContactDetailModel.LinkedinUrl?.Trim() },
+        ];
 
         updateMemberProfileAndPreferencesRequest.UpdateMemberProfileRequest.MemberProfiles = updateProfileModels;
 
@@ -74,12 +78,14 @@ public class EditContactDetailController : Controller
         var memberId = _sessionService.GetMemberId();
         var memberProfile = await _apiClient.GetMemberProfile(memberId, memberId, false, cancellationToken);
 
-        EditContactDetailViewModel editContactDetailViewModel = new EditContactDetailViewModel();
-        editContactDetailViewModel.Email = memberProfile.Email;
-        editContactDetailViewModel.LinkedinUrl = MapProfilesAndPreferencesService.GetProfileValue(ProfileIds.EmployerLinkedIn, memberProfile.Profiles);
-        editContactDetailViewModel.ShowLinkedinUrl = MapProfilesAndPreferencesService.GetPreferenceValue(PreferenceConstants.PreferenceIds.LinkedIn, memberProfile.Preferences);
-        editContactDetailViewModel.YourAmbassadorProfileUrl = Url.RouteUrl(SharedRouteNames.YourAmbassadorProfile, new { employerAccountId })!;
-        editContactDetailViewModel.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId });
+        EditContactDetailViewModel editContactDetailViewModel = new()
+        {
+            Email = memberProfile.Email,
+            LinkedinUrl = MapProfilesAndPreferencesService.GetProfileValue(ProfileIds.EmployerLinkedIn, memberProfile.Profiles),
+            ShowLinkedinUrl = MapProfilesAndPreferencesService.GetPreferenceValue(PreferenceConstants.PreferenceIds.LinkedIn, memberProfile.Preferences),
+            YourAmbassadorProfileUrl = Url.RouteUrl(SharedRouteNames.YourAmbassadorProfile, new { employerAccountId })!,
+            NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId })
+        };
         return editContactDetailViewModel;
     }
 }

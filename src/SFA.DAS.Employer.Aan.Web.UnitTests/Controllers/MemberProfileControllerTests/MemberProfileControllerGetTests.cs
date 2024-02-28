@@ -85,8 +85,10 @@ public class MemberProfileControllerGetTests
         outerApiMock.Setup(o => o.GetMemberProfile(memberId, memberId, It.IsAny<bool>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(getMemberProfileResponse));
         Mock<ISessionService> sessionServiceMock = new();
         sessionServiceMock.Setup(s => s.Get(Constants.SessionKeys.MemberId)).Returns(memberId.ToString());
-        MemberProfileController sut = new MemberProfileController(outerApiMock.Object, sessionServiceMock.Object, validatorMock.Object);
-        sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
+        MemberProfileController sut = new(outerApiMock.Object, sessionServiceMock.Object, validatorMock.Object)
+        {
+            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
+        };
 
         var networkHubUrl = "http://test";
         sessionServiceMock.Setup(s => s.Get(RouteNames.EventsHub)).Returns(networkHubUrl);

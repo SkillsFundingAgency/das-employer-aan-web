@@ -37,7 +37,7 @@ public class NetworkEventsController : Controller
         var calendarTask = _outerApiClient.GetCalendars(cancellationToken);
         var regionTask = _outerApiClient.GetRegions(cancellationToken);
 
-        List<Task> tasks = new() { calendarEventsTask, calendarTask, regionTask };
+        List<Task> tasks = [calendarEventsTask, calendarTask, regionTask];
 
         await Task.WhenAll(tasks);
 
@@ -81,7 +81,7 @@ public class NetworkEventsController : Controller
 
     }
     private static EventFilterChoices PopulateFilterChoices(GetNetworkEventsRequest request, List<Calendar> calendars, List<Region> regions)
-        => new EventFilterChoices
+        => new()
         {
             Keyword = request.Keyword?.Trim(),
             FromDate = request.FromDate,

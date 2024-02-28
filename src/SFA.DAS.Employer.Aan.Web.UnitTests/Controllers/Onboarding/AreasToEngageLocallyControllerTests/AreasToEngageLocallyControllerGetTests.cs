@@ -46,8 +46,10 @@ public class AreasToEngageLocallyControllerGetTests
     {
         int regionId = 101;
         sut.AddUrlHelperMock();
-        OnboardingSessionModel sessionModel = new();
-        sessionModel.Regions = new List<RegionModel>() { new RegionModel { Id = regionId, IsConfirmed = true } };
+        OnboardingSessionModel sessionModel = new()
+        {
+            Regions = [new RegionModel { Id = regionId, IsConfirmed = true }]
+        };
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
         var result = sut.Get(employerAccoundId);
@@ -62,15 +64,17 @@ public class AreasToEngageLocallyControllerGetTests
         string regionsUrl)
     {
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.Regions, regionsUrl);
-        OnboardingSessionModel sessionModel = new();
-        sessionModel.Regions = new()
+        OnboardingSessionModel sessionModel = new()
         {
-            new RegionModel { Id = 1, IsSelected = true, IsConfirmed = false },
-            new RegionModel { Id = 2, IsSelected = true, IsConfirmed = false },
-            new RegionModel { Id = 3, IsSelected = true, IsConfirmed = false },
-            new RegionModel { Id = 4, IsSelected = true, IsConfirmed = false },
-            new RegionModel { Id = 5, IsSelected = false, IsConfirmed = false },
-            new RegionModel { Id = 6, IsSelected = false, IsConfirmed = false }
+            Regions =
+            [
+                new RegionModel { Id = 1, IsSelected = true, IsConfirmed = false },
+                new RegionModel { Id = 2, IsSelected = true, IsConfirmed = false },
+                new RegionModel { Id = 3, IsSelected = true, IsConfirmed = false },
+                new RegionModel { Id = 4, IsSelected = true, IsConfirmed = false },
+                new RegionModel { Id = 5, IsSelected = false, IsConfirmed = false },
+                new RegionModel { Id = 6, IsSelected = false, IsConfirmed = false }
+            ]
         };
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
@@ -86,17 +90,19 @@ public class AreasToEngageLocallyControllerGetTests
         string primaryEngagementWithinNetworkUrl)
     {
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.PrimaryEngagementWithinNetwork, primaryEngagementWithinNetworkUrl);
-        OnboardingSessionModel sessionModel = new();
-        sessionModel.Regions = new()
+        OnboardingSessionModel sessionModel = new()
         {
-            new RegionModel { Id = 1, IsSelected = true, IsConfirmed = false },
-            new RegionModel { Id = 2, IsSelected = true, IsConfirmed = false },
-            new RegionModel { Id = 3, IsSelected = true, IsConfirmed = false },
-            new RegionModel { Id = 4, IsSelected = true, IsConfirmed = false },
-            new RegionModel { Id = 5, IsSelected = true, IsConfirmed = false },
-            new RegionModel { Id = 6, IsSelected = true, IsConfirmed = false }
+            Regions =
+            [
+                new RegionModel { Id = 1, IsSelected = true, IsConfirmed = false },
+                new RegionModel { Id = 2, IsSelected = true, IsConfirmed = false },
+                new RegionModel { Id = 3, IsSelected = true, IsConfirmed = false },
+                new RegionModel { Id = 4, IsSelected = true, IsConfirmed = false },
+                new RegionModel { Id = 5, IsSelected = true, IsConfirmed = false },
+                new RegionModel { Id = 6, IsSelected = true, IsConfirmed = false }
+            ],
+            IsMultiRegionalOrganisation = false
         };
-        sessionModel.IsMultiRegionalOrganisation = false;
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
         var result = sut.Get(Guid.NewGuid().ToString());

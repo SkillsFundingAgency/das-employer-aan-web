@@ -13,8 +13,8 @@ public class JoinTheNetworkSubmitModelValidatorTests
     {
         var model = new JoinTheNetworkSubmitModel
         {
-            ReasonToJoin = new List<SelectProfileModel> { new SelectProfileModel { Id = 1, IsSelected = false } },
-            Support = new List<SelectProfileModel> { new SelectProfileModel { Id = 2, IsSelected = false } }
+            ReasonToJoin = [new SelectProfileModel { Id = 1, IsSelected = false }],
+            Support = [new SelectProfileModel { Id = 2, IsSelected = false }]
         };
 
         var sut = new JoinTheNetworkSubmitModelValidator();
@@ -29,8 +29,8 @@ public class JoinTheNetworkSubmitModelValidatorTests
     {
         var model = new JoinTheNetworkSubmitModel
         {
-            ReasonToJoin = new List<SelectProfileModel> { new SelectProfileModel { Id = 1, IsSelected = true } },
-            Support = new List<SelectProfileModel> { new SelectProfileModel { Id = 2, IsSelected = false } }
+            ReasonToJoin = [new SelectProfileModel { Id = 1, IsSelected = true }],
+            Support = [new SelectProfileModel { Id = 2, IsSelected = false }]
         };
 
         var sut = new JoinTheNetworkSubmitModelValidator();
@@ -44,8 +44,8 @@ public class JoinTheNetworkSubmitModelValidatorTests
     {
         var model = new JoinTheNetworkSubmitModel
         {
-            ReasonToJoin = new List<SelectProfileModel> { new SelectProfileModel { Id = 1, IsSelected = false } },
-            Support = new List<SelectProfileModel> { new SelectProfileModel { Id = 2, IsSelected = true } }
+            ReasonToJoin = [new SelectProfileModel { Id = 1, IsSelected = false }],
+            Support = [new SelectProfileModel { Id = 2, IsSelected = true }]
         };
 
         var sut = new JoinTheNetworkSubmitModelValidator();
@@ -59,8 +59,8 @@ public class JoinTheNetworkSubmitModelValidatorTests
     {
         var model = new JoinTheNetworkSubmitModel
         {
-            ReasonToJoin = new List<SelectProfileModel> { new SelectProfileModel { Id = 1, IsSelected = true } },
-            Support = new List<SelectProfileModel> { new SelectProfileModel { Id = 2, IsSelected = true } }
+            ReasonToJoin = [new SelectProfileModel { Id = 1, IsSelected = true }],
+            Support = [new SelectProfileModel { Id = 2, IsSelected = true }]
         };
 
         var sut = new JoinTheNetworkSubmitModelValidator();

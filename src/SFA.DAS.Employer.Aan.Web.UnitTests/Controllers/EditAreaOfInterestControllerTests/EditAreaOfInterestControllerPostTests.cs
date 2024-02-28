@@ -19,9 +19,9 @@ using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.EditAreaOfInterestControllerTests;
 public class EditAreaOfInterestControllerPostTests
 {
-    private Guid memberId = Guid.NewGuid();
+    private readonly Guid memberId = Guid.NewGuid();
     static readonly string YourAmbassadorProfileUrl = Guid.NewGuid().ToString();
-    private string employerId = Guid.NewGuid().ToString();
+    private readonly string employerId = Guid.NewGuid().ToString();
     private EditAreaOfInterestController sut = null!;
     private Mock<IOuterApiClient> _outerApiMock = null!;
     private Mock<ISessionService> _sessionServiceMock = null!;
@@ -104,7 +104,7 @@ public class EditAreaOfInterestControllerPostTests
     [TearDown]
     public void TearDown()
     {
-        if (sut != null) sut.Dispose();
+        sut?.Dispose();
     }
 
     private void SetUpControllerWithContext()
@@ -118,9 +118,9 @@ public class EditAreaOfInterestControllerPostTests
 
     private void HappyPathSetUp()
     {
-        List<SelectProfileViewModel> selectProfileViewModels = new() { new SelectProfileViewModel() { Id = 1, IsSelected = true, Ordering = 1, Description = "Description 1", Category = "Category 1" },
-        new SelectProfileViewModel() { Id = 2, IsSelected = true, Ordering = 2, Description = "Description 2", Category = "Category 2" },
-        new SelectProfileViewModel() { Id = 3, IsSelected = false, Ordering = 3, Description = "Description 3", Category = "Category 3" }};
+        List<SelectProfileViewModel> selectProfileViewModels = [new SelectProfileViewModel() { Id = 1, IsSelected = true, Ordering = 1, Description = "Description 1", Category = "Category 1" },
+            new SelectProfileViewModel() { Id = 2, IsSelected = true, Ordering = 2, Description = "Description 2", Category = "Category 2" },
+            new SelectProfileViewModel() { Id = 3, IsSelected = false, Ordering = 3, Description = "Description 3", Category = "Category 3" }];
 
         _outerApiMock = new();
         _validatorMock = new();
@@ -146,15 +146,15 @@ public class EditAreaOfInterestControllerPostTests
 
         _sessionServiceMock.Setup(s => s.Get(Constants.SessionKeys.MemberId)).Returns(memberId.ToString());
 
-        List<MemberProfile> memberProfiles = new List<MemberProfile>()
-        {
-            new MemberProfile(){ProfileId=41,Value="True"},
-            new MemberProfile(){ProfileId=42,Value="True"}
-        };
-        List<MemberPreference> memberPreferences = new List<MemberPreference>()
-        {
-            new MemberPreference(){PreferenceId=1,Value=true}
-        };
+        List<MemberProfile> memberProfiles =
+        [
+            new MemberProfile() { ProfileId = 41, Value = "True" },
+            new MemberProfile() { ProfileId = 42, Value = "True" }
+        ];
+        List<MemberPreference> memberPreferences =
+        [
+            new MemberPreference() { PreferenceId = 1, Value = true }
+        ];
         _getMemberProfileResponse = new()
         {
             Profiles = memberProfiles,
@@ -165,8 +165,8 @@ public class EditAreaOfInterestControllerPostTests
 
         _getProfilesResult = new()
         {
-            Profiles = new List<Profile>() { new Profile() { Id = 41, Description = "Description 1", Category = Category.ReasonToJoin },
-            new Profile() { Id = 42, Description = "Description 2", Category = Category.Support }}
+            Profiles = [new Profile() { Id = 41, Description = "Description 1", Category = Category.ReasonToJoin },
+                new Profile() { Id = 42, Description = "Description 2", Category = Category.Support }]
         };
 
         _outerApiMock.Setup(o => o.GetMemberProfile(memberId, memberId, It.IsAny<bool>(), It.IsAny<CancellationToken>()))
@@ -179,7 +179,7 @@ public class EditAreaOfInterestControllerPostTests
         sut.TempData = Mock.Of<ITempDataDictionary>();
         _validatorMock.Setup(m => m.ValidateAsync(submitAreaOfInterestModel, CancellationToken.None)).ReturnsAsync(new ValidationResult(new List<ValidationFailure>()
             {
-                new ValidationFailure("TestField","Test Message") { ErrorCode = "1001"}
+                new("TestField","Test Message") { ErrorCode = "1001"}
             }));
     }
 }

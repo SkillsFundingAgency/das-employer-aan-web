@@ -22,7 +22,7 @@ public class NetworkEventDetailsControllerTests
 {
     private static readonly string AllNetworksUrl = Guid.NewGuid().ToString();
     private static readonly string MemberProfileUrl = Guid.NewGuid().ToString();
-    string accountId = Guid.NewGuid().ToString();
+    readonly string accountId = Guid.NewGuid().ToString();
 
     [Test, MoqAutoData]
     public void Get_ReturnsEventDetailsViewModel_ValidateModelType(
@@ -83,7 +83,6 @@ public class NetworkEventDetailsControllerTests
     [Test, MoqAutoData]
     public void SignUpConfirmation_ReturnsSignUpConfirmationView(
         [Greedy] NetworkEventDetailsController sut,
-        Guid apprenticeId,
         Guid employerId)
     {
         var user = UsersForTesting.GetUserWithClaims(employerId.ToString());
@@ -102,7 +101,6 @@ public class NetworkEventDetailsControllerTests
     [Test, MoqAutoData]
     public void CancellationConfirmation_ReturnsCancellationConfirmationView(
         [Greedy] NetworkEventDetailsController sut,
-        Guid apprenticeId,
         Guid employerId)
     {
         var user = UsersForTesting.GetUserWithClaims(employerId.ToString());

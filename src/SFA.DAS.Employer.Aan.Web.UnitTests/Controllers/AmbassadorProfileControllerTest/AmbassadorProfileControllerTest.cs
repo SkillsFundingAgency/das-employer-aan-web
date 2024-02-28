@@ -19,22 +19,21 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.AmbassadorProfileContro
 public class AmbassadorProfileControllerTest
 {
     private static readonly string YourAmbassadorProfileUrl = Guid.NewGuid().ToString();
-    private static readonly string EditPersonalInformtionUrl = Guid.NewGuid().ToString();
     private IActionResult _result = null!;
     private Mock<IOuterApiClient> _outerApiClientMock = null!;
     private AmbassadorProfileController _sut = null!;
     private GetMemberProfileResponse memberProfileResponse = null!;
     private CancellationToken _cancellationToken;
-    private string employerId = Guid.NewGuid().ToString();
+    private readonly string employerId = Guid.NewGuid().ToString();
     private GetProfilesResult getProfilesResult = null!;
 
-    private readonly List<Profile> profiles = new()
-    {
+    private readonly List<Profile> profiles =
+    [
         new Profile { Id = 41, Description = "Meet other employer ambassadors and grow your network", Category = Category.ReasonToJoin, Ordering = 1 },
         new Profile { Id = 42, Description = "Share your knowledge, experience and best practice", Category = Category.ReasonToJoin, Ordering = 2 },
         new Profile { Id = 51, Description = "Building apprenticeship profile of my organisation", Category = Category.Support, Ordering = 1 },
         new Profile { Id = 52, Description = "Increasing engagement with schools and colleges", Category = Category.Support, Ordering = 2 }
-    };
+    ];
 
     [SetUp]
     public async Task Setup()

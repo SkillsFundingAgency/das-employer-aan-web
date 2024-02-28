@@ -18,11 +18,11 @@ public static class AddServiceRegistrationsExtension
     public static IServiceCollection AddServiceRegistrations(this IServiceCollection services, IConfigurationRoot configuration)
     {
         var outerApiConfiguration = configuration.GetSection(nameof(EmployerAanOuterApiConfiguration)).Get<EmployerAanOuterApiConfiguration>();
-        AddOuterApi(services, outerApiConfiguration);
+        AddOuterApi(services, outerApiConfiguration!);
 
         var encodingsConfiguration = configuration.GetSection(EncodingConfigKey).Value;
 
-        var encodingConfig = JsonSerializer.Deserialize<EncodingConfig>(encodingsConfiguration);
+        var encodingConfig = JsonSerializer.Deserialize<EncodingConfig>(encodingsConfiguration!);
         services.AddSingleton(encodingConfig!);
 
         services.AddTransient<ISessionService, SessionService>();

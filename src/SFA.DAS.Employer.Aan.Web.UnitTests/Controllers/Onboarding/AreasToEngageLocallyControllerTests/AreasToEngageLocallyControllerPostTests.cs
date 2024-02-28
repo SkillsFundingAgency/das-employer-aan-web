@@ -24,8 +24,10 @@ public class AreasToEngageLocallyControllerPostTests
         AreasToEngageLocallySubmitModel submitmodel)
     {
         sut.AddUrlHelperMock();
-        OnboardingSessionModel sessionModel = new();
-        sessionModel.Regions = new List<RegionModel>() { new RegionModel() { Id = (int)submitmodel.SelectedAreaToEngageLocallyId!, IsConfirmed = false } };
+        OnboardingSessionModel sessionModel = new()
+        {
+            Regions = [new RegionModel() { Id = (int)submitmodel.SelectedAreaToEngageLocallyId!, IsConfirmed = false }]
+        };
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
         ValidationResult validationResult = new();
@@ -46,9 +48,11 @@ public class AreasToEngageLocallyControllerPostTests
         AreasToEngageLocallySubmitModel submitmodel)
     {
         sut.AddUrlHelperMock();
-        OnboardingSessionModel sessionModel = new();
-        sessionModel.HasSeenPreview = hasSeenPreview;
-        sessionModel.Regions = new List<RegionModel>() { new RegionModel() { Id = (int)submitmodel.SelectedAreaToEngageLocallyId!, IsConfirmed = false } };
+        OnboardingSessionModel sessionModel = new()
+        {
+            HasSeenPreview = hasSeenPreview,
+            Regions = [new RegionModel() { Id = (int)submitmodel.SelectedAreaToEngageLocallyId!, IsConfirmed = false }]
+        };
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
         ValidationResult validationResult = new();

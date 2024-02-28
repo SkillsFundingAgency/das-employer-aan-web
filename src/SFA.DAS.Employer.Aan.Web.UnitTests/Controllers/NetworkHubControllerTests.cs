@@ -13,7 +13,7 @@ public class NetworkHubControllerTests
     static readonly string NetworkDirectoryUrl = Guid.NewGuid().ToString();
     static readonly string ProfileSettingsUrl = Guid.NewGuid().ToString();
     static readonly string ContactUsUrl = Guid.NewGuid().ToString();
-    string accountId = Guid.NewGuid().ToString();
+    readonly string accountId = Guid.NewGuid().ToString();
     private string currentTestMethodName;
     private NetworkHubViewModel model = null!;
 

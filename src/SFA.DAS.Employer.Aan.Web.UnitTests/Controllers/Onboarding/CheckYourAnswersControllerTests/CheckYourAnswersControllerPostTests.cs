@@ -39,7 +39,7 @@ public class CheckYourAnswersControllerPostTests
         outerApiClientMock.Setup(o => o.PostEmployerMember(It.IsAny<CreateEmployerMemberRequest>(), cancellationToken)).ReturnsAsync(createEmployerMemberResponse);
 
         onboardingSessionModel.ProfileData.Add(new ProfileModel { Id = ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer, Value = "True" });
-        onboardingSessionModel.Regions = new List<RegionModel> { new RegionModel { Id = int.MaxValue, IsSelected = true, IsConfirmed = true } };
+        onboardingSessionModel.Regions = [new RegionModel { Id = int.MaxValue, IsSelected = true, IsConfirmed = true }];
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(onboardingSessionModel);
 
         var user = UsersForTesting.GetUserWithClaims(employerAccountId);
@@ -60,7 +60,7 @@ public class CheckYourAnswersControllerPostTests
         ValidationResult validationResult = new();
         validatorMock.Setup(v => v.Validate(submitModel)).Returns(validationResult);
 
-        CheckYourAnswersController sut = new CheckYourAnswersController(sessionServiceMock.Object, outerApiClientMock.Object, validatorMock.Object);
+        CheckYourAnswersController sut = new(sessionServiceMock.Object, outerApiClientMock.Object, validatorMock.Object);
         sut.AddUrlHelperMock();
 
         sut.ControllerContext = new() { HttpContext = new DefaultHttpContext() { User = user, RequestServices = serviceProviderMock.Object } };
@@ -95,12 +95,12 @@ public class CheckYourAnswersControllerPostTests
         string employerAccountId,
         CancellationToken cancellationToken)
     {
-        OnboardingSessionModel onboardingSessionModel = new OnboardingSessionModel();
+        OnboardingSessionModel onboardingSessionModel = new();
         onboardingSessionModel.ProfileData.Add(new ProfileModel { Id = ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer, Value = "True" });
-        onboardingSessionModel.Regions = new List<RegionModel> { new RegionModel { Id = int.MaxValue, IsSelected = true, IsConfirmed = true } };
+        onboardingSessionModel.Regions = [new RegionModel { Id = int.MaxValue, IsSelected = true, IsConfirmed = true }];
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(onboardingSessionModel);
 
-        CheckYourAnswersController sut = new CheckYourAnswersController(sessionServiceMock.Object, outerApiClientMock.Object, validatorMock.Object);
+        CheckYourAnswersController sut = new(sessionServiceMock.Object, outerApiClientMock.Object, validatorMock.Object);
 
         sut.AddUrlHelperMock();
         sut.ModelState.AddModelError("key", "message");

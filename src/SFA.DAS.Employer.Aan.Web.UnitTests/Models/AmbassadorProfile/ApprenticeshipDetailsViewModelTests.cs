@@ -13,23 +13,23 @@ public class ApprenticeshipDetailsViewModelTests
     private ApprenticeshipDetailsModel? apprenticeshipDetails;
     private IEnumerable<MemberPreference> memberPreferences = null!;
     private GetMemberProfileResponse? memberProfileResponse;
-    private static string editApprenticeshipInformationUrl = Guid.NewGuid().ToString();
+    private static readonly string editApprenticeshipInformationUrl = Guid.NewGuid().ToString();
 
     [SetUp]
     public void Setup()
     {
         var fixture = new Fixture();
 
-        List<MemberProfile> memberProfiles = new()
-        {
-            new MemberProfile() { ProfileId=41, Value="true"},
-            new MemberProfile() { ProfileId=42, Value="true"},
-            new MemberProfile() { ProfileId=51, Value="true"},
-            new MemberProfile() { ProfileId=52, Value="true"},
-        };
+        List<MemberProfile> memberProfiles =
+        [
+            new MemberProfile() { ProfileId = 41, Value = "true" },
+            new MemberProfile() { ProfileId = 42, Value = "true" },
+            new MemberProfile() { ProfileId = 51, Value = "true" },
+            new MemberProfile() { ProfileId = 52, Value = "true" },
+        ];
         memberPreferences = new List<MemberPreference>()
         {
-            new MemberPreference(){PreferenceId=PreferenceConstants.PreferenceIds.Apprenticeship,Value=true}
+            new(){PreferenceId=PreferenceConstants.PreferenceIds.Apprenticeship,Value=true}
         };
         memberProfileResponse = fixture.Create<GetMemberProfileResponse>();
         memberProfileResponse.Profiles = memberProfiles;

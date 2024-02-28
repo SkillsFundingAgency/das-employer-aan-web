@@ -24,7 +24,7 @@ public class NetworkDirectoryControllerTests
     private static readonly string AllNetworksUrl = Guid.NewGuid().ToString();
     private static GetMembersResponse expectedMembers = null!;
     private IActionResult result = null!;
-    string employerAccountId = Guid.NewGuid().ToString();
+    readonly string employerAccountId = Guid.NewGuid().ToString();
 
     [SetUp]
     public async Task SetupDependenciesAndSystemUnderTest()
@@ -50,7 +50,7 @@ public class NetworkDirectoryControllerTests
     [TearDown]
     public void TearDown()
     {
-        if (_sut != null) _sut.Dispose();
+        _sut?.Dispose();
     }
 
     [Test]
@@ -75,7 +75,7 @@ public class NetworkDirectoryControllerTests
         //arrange
         IEnumerable<ChecklistLookup> checklistLookups = new List<ChecklistLookup>()
         {
-            new ChecklistLookup("Multi-regional", "0", false)
+            new("Multi-regional", "0", false)
         };
 
         //act
@@ -119,8 +119,10 @@ public class NetworkDirectoryControllerTests
     public void NetworkDirectoryViewModel_SetTotalCountValue_TotalCountDescriptionIsEqualToexpectedString(int totalCount, string expectedString)
     {
         //arrange
-        var sut = new NetworkDirectoryViewModel();
-        sut.TotalCount = totalCount;
+        var sut = new NetworkDirectoryViewModel
+        {
+            TotalCount = totalCount
+        };
 
         //assert
         sut.TotalCountDescription.Should().Be(expectedString);
@@ -162,14 +164,14 @@ public class NetworkDirectoryControllerTests
 
     private static ChecklistLookup[] GetUserRoleCheckListLookup(NetworkDirectoryRequestModel networkDirectoryRequestModel)
     {
-        return new ChecklistLookup[]
-        {
+        return
+        [
             new(Role.Apprentice.GetDescription(), Role.Apprentice.ToString(),
                 networkDirectoryRequestModel.UserRole.Exists(x => x == Role.Apprentice)),
             new(Role.Employer.GetDescription(), Role.Employer.ToString(),
                 networkDirectoryRequestModel.UserRole.Exists(x => x == Role.Employer)),
             new(Role.RegionalChair.GetDescription(), Role.RegionalChair.ToString(),
                 networkDirectoryRequestModel.UserRole.Exists(x => x == Role.RegionalChair))
-        };
+        ];
     }
 }

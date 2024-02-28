@@ -33,8 +33,10 @@ public class EditApprenticeshipInformationController : Controller
         var memberId = _sessionService.GetMemberId();
         var memberProfiles = await _apiClient.GetMemberProfile(memberId, memberId, false, cancellationToken);
 
-        EditApprenticeshipDetailViewModel editApprenticeshipDetailViewModel = new EditApprenticeshipDetailViewModel();
-        editApprenticeshipDetailViewModel.EmployerName = memberProfiles.OrganisationName;
+        EditApprenticeshipDetailViewModel editApprenticeshipDetailViewModel = new()
+        {
+            EmployerName = memberProfiles.OrganisationName
+        };
         if (memberProfiles.Apprenticeship != null)
         {
             editApprenticeshipDetailViewModel.Sectors = memberProfiles.Apprenticeship.Sectors;
@@ -43,7 +45,7 @@ public class EditApprenticeshipInformationController : Controller
 
         editApprenticeshipDetailViewModel.ShowApprenticeshipInformation = MapProfilesAndPreferencesService.GetPreferenceValue(PreferenceConstants.PreferenceIds.Apprenticeship, memberProfiles.Preferences);
 
-        editApprenticeshipDetailViewModel.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId });
+        editApprenticeshipDetailViewModel.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId });
         editApprenticeshipDetailViewModel.YourAmbassadorProfileUrl = Url.RouteUrl(SharedRouteNames.YourAmbassadorProfile, new { employerAccountId })!;
         return View(SharedRouteNames.EditApprenticeshipInformation, editApprenticeshipDetailViewModel);
     }
@@ -52,10 +54,13 @@ public class EditApprenticeshipInformationController : Controller
     public async Task<IActionResult> Post([FromRoute] string employerAccountId, SubmitApprenticeshipInformationModel submitApprenticeshipInformationModel, CancellationToken cancellationToken)
     {
         var memberId = _sessionService.GetMemberId();
-        UpdateMemberProfileAndPreferencesRequest updateMemberProfileAndPreferencesRequest = new UpdateMemberProfileAndPreferencesRequest();
+        UpdateMemberProfileAndPreferencesRequest updateMemberProfileAndPreferencesRequest = new();
 
-        List<UpdatePreferenceModel> updatePreferenceModels = new List<UpdatePreferenceModel>();
-        updatePreferenceModels.Add(new UpdatePreferenceModel() { PreferenceId = PreferenceConstants.PreferenceIds.Apprenticeship, Value = submitApprenticeshipInformationModel.ShowApprenticeshipInformation }); updateMemberProfileAndPreferencesRequest.UpdateMemberProfileRequest.MemberPreferences = updatePreferenceModels;
+        List<UpdatePreferenceModel> updatePreferenceModels =
+        [
+            new UpdatePreferenceModel() { PreferenceId = PreferenceConstants.PreferenceIds.Apprenticeship, Value = submitApprenticeshipInformationModel.ShowApprenticeshipInformation },
+        ];
+        updateMemberProfileAndPreferencesRequest.UpdateMemberProfileRequest.MemberPreferences = updatePreferenceModels;
 
         await _apiClient.UpdateMemberProfileAndPreferences(memberId, updateMemberProfileAndPreferencesRequest, cancellationToken);
 

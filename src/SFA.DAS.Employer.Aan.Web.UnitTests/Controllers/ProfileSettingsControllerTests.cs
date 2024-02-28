@@ -11,9 +11,9 @@ public class ProfileSettingsControllerTests
 {
     private static readonly string YourAmbassadorProfileUrl = Guid.NewGuid().ToString();
     private IActionResult _result = null!;
-    private string employerAccountId = Guid.NewGuid().ToString();
-    private string NetworkHubUrl = Guid.NewGuid().ToString();
-    private string LeavingTheNetworkUrl = Guid.NewGuid().ToString();
+    private readonly string employerAccountId = Guid.NewGuid().ToString();
+    private readonly string NetworkHubUrl = Guid.NewGuid().ToString();
+    private readonly string LeavingTheNetworkUrl = Guid.NewGuid().ToString();
 
     [SetUp]
     public void WhenGettingNetworkHub()

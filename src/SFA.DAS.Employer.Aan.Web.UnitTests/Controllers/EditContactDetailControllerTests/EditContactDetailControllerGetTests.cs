@@ -24,10 +24,10 @@ public class EditContactDetailControllerGetTests
     private Mock<IValidator<SubmitContactDetailModel>> validatorMock = null!;
     private readonly string YourAmbassadorProfileUrl = Guid.NewGuid().ToString();
     private readonly string NetworkHubLinkUrl = Guid.NewGuid().ToString();
-    private Guid memberId = Guid.NewGuid();
+    private readonly Guid memberId = Guid.NewGuid();
     private GetMemberProfileResponse getMemberProfileResponse = null!;
-    private string employerId = Guid.NewGuid().ToString();
-    private string employerAccountId = Guid.NewGuid().ToString();
+    private readonly string employerId = Guid.NewGuid().ToString();
+    private readonly string employerAccountId = Guid.NewGuid().ToString();
     private Mock<ISessionService> sessionServiceMock = null!;
 
     [Test]
@@ -181,8 +181,10 @@ public class EditContactDetailControllerGetTests
     private void SetUpControllerWithContext()
     {
         var user = UsersForTesting.GetUserWithClaims(employerId);
-        sut = new EditContactDetailController(outerApiMock.Object, validatorMock.Object, sessionServiceMock.Object);
-        sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
+        sut = new(outerApiMock.Object, validatorMock.Object, sessionServiceMock.Object)
+        {
+            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
+        };
         sut.AddUrlHelperMock()
             .AddUrlForRoute(SharedRouteNames.YourAmbassadorProfile, YourAmbassadorProfileUrl).AddUrlForRoute(RouteNames.NetworkHub, NetworkHubLinkUrl);
     }
@@ -208,6 +210,6 @@ public class EditContactDetailControllerGetTests
     [TearDown]
     public void TearDown()
     {
-        if (sut != null) sut.Dispose();
+        sut?.Dispose();
     }
 }

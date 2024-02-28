@@ -42,7 +42,7 @@ public class NotificationsController : Controller
             id = notification.ReferenceId
         };
 
-        (string RouteName, object? RouteValues) route = notification.TemplateName switch
+        (string routeName, object? routeValue) = notification.TemplateName switch
         {
             NotificationTemplateNames.AANEmployerOnboarding
                 => (RouteNames.NetworkHub, routeValues),
@@ -64,6 +64,6 @@ public class NotificationsController : Controller
             _ => (RouteNames.Home, routeValues)
         };
 
-        return RedirectToRoute(route.RouteName, route.RouteValues);
+        return RedirectToRoute(routeName, routeValue);
     }
 }

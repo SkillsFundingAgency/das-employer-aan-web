@@ -55,7 +55,7 @@ public class LeavingTheNetworkAreYouSureTests
         CancellationToken cancellationToken
         )
     {
-        sessionModel.ReasonsForLeaving = new List<int>();
+        sessionModel.ReasonsForLeaving = [];
 
         sessionServiceMock.Setup(s => s.Get<ReasonsForLeavingSessionModel>()).Returns(sessionModel);
 

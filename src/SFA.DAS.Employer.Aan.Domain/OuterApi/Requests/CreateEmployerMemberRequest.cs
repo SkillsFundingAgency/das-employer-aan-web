@@ -8,7 +8,7 @@ public class CreateEmployerMemberRequest
     public DateTime JoinedDate { get; set; }
     public int? RegionId { get; set; }
     public string? OrganisationName { get; set; } = null!;
-    public List<ProfileValue> ProfileValues { get; set; } = new();
+    public List<ProfileValue> ProfileValues { get; set; } = [];
     public long AccountId { get; set; }
     public Guid UserRef { get; set; }
 }

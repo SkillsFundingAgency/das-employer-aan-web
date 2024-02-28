@@ -19,10 +19,10 @@ using SFA.DAS.Testing.AutoFixture;
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.EditAreaOfInterestControllerTests;
 public class EditAreaOfInterestControllerGetTests
 {
-    private string employerId = Guid.NewGuid().ToString();
+    private readonly string employerId = Guid.NewGuid().ToString();
     static readonly string YourAmbassadorProfileUrl = Guid.NewGuid().ToString();
     private EditAreaOfInterestController sut = null!;
-    private Guid memberId = Guid.NewGuid();
+    private readonly Guid memberId = Guid.NewGuid();
     private Mock<IOuterApiClient> outerApiMock = null!;
     private Mock<ISessionService> sessionServiceMock = null!;
     private Mock<IValidator<SubmitAreaOfInterestModel>> validatorMock = null!;
@@ -90,16 +90,16 @@ public class EditAreaOfInterestControllerGetTests
     {
         // Arrange
         var fixture = new Fixture();
-        EditPersonalInformationViewModel editPersonalInformationViewModel = new EditPersonalInformationViewModel();
+        EditPersonalInformationViewModel editPersonalInformationViewModel = new();
         IEnumerable<MemberProfile> memberProfiles = fixture.CreateMany<MemberProfile>(1);
 
-        List<SelectProfileViewModel> selectProfileViewModels = new List<SelectProfileViewModel>();
+        List<SelectProfileViewModel> selectProfileViewModels = [];
 
         memberProfiles.FirstOrDefault()!.Value = profileValue.ToString();
-        List<Profile> profiles = new List<Profile>()
-        {
-            new Profile{ Id=memberProfiles.FirstOrDefault()!.ProfileId}
-        };
+        List<Profile> profiles =
+        [
+            new Profile { Id = memberProfiles.FirstOrDefault()!.ProfileId }
+        ];
 
         // Act
         var _sut = EditAreaOfInterestController.SelectProfileViewModelMapping(profiles, memberProfiles);
@@ -120,7 +120,7 @@ public class EditAreaOfInterestControllerGetTests
     [TearDown]
     public void TearDown()
     {
-        if (sut != null) sut.Dispose();
+        sut?.Dispose();
     }
 
     private void SetUpControllerWithContext()
@@ -142,15 +142,15 @@ public class EditAreaOfInterestControllerGetTests
         sut.AddUrlHelperMock()
 .AddUrlForRoute(SharedRouteNames.YourAmbassadorProfile, YourAmbassadorProfileUrl);
 
-        List<MemberProfile> memberProfiles = new List<MemberProfile>()
-        {
-            new MemberProfile(){ProfileId=41,Value="True"},
-            new MemberProfile(){ProfileId=42,Value="True"}
-        };
-        List<MemberPreference> memberPreferences = new List<MemberPreference>()
-        {
-            new MemberPreference(){PreferenceId=1,Value=true}
-        };
+        List<MemberProfile> memberProfiles =
+        [
+            new MemberProfile() { ProfileId = 41, Value = "True" },
+            new MemberProfile() { ProfileId = 42, Value = "True" }
+        ];
+        List<MemberPreference> memberPreferences =
+        [
+            new MemberPreference() { PreferenceId = 1, Value = true }
+        ];
         getMemberProfileResponse = new()
         {
             Profiles = memberProfiles,
@@ -161,8 +161,8 @@ public class EditAreaOfInterestControllerGetTests
 
         getProfilesResult = new()
         {
-            Profiles = new List<Profile>() { new Profile() { Id = 41, Description = "Description 1", Category = Category.ReasonToJoin },
-            new Profile() { Id = 42, Description = "Description 2", Category = Category.Support }}
+            Profiles = [new() { Id = 41, Description = "Description 1", Category = Category.ReasonToJoin },
+                new() { Id = 42, Description = "Description 2", Category = Category.Support }]
         };
 
         outerApiMock.Setup(o => o.GetMemberProfile(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))

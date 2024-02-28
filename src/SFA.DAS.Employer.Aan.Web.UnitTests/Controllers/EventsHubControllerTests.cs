@@ -19,7 +19,7 @@ public class EventsHubControllerTests
     private Mock<IOuterApiClient> _outerApiClientMock = null!;
     private EventsHubController _sut = null!;
     private CancellationToken _cancellationToken;
-    string accountId = Guid.NewGuid().ToString();
+    readonly string accountId = Guid.NewGuid().ToString();
 
     [SetUp]
     public async Task WhenGetEventsHub()

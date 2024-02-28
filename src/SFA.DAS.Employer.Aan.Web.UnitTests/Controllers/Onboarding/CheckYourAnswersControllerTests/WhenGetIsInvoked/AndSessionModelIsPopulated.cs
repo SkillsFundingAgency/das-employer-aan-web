@@ -33,33 +33,33 @@ public class AndSessionModelIsPopulated
     static readonly string? IsPreviouslyEngagedWithNetwork = "true";
     static readonly string PreviousEngagementUrl = Guid.NewGuid().ToString();
     static readonly string LocallyPreferredRegion = Guid.NewGuid().ToString();
-    static readonly List<RegionModel> LocalOrganisationMultipleRegions = new()
-        {
-            new  RegionModel() { Area = LocallyPreferredRegion, IsSelected = true, IsConfirmed = true},
-            new  RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = true, IsConfirmed = false},
-            new  RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = true, IsConfirmed = false},
-            new  RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = true, IsConfirmed = false}
-        };
+    static readonly List<RegionModel> LocalOrganisationMultipleRegions =
+        [
+            new RegionModel() { Area = LocallyPreferredRegion, IsSelected = true, IsConfirmed = true },
+            new RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = true, IsConfirmed = false },
+            new RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = true, IsConfirmed = false },
+            new RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = true, IsConfirmed = false }
+        ];
 
-    static readonly List<RegionModel> MultiOrganisationRegions = new()
-        {
-            new  RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = true, IsConfirmed = false},
-            new  RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = true, IsConfirmed = false},
-            new  RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = true, IsConfirmed = false},
-            new  RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = true, IsConfirmed = false}
-        };
+    static readonly List<RegionModel> MultiOrganisationRegions =
+        [
+            new RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = true, IsConfirmed = false },
+            new RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = true, IsConfirmed = false },
+            new RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = true, IsConfirmed = false },
+            new RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = true, IsConfirmed = false }
+        ];
 
     static readonly string OnlySelectedRegion = Guid.NewGuid().ToString();
-    static readonly List<RegionModel> SingleRegionSelected = new()
-        {
-            new  RegionModel() { Area = OnlySelectedRegion, IsSelected = true, IsConfirmed = false},
-            new  RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = false, IsConfirmed = false},
-            new  RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = false, IsConfirmed = false},
-            new  RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = false, IsConfirmed = false}
-        };
+    static readonly List<RegionModel> SingleRegionSelected =
+        [
+            new RegionModel() { Area = OnlySelectedRegion, IsSelected = true, IsConfirmed = false },
+            new RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = false, IsConfirmed = false },
+            new RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = false, IsConfirmed = false },
+            new RegionModel() { Area = Guid.NewGuid().ToString(), IsSelected = false, IsConfirmed = false }
+        ];
 
-    static readonly List<ProfileModel> ProfileValues = new List<ProfileModel>()
-        {
+    static readonly List<ProfileModel> ProfileValues =
+        [
             new ProfileModel { Id = 1, Category = Category.ReasonToJoin, Value = Guid.NewGuid().ToString() },
             new ProfileModel { Id = 2, Category = Category.ReasonToJoin, Value = Guid.NewGuid().ToString() },
             new ProfileModel { Id = 3, Category = Category.ReasonToJoin, Value = null },
@@ -67,7 +67,7 @@ public class AndSessionModelIsPopulated
             new ProfileModel { Id = 5, Category = Category.Support, Value = Guid.NewGuid().ToString() },
             new ProfileModel { Id = 6, Category = Category.Support, Value = null },
             new ProfileModel { Id = ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer, Value = IsPreviouslyEngagedWithNetwork }
-        };
+        ];
 
 
     [SetUp]

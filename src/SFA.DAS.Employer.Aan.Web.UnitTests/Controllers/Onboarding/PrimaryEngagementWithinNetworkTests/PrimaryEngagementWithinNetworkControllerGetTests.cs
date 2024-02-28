@@ -22,8 +22,10 @@ public class PrimaryEngagementWithinNetworkControllerGetTests
         string employerAccountId,
         string regionsUrl)
     {
-        OnboardingSessionModel sessionModel = new();
-        sessionModel.IsMultiRegionalOrganisation = false;
+        OnboardingSessionModel sessionModel = new()
+        {
+            IsMultiRegionalOrganisation = false
+        };
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.Regions, regionsUrl);
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
@@ -40,9 +42,9 @@ public class PrimaryEngagementWithinNetworkControllerGetTests
     {
         Mock<ISessionService> sessionServiceMock = new();
         Mock<IValidator<PrimaryEngagementWithinNetworkSubmitModel>> validatorMock = new();
-        PrimaryEngagementWithinNetworkController sut = new PrimaryEngagementWithinNetworkController(sessionServiceMock.Object, validatorMock.Object);
+        PrimaryEngagementWithinNetworkController sut = new(sessionServiceMock.Object, validatorMock.Object);
         sut.AddUrlHelperMock();
-        OnboardingSessionModel sessionModel = new OnboardingSessionModel();
+        OnboardingSessionModel sessionModel = new();
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
         sessionModel.IsMultiRegionalOrganisation = isMultiRegionalOrganisation_ValueInSession;
 

@@ -12,25 +12,25 @@ public class InterestInTheNetworkViewModelTests
     private InterestInTheNetworkViewModel sut;
     private List<Profile> profiles;
     private IEnumerable<MemberProfile> memberProfiles;
-    private string areaOfInterestChangeUrl = Guid.NewGuid().ToString();
+    private readonly string areaOfInterestChangeUrl = Guid.NewGuid().ToString();
 
     [SetUp]
     public void Setup()
     {
         memberProfiles = new List<MemberProfile>()
         {
-            new MemberProfile() { ProfileId=41, Value="true"},
-            new MemberProfile() { ProfileId=42, Value="true"},
-            new MemberProfile() { ProfileId=51, Value="true"},
-            new MemberProfile() { ProfileId=52, Value="true"},
+            new() { ProfileId=41, Value="true"},
+            new() { ProfileId=42, Value="true"},
+            new() { ProfileId=51, Value="true"},
+            new() { ProfileId=52, Value="true"},
         };
-        profiles = new List<Profile>()
-        {
+        profiles =
+        [
             new Profile { Id = 41, Description = "Meet other employer ambassadors and grow your network", Category = Category.ReasonToJoin, Ordering = 1 },
             new Profile { Id = 42, Description = "Share your knowledge, experience and best practice", Category = Category.ReasonToJoin, Ordering = 2 },
             new Profile { Id = 51, Description = "Building apprenticeship profile of my organisation", Category = Category.Support, Ordering = 1 },
             new Profile { Id = 52, Description = "Increasing engagement with schools and colleges", Category = Category.Support, Ordering = 2 }
-        };
+        ];
         sut = new InterestInTheNetworkViewModel(memberProfiles, profiles, areaOfInterestChangeUrl);
     }
 
