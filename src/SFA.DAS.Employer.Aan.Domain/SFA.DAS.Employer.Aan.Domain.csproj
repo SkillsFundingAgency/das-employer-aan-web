@@ -8,10 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="RestEase" Version="1.6.4" />
-    <PackageReference Include="SFA.DAS.Aan.SharedUi" Version="0.1.95-prerelease-14" />
-    <PackageReference Include="System.Net.Http" Version="4.3.4" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="8.0.0" />
-    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+    <PackageReference Include="SFA.DAS.Aan.SharedUi" Version="0.1.95-prerelease-16" />
   </ItemGroup>
 
 </Project>

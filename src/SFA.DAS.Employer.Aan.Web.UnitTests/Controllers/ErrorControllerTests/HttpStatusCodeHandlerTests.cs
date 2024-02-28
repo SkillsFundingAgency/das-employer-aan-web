@@ -15,8 +15,8 @@ public class ErrorControllerTests
     const string ErrorInServiceViewName = "ErrorInService";
     private readonly string NetworkHubLink = Guid.NewGuid().ToString();
 
-    //[TestCase(403, PageNotFoundViewName)]
-    //[TestCase(404, PageNotFoundViewName)]
+    [TestCase(403, PageNotFoundViewName)]
+    [TestCase(404, PageNotFoundViewName)]
     [TestCase(500, ErrorInServiceViewName)]
     public void HttpStatusCodeHandler_ReturnsRespectiveView(int statusCode, string expectedViewName)
     {

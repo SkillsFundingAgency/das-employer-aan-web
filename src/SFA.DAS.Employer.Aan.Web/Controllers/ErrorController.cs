@@ -31,8 +31,7 @@ public class ErrorController : Controller
                 var feature = HttpContext?.Features?.Get<IExceptionHandlerPathFeature>();
                 ErrorViewModel errorViewModel = new()
                 {
-                    HomePageUrl = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = feature?.RouteValues?["employerAccountId"]?.ToString()! })!,
-                    HomePageUrlText = "employer ambassador network home"
+                    HomePageUrl = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = feature?.RouteValues?["employerAccountId"]?.ToString()! })!
                 };
                 return View("ErrorInService", errorViewModel);
         }
@@ -46,8 +45,7 @@ public class ErrorController : Controller
 
         ErrorViewModel errorViewModel = new()
         {
-            HomePageUrl = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = feature?.RouteValues?["employerAccountId"]?.ToString()! })!,
-            HomePageUrlText = "employer ambassador network home"
+            HomePageUrl = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = feature?.RouteValues?["employerAccountId"]?.ToString()! })!
         };
 
         if (User.Identity!.IsAuthenticated)
