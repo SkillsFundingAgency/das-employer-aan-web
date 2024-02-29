@@ -16,7 +16,7 @@ public static class AddSessionExtension
             options.Cookie.IsEssential = true;
         });
 
-        if (configuration["EnvironmentName"].Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase))
+        if (configuration["EnvironmentName"]!.Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase))
         {
             services.AddDistributedMemoryCache();
         }
@@ -25,7 +25,7 @@ public static class AddSessionExtension
             services.AddStackExchangeRedisCache(options =>
             {
                 var applicationCopnfiguration = configuration.GetSection(nameof(ApplicationSettings)).Get<ApplicationSettings>();
-                options.Configuration = applicationCopnfiguration.RedisConnectionString;
+                options.Configuration = applicationCopnfiguration!.RedisConnectionString;
             });
         }
 

@@ -23,9 +23,9 @@ public static class UsersForTesting
 
         var accountsClaim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, JsonSerializer.Serialize(employerAccounts));
 
-        ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity[1]
+        ClaimsPrincipal claimsPrincipal = new(new ClaimsIdentity[1]
             {
-                new ClaimsIdentity(new Claim[6]
+                new(new Claim[6]
                 {
                     givenNameClaim,
                     familyNameClaim,

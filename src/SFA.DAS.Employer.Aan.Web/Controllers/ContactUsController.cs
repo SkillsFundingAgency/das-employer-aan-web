@@ -36,7 +36,7 @@ public class ContactUsController : Controller
             SouthWestEmailAddress = contactUsEmails.SouthWest,
             WestMidlandsEmailAddress = contactUsEmails.WestMidlands,
             YorkshireAndTheHumberEmailAddress = contactUsEmails.YorkshireAndTheHumber,
-            NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId })
+            NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId })
         };
 
         return View(ContactUsViewPath, viewModel);

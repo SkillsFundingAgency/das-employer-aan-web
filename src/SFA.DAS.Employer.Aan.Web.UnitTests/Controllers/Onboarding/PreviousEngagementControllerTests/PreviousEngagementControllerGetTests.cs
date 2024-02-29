@@ -24,8 +24,10 @@ public class PreviousEngagementControllerGetTests
         string employerAccountId,
         string joinTheNetworkUrl)
     {
-        OnboardingSessionModel sessionModel = new();
-        sessionModel.HasSeenPreview = false;
+        OnboardingSessionModel sessionModel = new()
+        {
+            HasSeenPreview = false
+        };
         sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer, Value = "True" });
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.JoinTheNetwork, joinTheNetworkUrl);
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
@@ -42,8 +44,10 @@ public class PreviousEngagementControllerGetTests
         [Greedy] PreviousEngagementController sut,
         string checkYourAnswersUrl)
     {
-        OnboardingSessionModel sessionModel = new();
-        sessionModel.HasSeenPreview = true;
+        OnboardingSessionModel sessionModel = new()
+        {
+            HasSeenPreview = true
+        };
         sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer, Value = "True" });
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.CheckYourAnswers, checkYourAnswersUrl);
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
@@ -62,9 +66,9 @@ public class PreviousEngagementControllerGetTests
         Mock<IValidator<PreviousEngagementSubmitModel>> validatorMock = new();
         Mock<IOuterApiClient> outerApiClient = new();
         Mock<IEncodingService> encodingServiceMock = new();
-        PreviousEngagementController sut = new PreviousEngagementController(sessionServiceMock.Object, validatorMock.Object, outerApiClient.Object, encodingServiceMock.Object);
+        PreviousEngagementController sut = new(sessionServiceMock.Object, validatorMock.Object, outerApiClient.Object, encodingServiceMock.Object);
         sut.AddUrlHelperMock();
-        OnboardingSessionModel sessionModel = new OnboardingSessionModel();
+        OnboardingSessionModel sessionModel = new();
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
         sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer, Value = hasPreviousEngagement_ValueInSession });
 

@@ -32,7 +32,7 @@ public class JoinTheNetworkControllerPostTests
 
         JoinTheNetworkSubmitModel submitmodel = new()
         {
-            ReasonToJoin = new List<SelectProfileModel> { new SelectProfileModel { Id = 1, IsSelected = false } }
+            ReasonToJoin = [new SelectProfileModel { Id = 1, IsSelected = false }]
         };
 
         sut.Post(submitmodel);
@@ -55,7 +55,7 @@ public class JoinTheNetworkControllerPostTests
 
         JoinTheNetworkSubmitModel submitmodel = new()
         {
-            Support = new List<SelectProfileModel> { new SelectProfileModel { Id = 1, IsSelected = false } }
+            Support = [new SelectProfileModel { Id = 1, IsSelected = false }]
         };
 
         sut.Post(submitmodel);
@@ -78,8 +78,8 @@ public class JoinTheNetworkControllerPostTests
 
         JoinTheNetworkSubmitModel submitmodel = new()
         {
-            ReasonToJoin = new List<SelectProfileModel> { new SelectProfileModel { Id = 1, IsSelected = false } },
-            Support = new List<SelectProfileModel> { new SelectProfileModel { Id = 2, IsSelected = false } }
+            ReasonToJoin = [new SelectProfileModel { Id = 1, IsSelected = false }],
+            Support = [new SelectProfileModel { Id = 2, IsSelected = false }]
         };
 
         ValidationResult validationResult = new();
@@ -102,8 +102,10 @@ public class JoinTheNetworkControllerPostTests
         JoinTheNetworkSubmitModel submitmodel)
     {
         sut.AddUrlHelperMock();
-        OnboardingSessionModel sessionModel = new();
-        sessionModel.HasSeenPreview = hasSeenPreview;
+        OnboardingSessionModel sessionModel = new()
+        {
+            HasSeenPreview = hasSeenPreview
+        };
         submitmodel.ReasonToJoin!.ForEach(x =>
         {
             sessionModel.ProfileData.Add(new ProfileModel { Id = x.Id });

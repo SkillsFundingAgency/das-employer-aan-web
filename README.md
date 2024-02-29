@@ -38,6 +38,8 @@ In the web project, if not exist already, add `AppSettings.Development.json` fil
   "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true;",
   "ConfigNames": "SFA.DAS.EmployerAan.Web,SFA.DAS.Employer.GovSignIn,SFA.DAS.Encoding",
   "EnvironmentName": "LOCAL",
+  "Version": "1.0",
+  "APPINSIGHTS_INSTRUMENTATIONKEY": "",
   "ResourceEnvironmentName": "LOCAL",
   "cdn": {
     "url": "https://das-test-frnt-end.azureedge.net"
@@ -48,7 +50,7 @@ In the web project, if not exist already, add `AppSettings.Development.json` fil
 ```
 
 ## Technologies
-* .NetCore 6.0
+* .NetCore 8.0
 * NUnit
 * Moq
 * FluentAssertions

@@ -7,8 +7,8 @@ public class SignedOutViewModel
 
     public SignedOutViewModel(string environment)
     {
-        _environmentPart = environment.ToLower() == "prd" ? "manage-apprenticeships" : $"{environment.ToLower()}-eas.apprenticeships";
-        _domainPart = environment.ToLower() == "prd" ? "service" : "education";
+        _environmentPart = environment.Equals("prd", StringComparison.OrdinalIgnoreCase) ? "manage-apprenticeships" : $"{environment.ToLower()}-eas.apprenticeships";
+        _domainPart = environment.Equals("prd", StringComparison.OrdinalIgnoreCase) ? "service" : "education";
     }
     public string ServiceLink => $"https://accounts.{_environmentPart}.{_domainPart}.gov.uk";
 }

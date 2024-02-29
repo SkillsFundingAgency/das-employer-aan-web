@@ -20,20 +20,20 @@ public class EditPersonalInformationControllerGetTests
 {
     private static readonly string YourAmbassadorProfileUrl = Guid.NewGuid().ToString();
     private static readonly string NetworkHubLinkUrl = Guid.NewGuid().ToString();
-    private string employerId = Guid.NewGuid().ToString();
-    private Guid memberId = Guid.NewGuid();
+    private readonly string employerId = Guid.NewGuid().ToString();
+    private readonly Guid memberId = Guid.NewGuid();
     private EditPersonalInformationController sut = null!;
     private Mock<IOuterApiClient> outerApiMock = null!;
     private Mock<ISessionService> sessionServiceMock = null!;
     private Mock<IValidator<SubmitPersonalDetailModel>> validatorMock = null!;
     private GetMemberProfileResponse getMemberProfileResponse = null!;
     private GetRegionsResult getRegionsResult = null!;
-    private static List<MemberProfile> memberProfiles = new List<MemberProfile>()
-        {
-            new MemberProfile{ProfileId=ProfileConstants.ProfileIds.EmployerJobTitle,PreferenceId=PreferenceConstants.PreferenceIds.JobTitle},
-            new MemberProfile{ProfileId=ProfileConstants.ProfileIds.EmployerBiography,PreferenceId=PreferenceConstants.PreferenceIds.Biography},
-        };
-    private static List<MemberPreference> memberPreferences = new List<MemberPreference>();
+    private static readonly List<MemberProfile> memberProfiles =
+        [
+            new MemberProfile { ProfileId = ProfileConstants.ProfileIds.EmployerJobTitle, PreferenceId = PreferenceConstants.PreferenceIds.JobTitle },
+            new MemberProfile { ProfileId = ProfileConstants.ProfileIds.EmployerBiography, PreferenceId = PreferenceConstants.PreferenceIds.Biography },
+        ];
+    private static readonly List<MemberPreference> memberPreferences = [];
 
     [Test]
     public void Index_ReturnsEditPersonalInformationViewModel()
@@ -102,7 +102,7 @@ public class EditPersonalInformationControllerGetTests
             RegionId = 1,
             OrganisationName = organisationName
         };
-        organisationName = organisationName ?? string.Empty;
+        organisationName ??= string.Empty;
         outerApiMock.Setup(o => o.GetMemberProfile(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                         .Returns(Task.FromResult(getMemberProfileResponse));
 
@@ -122,13 +122,13 @@ public class EditPersonalInformationControllerGetTests
         HappyPathSetUp();
         getRegionsResult = new()
         {
-            Regions = new List<Region>()
-            {
-                new Region { Id=5, Area="Region 5", Ordering=5},
-                new Region { Id=1, Area="Region 1", Ordering=1},
-                new Region { Id=3, Area="Region 3", Ordering=3},
-                new Region { Id=2, Area="Region 2", Ordering=2}
-            }
+            Regions =
+            [
+                new Region { Id = 5, Area = "Region 5", Ordering = 5 },
+                new Region { Id = 1, Area = "Region 1", Ordering = 1 },
+                new Region { Id = 3, Area = "Region 3", Ordering = 3 },
+                new Region { Id = 2, Area = "Region 2", Ordering = 2 }
+            ]
         };
         outerApiMock.Setup(o => o.GetRegions(CancellationToken.None)).Returns(Task.FromResult(getRegionsResult));
 
@@ -180,7 +180,7 @@ public class EditPersonalInformationControllerGetTests
 
         getRegionsResult = new()
         {
-            Regions = new List<Region>()
+            Regions = []
         };
 
         outerApiMock.Setup(o => o.GetMemberProfile(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))

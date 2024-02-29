@@ -53,7 +53,7 @@ public class MemberProfileController : Controller
             var model = await GetViewModel(id, employerAccountId, cancellationToken);
             return View(MemberProfileViewPath, model);
         }
-        CreateNotificationRequest createNotificationRequest = new CreateNotificationRequest(id, command.ReasonToGetInTouch);
+        CreateNotificationRequest createNotificationRequest = new(id, command.ReasonToGetInTouch);
         await _outerApiClient.PostNotification(userId, createNotificationRequest, cancellationToken);
 
         return RedirectToRoute(SharedRouteNames.NotificationSentConfirmation, new { employerAccountId });
@@ -63,8 +63,10 @@ public class MemberProfileController : Controller
     [Route("accounts/{employerAccountId}/member-profile/notificationsent-confirmation", Name = SharedRouteNames.NotificationSentConfirmation)]
     public IActionResult NotificationSentConfirmation(string employerAccountId)
     {
-        NotificationSentConfirmationViewModel model = new(Url.RouteUrl(SharedRouteNames.NetworkDirectory, new { employerAccountId })!);
-        model.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId });
+        NotificationSentConfirmationViewModel model = new(Url.RouteUrl(SharedRouteNames.NetworkDirectory, new { employerAccountId })!)
+        {
+            NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId })
+        };
         return View(NotificationSentConfirmationViewPath, model);
     }
 
@@ -74,11 +76,13 @@ public class MemberProfileController : Controller
         var memberProfiles = await _outerApiClient.GetMemberProfile(userId, id, true, cancellationToken);
         var profilesResult = await _outerApiClient.GetProfilesByUserType(memberProfiles.UserType.ToString(), cancellationToken);
 
-        MemberProfileViewModel memberProfileViewModel = new();
-        memberProfileViewModel.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId });
-        memberProfileViewModel.MemberId = id;
-        memberProfileViewModel.IsLoggedInUserMemberProfile = id == userId;
-        memberProfileViewModel.IsConnectWithMemberVisible = true;
+        MemberProfileViewModel memberProfileViewModel = new()
+        {
+            NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId }),
+            MemberId = id,
+            IsLoggedInUserMemberProfile = id == userId,
+            IsConnectWithMemberVisible = true
+        };
 
         memberProfileViewModel.ConnectViaLinkedIn.LinkedInUrl = MemberProfileHelper.GetLinkedInUrl(profilesResult.Profiles, memberProfiles.Profiles);
         memberProfileViewModel.FirstName = memberProfileViewModel.ConnectViaLinkedIn.FirstName = memberProfiles.FirstName;

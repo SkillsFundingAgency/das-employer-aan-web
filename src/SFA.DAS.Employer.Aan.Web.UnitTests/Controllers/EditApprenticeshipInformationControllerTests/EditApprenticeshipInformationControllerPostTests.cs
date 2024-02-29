@@ -48,7 +48,7 @@ public class EditApprenticeshipInformationControllerPostTests
         SetUpModel();
 
         // Act
-        var response = await sut.Post(employerId, submitApprenticeshipInformationModel, CancellationToken.None);
+        await sut.Post(employerId, submitApprenticeshipInformationModel, CancellationToken.None);
 
         // Assert
         Assert.That(sut.TempData.ContainsKey(TempDataKeys.YourAmbassadorProfileSuccessMessage), Is.EqualTo(true));
@@ -70,14 +70,16 @@ public class EditApprenticeshipInformationControllerPostTests
     [TearDown]
     public void TearDown()
     {
-        if (sut != null) sut.Dispose();
+        sut?.Dispose();
     }
 
     private void SetUpControllerWithContext()
     {
         var user = UsersForTesting.GetUserWithClaims(employerId);
-        sut = new EditApprenticeshipInformationController(outerApiMock.Object, sessionServiceMock.Object);
-        sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
+        sut = new EditApprenticeshipInformationController(outerApiMock.Object, sessionServiceMock.Object)
+        {
+            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
+        };
         sut.AddUrlHelperMock()
             .AddUrlForRoute(SharedRouteNames.YourAmbassadorProfile, YourAmbassadorProfileUrl).AddUrlForRoute(RouteNames.NetworkHub, NetworkHubLinkUrl);
     }
@@ -87,7 +89,7 @@ public class EditApprenticeshipInformationControllerPostTests
         sessionServiceMock = new();
         sessionServiceMock.Setup(s => s.Get(Constants.SessionKeys.MemberId)).Returns(memberId.ToString());
         SetUpControllerWithContext();
-        Mock<ITempDataDictionary> tempDataMock = new Mock<ITempDataDictionary>();
+        Mock<ITempDataDictionary> tempDataMock = new();
         tempDataMock.Setup(t => t.ContainsKey(TempDataKeys.YourAmbassadorProfileSuccessMessage)).Returns(true);
         sut.TempData = tempDataMock.Object;
     }

@@ -42,7 +42,7 @@ public class NetworkEventDetailsController : Controller
         {
             CalendarEvent calendarEvent = eventDetailsResponse.GetContent();
 
-            List<Attendee> attendees = new List<Attendee>();
+            List<Attendee> attendees = [];
             foreach (var attendee in calendarEvent.Attendees)
             {
                 Attendee attendeeObject = attendee;
@@ -53,9 +53,10 @@ public class NetworkEventDetailsController : Controller
 
             var model = new NetworkEventDetailsViewModel(
                 calendarEvent,
-                memberId);
-
-            model.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId });
+                memberId)
+            {
+                NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId })
+            };
             return View(DetailsViewPath, model);
         }
 

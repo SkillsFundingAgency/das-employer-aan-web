@@ -41,7 +41,7 @@ public class AndUserHasSkippedJourney
 
         _sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
-        _sessionModel.Regions = new();
+        _sessionModel.Regions = [];
 
         _getResult = _sut.Get(_employerAccountId).As<ViewResult>();
         _viewModel = _getResult.Model.As<CheckYourAnswersViewModel>();

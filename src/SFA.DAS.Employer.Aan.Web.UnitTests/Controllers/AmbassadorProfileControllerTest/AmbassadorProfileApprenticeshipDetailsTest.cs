@@ -17,20 +17,20 @@ using SFA.DAS.Testing.AutoFixture;
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers;
 public class AmbassadorProfileApprenticeshipDetailsTest
 {
-    private Guid memberId = Guid.NewGuid();
+    private readonly Guid memberId = Guid.NewGuid();
     private static readonly string YourAmbassadorProfileUrl = Guid.NewGuid().ToString();
     private static readonly string NetworkHubUrl = Guid.NewGuid().ToString();
-    private string employerId = Guid.NewGuid().ToString();
+    private readonly string employerId = Guid.NewGuid().ToString();
     private IActionResult _result = null!;
     private AmbassadorProfileController sut = null!;
 
-    private readonly List<Profile> profiles = new()
-    {
+    private readonly List<Profile> profiles =
+    [
         new Profile { Id = 41, Description = "Meet other employer ambassadors and grow your network", Category = Category.ReasonToJoin, Ordering = 1 },
         new Profile { Id = 42, Description = "Share your knowledge, experience and best practice", Category = Category.ReasonToJoin, Ordering = 2 },
         new Profile { Id = 51, Description = "Building apprenticeship profile of my organisation", Category = Category.Support, Ordering = 1 },
         new Profile { Id = 52, Description = "Increasing engagement with schools and colleges", Category = Category.Support, Ordering = 2 }
-    };
+    ];
 
     [Test, MoqAutoData]
     public async Task Index_SetApprenticeshipDetails_ReturnsView(

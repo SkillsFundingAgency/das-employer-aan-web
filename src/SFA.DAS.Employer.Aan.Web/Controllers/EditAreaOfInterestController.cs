@@ -52,7 +52,7 @@ public class EditAreaOfInterestController : Controller
             return View(ChangeAreaOfInterestViewPath, GetAreaOfInterests(employerAccountId, cancellationToken).Result);
         }
 
-        UpdateMemberProfileAndPreferencesRequest updateMemberProfileAndPreferencesRequest = new UpdateMemberProfileAndPreferencesRequest();
+        UpdateMemberProfileAndPreferencesRequest updateMemberProfileAndPreferencesRequest = new();
         updateMemberProfileAndPreferencesRequest.UpdateMemberProfileRequest.MemberProfiles = command.AreasOfInterest.Select(x => new UpdateProfileModel()
         {
             MemberProfileId = x.Id,
@@ -67,7 +67,7 @@ public class EditAreaOfInterestController : Controller
 
     public async Task<EditAreaOfInterestViewModel> GetAreaOfInterests(string employerAccountId, CancellationToken cancellationToken)
     {
-        EditAreaOfInterestViewModel editAreaOfInterestViewModel = new EditAreaOfInterestViewModel();
+        EditAreaOfInterestViewModel editAreaOfInterestViewModel = new();
         var memberId = _sessionService.GetMemberId();
         var memberProfiles = await _outerApiClient.GetMemberProfile(memberId, memberId, false, cancellationToken);
         var profilesResult = await _outerApiClient.GetProfilesByUserType(MemberUserType.Employer.ToString(), cancellationToken);
@@ -78,19 +78,22 @@ public class EditAreaOfInterestController : Controller
         editAreaOfInterestViewModel.FirstSectionTitle = AreaOfInterestTitleConstant.FirstSectionTitleForEmployer;
         editAreaOfInterestViewModel.SecondSectionTitle = AreaOfInterestTitleConstant.SecondSectionTitleForEmployer;
         editAreaOfInterestViewModel.YourAmbassadorProfileUrl = Url.RouteUrl(SharedRouteNames.YourAmbassadorProfile, new { employerAccountId })!;
-        editAreaOfInterestViewModel.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId });
+        editAreaOfInterestViewModel.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId });
         return editAreaOfInterestViewModel;
     }
 
     public static List<SelectProfileViewModel> SelectProfileViewModelMapping(IEnumerable<Profile> profiles, IEnumerable<MemberProfile> memberProfiles)
     {
-        return profiles.Select(profile => new SelectProfileViewModel()
-        {
-            Id = profile.Id,
-            Description = profile.Description,
-            Category = profile.Category,
-            Ordering = profile.Ordering,
-            IsSelected = (MapProfilesAndPreferencesService.GetProfileValue(profile.Id, memberProfiles) == true.ToString())
-        }).OrderBy(x => x.Ordering).ToList();
+        return
+        [
+            .. profiles.Select(profile => new SelectProfileViewModel()
+            {
+                Id = profile.Id,
+                Description = profile.Description,
+                Category = profile.Category,
+                Ordering = profile.Ordering,
+                IsSelected = (MapProfilesAndPreferencesService.GetProfileValue(profile.Id, memberProfiles) == true.ToString())
+            }).OrderBy(x => x.Ordering),
+        ];
     }
 }

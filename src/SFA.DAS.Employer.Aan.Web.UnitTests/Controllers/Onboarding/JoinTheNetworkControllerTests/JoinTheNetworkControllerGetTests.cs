@@ -48,7 +48,7 @@ public class JoinTheNetworkControllerGetTests
     {
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.Regions);
 
-        OnboardingSessionModel sessionModel = new OnboardingSessionModel();
+        OnboardingSessionModel sessionModel = new();
         sessionModel.ProfileData.Add(new ProfileModel { Id = 101, Category = Category.ReasonToJoin, Value = true.ToString() });
         sessionModel.ProfileData.Add(new ProfileModel { Id = 202, Category = Category.Support, Value = false.ToString() });
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
@@ -77,9 +77,11 @@ public class JoinTheNetworkControllerGetTests
         [Greedy] JoinTheNetworkController sut)
     {
         sut.AddUrlHelperMock().AddUrlForRoute(navigateRoute, navigateUrl);
-        OnboardingSessionModel sessionModel = new();
-        sessionModel.HasSeenPreview = hasSeenPreview;
-        sessionModel.Regions = Enumerable.Range(1, noOfRegionsSelected).Select(i => new RegionModel { Id = i, IsSelected = true }).ToList();
+        OnboardingSessionModel sessionModel = new()
+        {
+            HasSeenPreview = hasSeenPreview,
+            Regions = Enumerable.Range(1, noOfRegionsSelected).Select(i => new RegionModel { Id = i, IsSelected = true }).ToList()
+        };
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
         var result = sut.Get(employerAccountId);
@@ -101,10 +103,12 @@ public class JoinTheNetworkControllerGetTests
         [Greedy] JoinTheNetworkController sut)
     {
         sut.AddUrlHelperMock().AddUrlForRoute(navigateRoute, navigateUrl);
-        OnboardingSessionModel sessionModel = new();
-        sessionModel.IsMultiRegionalOrganisation = isMultiRegionalOrganisation;
-        sessionModel.HasSeenPreview = hasSeenPreview;
-        sessionModel.Regions = Enumerable.Range(1, noOfRegionsSelected).Select(i => new RegionModel { Id = i, IsSelected = true }).ToList();
+        OnboardingSessionModel sessionModel = new()
+        {
+            IsMultiRegionalOrganisation = isMultiRegionalOrganisation,
+            HasSeenPreview = hasSeenPreview,
+            Regions = Enumerable.Range(1, noOfRegionsSelected).Select(i => new RegionModel { Id = i, IsSelected = true }).ToList()
+        };
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
         var result = sut.Get(Guid.NewGuid().ToString());
@@ -119,16 +123,18 @@ public class JoinTheNetworkControllerGetTests
         string primaryEngagementWithinNetworkUrl)
     {
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.PrimaryEngagementWithinNetwork, primaryEngagementWithinNetworkUrl);
-        OnboardingSessionModel sessionModel = new();
-        sessionModel.IsMultiRegionalOrganisation = true;
-        sessionModel.Regions = new()
+        OnboardingSessionModel sessionModel = new()
         {
-            new RegionModel { Id = 1, IsSelected = true, IsConfirmed = false },
-            new RegionModel { Id = 2, IsSelected = true, IsConfirmed = false },
-            new RegionModel { Id = 3, IsSelected = true, IsConfirmed = false },
-            new RegionModel { Id = 3, IsSelected = true, IsConfirmed = false },
-            new RegionModel { Id = 3, IsSelected = true, IsConfirmed = false },
-            new RegionModel { Id = 3, IsSelected = true, IsConfirmed = true }
+            IsMultiRegionalOrganisation = true,
+            Regions =
+            [
+                new RegionModel { Id = 1, IsSelected = true, IsConfirmed = false },
+                new RegionModel { Id = 2, IsSelected = true, IsConfirmed = false },
+                new RegionModel { Id = 3, IsSelected = true, IsConfirmed = false },
+                new RegionModel { Id = 3, IsSelected = true, IsConfirmed = false },
+                new RegionModel { Id = 3, IsSelected = true, IsConfirmed = false },
+                new RegionModel { Id = 3, IsSelected = true, IsConfirmed = true }
+            ]
         };
 
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);

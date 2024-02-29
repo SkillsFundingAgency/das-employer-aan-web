@@ -9,10 +9,10 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers;
 
 public class ControllersTests
 {
-    private readonly List<string> _controllersThatDoNotRequireAuthorize = new List<string>()
-    {
+    private readonly List<string> _controllersThatDoNotRequireAuthorize =
+    [
         nameof(ServiceController)
-    };
+    ];
 
     [Test]
     public void Controllers_MustBeDecoratedWithAuthorizeAttribute()

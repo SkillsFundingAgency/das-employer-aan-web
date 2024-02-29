@@ -99,7 +99,7 @@ public class PreviousEngagementControllerPostTests
         long decodedEmployerAccountId,
         CancellationToken cancellationToken)
     {
-        PreviousEngagementController sut = new PreviousEngagementController(sessionServiceMock.Object, validatorMock.Object, outerApiClient.Object, encodingServiceMock.Object);
+        PreviousEngagementController sut = new(sessionServiceMock.Object, validatorMock.Object, outerApiClient.Object, encodingServiceMock.Object);
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.JoinTheNetwork);
 
         sessionModel.HasSeenPreview = hasSeenPreview;

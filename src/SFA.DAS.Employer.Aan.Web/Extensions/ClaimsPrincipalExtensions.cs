@@ -17,14 +17,14 @@ public static class ClaimsPrincipalExtensions
     }
 
     public static Dictionary<string, EmployerIdentifier> GetEmployerAccounts(this ClaimsPrincipal user)
-    => JsonConvert.DeserializeObject<Dictionary<string, EmployerIdentifier>>(user.FindFirstValue(EmployerClaims.AccountsClaimsTypeIdentifier))!;
+    => JsonConvert.DeserializeObject<Dictionary<string, EmployerIdentifier>>(user.FindFirstValue(EmployerClaims.AccountsClaimsTypeIdentifier)!)!;
 
     public static EmployerIdentifier GetEmployerAccount(this ClaimsPrincipal user, string employerAccountId)
         => GetEmployerAccounts(user)[employerAccountId.ToUpper()];
 
     public static Guid GetUserId(this ClaimsPrincipal principal) => GetClaimValue(principal, EmployerClaims.UserIdClaimTypeIdentifier);
-    public static string GetUserDisplayName(this ClaimsPrincipal principal) => principal.FindFirstValue(EmployerClaims.UserDisplayNameClaimTypeIdentifier);
-    public static string GetGivenName(this ClaimsPrincipal principal) => principal.FindFirstValue(EmployerClaims.GivenName);
-    public static string GetFamilyName(this ClaimsPrincipal principal) => principal.FindFirstValue(EmployerClaims.FamilyName);
-    public static string GetEmail(this ClaimsPrincipal principal) => principal.FindFirstValue(EmployerClaims.UserEmailClaimTypeIdentifier);
+    public static string GetUserDisplayName(this ClaimsPrincipal principal) => principal.FindFirstValue(EmployerClaims.UserDisplayNameClaimTypeIdentifier)!;
+    public static string GetGivenName(this ClaimsPrincipal principal) => principal.FindFirstValue(EmployerClaims.GivenName)!;
+    public static string GetFamilyName(this ClaimsPrincipal principal) => principal.FindFirstValue(EmployerClaims.FamilyName)!;
+    public static string GetEmail(this ClaimsPrincipal principal) => principal.FindFirstValue(EmployerClaims.UserEmailClaimTypeIdentifier)!;
 }

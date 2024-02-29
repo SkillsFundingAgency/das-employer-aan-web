@@ -12,7 +12,7 @@ public class RegionsSubmitModelValidatorTests
     {
         var model = new RegionsSubmitModel
         {
-            Regions = new List<RegionModel> { new RegionModel { Id = 1, IsSelected = false } }
+            Regions = [new RegionModel { Id = 1, IsSelected = false }]
         };
 
         var sut = new RegionsSubmitModelValidator();
@@ -26,7 +26,7 @@ public class RegionsSubmitModelValidatorTests
     {
         var model = new RegionsSubmitModel
         {
-            Regions = new List<RegionModel> { new RegionModel { Id = 1, IsSelected = true } }
+            Regions = [new RegionModel { Id = 1, IsSelected = true }]
         };
 
         var sut = new RegionsSubmitModelValidator();

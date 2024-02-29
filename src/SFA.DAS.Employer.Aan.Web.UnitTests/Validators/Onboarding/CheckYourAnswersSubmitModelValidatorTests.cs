@@ -26,9 +26,9 @@ public class CheckYourAnswersSubmitModelValidatorTests
         [Frozen] Mock<IUrlHelper> mockUrlHelper,
         string employerAccountId)
     {
-        OnboardingSessionModel sessionModel = new OnboardingSessionModel();
+        OnboardingSessionModel sessionModel = new();
         sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer, Value = "True" });
-        sessionModel.Regions = new List<RegionModel> { new RegionModel { Id = int.MaxValue, IsSelected = true, IsConfirmed = isRegionConfirmed, Area = Guid.NewGuid().ToString() } };
+        sessionModel.Regions = [new RegionModel { Id = int.MaxValue, IsSelected = true, IsConfirmed = isRegionConfirmed, Area = Guid.NewGuid().ToString() }];
         sessionModel.IsMultiRegionalOrganisation = isMultiRegionalOrganisationValue;
 
         var model = new CheckYourAnswersViewModel(mockUrlHelper.Object, sessionModel, employerAccountId);

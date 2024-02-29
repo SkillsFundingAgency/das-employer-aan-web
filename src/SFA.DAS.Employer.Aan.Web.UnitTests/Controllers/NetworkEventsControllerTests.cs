@@ -19,17 +19,17 @@ public class NetworkEventsControllerTests
 {
     private static readonly string AllNetworksUrl = Guid.NewGuid().ToString();
 
-    string accountId = Guid.NewGuid().ToString();
+    readonly string accountId = Guid.NewGuid().ToString();
 
     [Test, MoqAutoData]
     public void GetCalendarEvents_ReturnsApiResponse(
-    [Frozen] Mock<IOuterApiClient> outerApiMock,
-    [Greedy] NetworkEventsController sut,
-    GetCalendarEventsQueryResult expectedResult,
-    string keyword,
-    DateTime? fromDate,
-    DateTime? toDate,
-    Guid employerId)
+        [Frozen] Mock<IOuterApiClient> outerApiMock,
+        [Greedy] NetworkEventsController sut,
+        GetCalendarEventsQueryResult expectedResult,
+        string keyword,
+        DateTime? fromDate,
+        DateTime? toDate,
+        Guid employerId)
     {
         var eventFormats = new List<EventFormat>
         {
@@ -89,10 +89,10 @@ public class NetworkEventsControllerTests
     }
     [Test, MoqAutoData]
     public void GetCalendarEventsNoFilters_ReturnsApiResponse(
-   [Frozen] Mock<IOuterApiClient> outerApiMock,
-   [Greedy] NetworkEventsController sut,
-           GetCalendarEventsQueryResult expectedResult,
-           Guid employerId)
+       [Frozen] Mock<IOuterApiClient> outerApiMock,
+       [Greedy] NetworkEventsController sut,
+       GetCalendarEventsQueryResult expectedResult,
+       Guid employerId)
     {
         var request = new GetNetworkEventsRequest();
 

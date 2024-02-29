@@ -53,17 +53,19 @@ public class EditPersonalInformationController : Controller
             result.AddToModelState(ModelState);
             return View(ChangePersonalDetailViewPath, await BuildMemberProfileModel(employerAccountId, cancellationToken));
         }
-        UpdateMemberProfileAndPreferencesRequest updateMemberProfileAndPreferencesRequest = new UpdateMemberProfileAndPreferencesRequest();
+        UpdateMemberProfileAndPreferencesRequest updateMemberProfileAndPreferencesRequest = new();
         updateMemberProfileAndPreferencesRequest.PatchMemberRequest.RegionId = submitPersonalDetailModel.RegionId;
         updateMemberProfileAndPreferencesRequest.PatchMemberRequest.OrganisationName = submitPersonalDetailModel.OrganisationName;
-        List<UpdatePreferenceModel> updatePreferenceModels = new List<UpdatePreferenceModel>();
+        List<UpdatePreferenceModel> updatePreferenceModels = [];
         updatePreferenceModels.Add(new UpdatePreferenceModel() { PreferenceId = PreferenceConstants.PreferenceIds.Biography, Value = submitPersonalDetailModel.ShowBiography && !string.IsNullOrEmpty(submitPersonalDetailModel.Biography) });
         updatePreferenceModels.Add(new UpdatePreferenceModel() { PreferenceId = PreferenceConstants.PreferenceIds.JobTitle, Value = submitPersonalDetailModel.ShowJobTitle });
         updateMemberProfileAndPreferencesRequest.UpdateMemberProfileRequest.MemberPreferences = updatePreferenceModels;
 
-        List<UpdateProfileModel> updateProfileModels = new List<UpdateProfileModel>();
-        updateProfileModels.Add(new UpdateProfileModel() { MemberProfileId = ProfileIds.EmployerBiography, Value = submitPersonalDetailModel.Biography?.Trim() });
-        updateProfileModels.Add(new UpdateProfileModel() { MemberProfileId = ProfileIds.EmployerJobTitle, Value = submitPersonalDetailModel.JobTitle?.Trim() });
+        List<UpdateProfileModel> updateProfileModels =
+        [
+            new UpdateProfileModel() { MemberProfileId = ProfileIds.EmployerBiography, Value = submitPersonalDetailModel.Biography?.Trim() },
+            new UpdateProfileModel() { MemberProfileId = ProfileIds.EmployerJobTitle, Value = submitPersonalDetailModel.JobTitle?.Trim() },
+        ];
 
         updateMemberProfileAndPreferencesRequest.UpdateMemberProfileRequest.MemberProfiles = updateProfileModels;
 
@@ -74,17 +76,19 @@ public class EditPersonalInformationController : Controller
 
     private EditPersonalInformationViewModel CreateViewModel(int regionId, IEnumerable<MemberProfile> memberProfiles, IEnumerable<MemberPreference> memberPreferences, MemberUserType userType, string? organisationName, string employerAccountId)
     {
-        EditPersonalInformationViewModel editPersonalInformationViewModel = new EditPersonalInformationViewModel();
-        editPersonalInformationViewModel.RegionId = regionId;
-        editPersonalInformationViewModel.UserType = userType;
-        editPersonalInformationViewModel.OrganisationName = organisationName ?? string.Empty;
+        EditPersonalInformationViewModel editPersonalInformationViewModel = new()
+        {
+            RegionId = regionId,
+            UserType = userType,
+            OrganisationName = organisationName ?? string.Empty,
 
-        editPersonalInformationViewModel.Biography = MapProfilesAndPreferencesService.GetProfileValue(ProfileIds.EmployerBiography, memberProfiles);
-        editPersonalInformationViewModel.ShowBiography = MapProfilesAndPreferencesService.GetPreferenceValue(PreferenceConstants.PreferenceIds.Biography, memberPreferences);
+            Biography = MapProfilesAndPreferencesService.GetProfileValue(ProfileIds.EmployerBiography, memberProfiles),
+            ShowBiography = MapProfilesAndPreferencesService.GetPreferenceValue(PreferenceConstants.PreferenceIds.Biography, memberPreferences),
 
-        editPersonalInformationViewModel.JobTitle = MapProfilesAndPreferencesService.GetProfileValue(ProfileIds.EmployerJobTitle, memberProfiles);
-        editPersonalInformationViewModel.ShowJobTitle = MapProfilesAndPreferencesService.GetPreferenceValue(PreferenceConstants.PreferenceIds.JobTitle, memberPreferences);
-        editPersonalInformationViewModel.NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId });
+            JobTitle = MapProfilesAndPreferencesService.GetProfileValue(ProfileIds.EmployerJobTitle, memberProfiles),
+            ShowJobTitle = MapProfilesAndPreferencesService.GetPreferenceValue(PreferenceConstants.PreferenceIds.JobTitle, memberPreferences),
+            NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId })
+        };
 
         return editPersonalInformationViewModel;
     }

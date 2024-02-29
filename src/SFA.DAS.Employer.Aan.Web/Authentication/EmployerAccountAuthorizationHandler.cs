@@ -66,7 +66,7 @@ public class EmployerAccountAuthorizationHandler : AuthorizationHandler<Employer
 
         if (employerAccounts != null)
         {
-            employerUserAccount = employerAccounts.ContainsKey(accountIdFromUrl) ? employerAccounts[accountIdFromUrl] : null;
+            employerUserAccount = employerAccounts.TryGetValue(accountIdFromUrl, out EmployerUserAccountItem? value) ? value : null;
         }
 
         if (employerAccounts == null || !employerAccounts.ContainsKey(accountIdFromUrl))
@@ -81,7 +81,7 @@ public class EmployerAccountAuthorizationHandler : AuthorizationHandler<Employer
 
             var email = context.User.FindFirstValue(ClaimTypes.Email);
 
-            var result = _outerApiClient.GetUserAccounts(userId, email, CancellationToken.None).Result;
+            var result = _outerApiClient.GetUserAccounts(userId, email!, CancellationToken.None).Result;
 
             var accountsAsJson = JsonConvert.SerializeObject(result.UserAccountResponse.ToDictionary(k => k.EncodedAccountId));
 
@@ -91,11 +91,11 @@ public class EmployerAccountAuthorizationHandler : AuthorizationHandler<Employer
 
             userClaim.Subject!.AddClaim(associatedAccountsClaim);
 
-            if (!updatedEmployerAccounts!.ContainsKey(accountIdFromUrl))
+            if (!updatedEmployerAccounts!.TryGetValue(accountIdFromUrl, out EmployerUserAccountItem? value))
             {
                 return false;
             }
-            employerUserAccount = updatedEmployerAccounts[accountIdFromUrl];
+            employerUserAccount = value;
         }
 
         if (!_httpContextAccessor.HttpContext.Items.ContainsKey("Employer"))

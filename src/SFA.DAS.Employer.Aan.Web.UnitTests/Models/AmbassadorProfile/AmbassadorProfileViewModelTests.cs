@@ -7,7 +7,7 @@ public class AmbassadorProfileViewModelTests
     public void AmbassadorProfileViewModel_InitializationWithParameterlessConstructor_ReturnsExpectedValue()
     {
         // Act
-        AmbassadorProfileViewModel _sut = new AmbassadorProfileViewModel();
+        AmbassadorProfileViewModel _sut = new();
 
         // Assert
         Assert.Multiple(() =>

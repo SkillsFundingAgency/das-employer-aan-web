@@ -15,7 +15,7 @@ public class LeavingTheNetworkConfirmationController : Controller
     {
         var model = new LeaveTheNetworkConfirmedViewModel
         {
-            HomeUrl = Url.RouteUrl(SharedRouteNames.Home, new { employerAccountId = employerAccountId })!
+            HomeUrl = Url.RouteUrl(SharedRouteNames.Home, new { employerAccountId })!
         };
 
         return View(model);

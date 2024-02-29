@@ -37,10 +37,10 @@ public class LeaveTheNetworkController : Controller
             LeavingReasonsTitle = leavingReasons.First(x => x.Category.Contains("reasons")).Category,
             LeavingExperienceTitle = leavingReasons.First(x => x.Category.Contains("experience")).Category,
             LeavingBenefitsTitle = leavingReasons.First(x => x.Category.Contains("benefit")).Category,
-            LeavingReasons = leavingReasons.First(x => x.Category.Contains("reasons")).LeavingReasons.OrderBy(x => x.Ordering).ToList(),
-            LeavingExperience = leavingReasons.First(x => x.Category.Contains("experience")).LeavingReasons.OrderBy(x => x.Ordering).ToList(),
-            LeavingBenefits = leavingReasons.First(x => x.Category.Contains("benefit")).LeavingReasons.OrderBy(x => x.Ordering).ToList(),
-            ProfileSettingsLink = Url.RouteUrl(SharedRouteNames.ProfileSettings, new { employerAccountId = employerAccountId })!
+            LeavingReasons = [.. leavingReasons.First(x => x.Category.Contains("reasons")).LeavingReasons.OrderBy(x => x.Ordering)],
+            LeavingExperience = [.. leavingReasons.First(x => x.Category.Contains("experience")).LeavingReasons.OrderBy(x => x.Ordering)],
+            LeavingBenefits = [.. leavingReasons.First(x => x.Category.Contains("benefit")).LeavingReasons.OrderBy(x => x.Ordering)],
+            ProfileSettingsLink = Url.RouteUrl(SharedRouteNames.ProfileSettings, new { employerAccountId })!
         };
 
         return View(viewModel);
@@ -67,7 +67,7 @@ public class LeaveTheNetworkController : Controller
             ReasonsForLeaving = reasonsTicked
         };
         _sessionService.Set(sessionModel);
-        return RedirectToRoute(SharedRouteNames.LeaveTheNetworkConfirmation, new { employerAccountId = employerAccountId });
+        return RedirectToRoute(SharedRouteNames.LeaveTheNetworkConfirmation, new { employerAccountId });
     }
 
     [HttpGet]
@@ -76,7 +76,7 @@ public class LeaveTheNetworkController : Controller
     {
         var viewModel = new LeaveTheNetworkAreYouSureViewModel
         {
-            ProfileSettingsLink = Url.RouteUrl(SharedRouteNames.ProfileSettings, new { employerAccountId = employerAccountId })!
+            ProfileSettingsLink = Url.RouteUrl(SharedRouteNames.ProfileSettings, new { employerAccountId })!
         };
 
         return View(LeaveTheNetworkAreYouSureViewPath, viewModel);
@@ -95,6 +95,6 @@ public class LeaveTheNetworkController : Controller
 
         _sessionService.Delete<ReasonsForLeavingSessionModel>();
 
-        return RedirectToRoute(SharedRouteNames.LeaveTheNetworkComplete, new { employerAccountId = employerAccountId });
+        return RedirectToRoute(SharedRouteNames.LeaveTheNetworkComplete, new { employerAccountId });
     }
 }

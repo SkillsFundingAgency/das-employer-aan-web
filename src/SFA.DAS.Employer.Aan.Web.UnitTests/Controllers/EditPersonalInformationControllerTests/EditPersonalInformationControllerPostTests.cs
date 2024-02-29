@@ -24,8 +24,8 @@ public class EditPersonalInformationControllerPostTests
     private GetMemberProfileResponse _getMemberProfileResponse = null!;
     private GetRegionsResult _getRegionsResult = null!;
     private EditPersonalInformationController _sut = null!;
-    private Guid _memberId = Guid.NewGuid();
-    private string employerId = Guid.NewGuid().ToString();
+    private readonly Guid _memberId = Guid.NewGuid();
+    private readonly string employerId = Guid.NewGuid().ToString();
 
     [Test]
     public async Task Post_ValidModel_InvokeUpdateOnce()
@@ -190,7 +190,7 @@ public class EditPersonalInformationControllerPostTests
     [TearDown]
     public void TearDown()
     {
-        if (_sut != null) _sut.Dispose();
+        _sut?.Dispose();
     }
 
     private void HappyPathSetUp()
@@ -229,7 +229,7 @@ public class EditPersonalInformationControllerPostTests
 
         _getRegionsResult = new()
         {
-            Regions = new List<Region>()
+            Regions = []
         };
         _outerApiMock.Setup(o => o.GetMemberProfile(_memberId, _memberId, It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(_getMemberProfileResponse));
@@ -241,7 +241,7 @@ public class EditPersonalInformationControllerPostTests
         _sut.TempData = Mock.Of<ITempDataDictionary>();
         _validatorMock.Setup(m => m.ValidateAsync(_submitPersonalDetailModel, CancellationToken.None)).ReturnsAsync(new ValidationResult(new List<ValidationFailure>()
             {
-                new ValidationFailure("TestField","Test Message"){ErrorCode = "1001"}
+                new("TestField","Test Message"){ErrorCode = "1001"}
             }));
     }
 
