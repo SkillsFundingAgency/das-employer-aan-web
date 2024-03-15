@@ -40,13 +40,12 @@ In the web project, if not exist already, add `AppSettings.Development.json` fil
   "EnvironmentName": "LOCAL",
   "Version": "1.0",
   "APPINSIGHTS_INSTRUMENTATIONKEY": "",
-  "ResourceEnvironmentName": "LOCAL",
   "cdn": {
     "url": "https://das-test-frnt-end.azureedge.net"
   },
   "ResourceEnvironmentName": "LOCAL",
   "StubAuth": true
-} 
+}
 ```
 
 ## Technologies
