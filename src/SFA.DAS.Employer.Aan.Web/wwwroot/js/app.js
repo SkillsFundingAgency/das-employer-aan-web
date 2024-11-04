@@ -1,4 +1,26 @@
-﻿//Location search autocomplete
+﻿// Select Submit
+function SelectSubmit(selectField) {
+    this.selectField = selectField;
+    this.form = selectField.closest("form");
+}
+
+SelectSubmit.prototype.init = function () {
+    if (!this.selectField) {
+        return;
+    }
+    this.selectField.addEventListener("change", () => {
+        this.form.submit();
+    });
+};
+
+const selectSubmits = document.querySelectorAll('[data-module="selectSubmit"]');
+nodeListForEach(selectSubmits, function (selectSubmit) {
+    console.log(selectSubmit);
+    new SelectSubmit(selectSubmit).init();
+});
+
+
+//Location search autocomplete
 const locationInputs = document.querySelectorAll(".location-search-autocomplete");
 const apiUrl = "/locations/search";
 
