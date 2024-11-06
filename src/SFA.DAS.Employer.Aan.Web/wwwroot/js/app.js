@@ -6,34 +6,6 @@ AutoComplete.prototype.init = function () {
     this.autoComplete()
 }
 
-function inputValueTemplate(result) {
-    return result && [result.organisationName, result.addressLine1, result.town, result.postcode].filter(element => element).join(', ')
-}
-
-function suggestionTemplate(result) {
-    return result && [result.organisationName, result.addressLine1, result.town, result.postcode].filter(element => element).join(', ')
-}
-
-AutoComplete.prototype.autoComplete = function () {
-    let that = this
-    accessibleAutocomplete.enhanceSelectElement({
-        selectElement: that.selectElement,
-        minLength: 2,
-        autoselect: false,
-        defaultValue: '',
-        displayMenu: 'overlay',
-        placeholder: '',
-        source: that.getSuggestions,
-        showAllValues: false,
-        confirmOnBlur: false,
-        onConfirm: that.onConfirm,
-        templates: {
-            inputValue: inputValueTemplate,
-            suggestion: suggestionTemplate
-        }
-    });
-}
-
 function nodeListForEach(nodes, callback) {
     if (window.NodeList.prototype.forEach) {
         return nodes.forEach(callback)
