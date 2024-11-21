@@ -10,8 +10,6 @@ public static class ApplicationBuilderExtensions
         const string dasCdn = "das-at-frnt-end.azureedge.net das-pp-frnt-end.azureedge.net das-mo-frnt-end.azureedge.net das-test-frnt-end.azureedge.net das-test2-frnt-end.azureedge.net das-prd-frnt-end.azureedge.net";
         app.Use(async (context, next) =>
         {
-            var nonce = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
-            context.Items["CspNonce"] = nonce;
             context.Response.Headers["Content-Security-Policy"] =
                 $"script-src 'self' 'unsafe-inline' {dasCdn} *.tagmanager.google.com https://ssl.google-analytics.com *.googletagmanager.com *.google-analytics.com *.googleapis.com https://*.services.visualstudio.com https://*.rcrsv.io; " +
                 $"style-src 'self' 'unsafe-inline' {dasCdn} *.tagmanager.google.com https://fonts.googleapis.com https://*.rcrsv.io; " +
