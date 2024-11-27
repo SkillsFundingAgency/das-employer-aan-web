@@ -5,7 +5,7 @@ namespace SFA.DAS.Employer.Aan.Web.Validators;
 
 public class AreasToEngageLocallySubmitModelValidator : AbstractValidator<AreasToEngageLocallySubmitModel>
 {
-    public const string NoSelectionForAreasToEngageLocallyErrorMessage = "Select the region where you would like to engage within the network";
+    public const string NoSelectionForAreasToEngageLocallyErrorMessage = "Select which regional network you would like to join";
 
     public AreasToEngageLocallySubmitModelValidator()
     {
