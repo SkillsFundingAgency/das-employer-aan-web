@@ -1,9 +1,8 @@
-﻿@using SFA.DAS.Employer.Aan.Web.Infrastructure
-@using SFA.DAS.Employer.Aan.Web.Models.Onboarding
+﻿@using SFA.DAS.Employer.Aan.Web.Models.Onboarding
 @addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
 @model AreasToEngageLocallyViewModel
 @{
-    ViewData["Title"] = "Areas To Engage Locally";
+    ViewData["Title"] = "Choose a regional network to join";
 }
 
 <div class="govuk-grid-row">
@@ -16,7 +15,7 @@
                     <div esfa-validation-marker-for="@Model.SelectedAreaToEngageLocallyId" class="govuk-form-group">
                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                             <h1 class="govuk-fieldset__heading">
-                                What area would you like to engage with locally within the network?
+                                Choose a regional network to join
                             </h1>
                         </legend>
                         <p />
