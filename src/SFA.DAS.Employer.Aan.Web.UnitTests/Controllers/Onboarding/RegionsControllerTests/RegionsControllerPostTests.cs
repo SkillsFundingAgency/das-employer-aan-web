@@ -36,8 +36,8 @@ public class RegionsControllerPostTests
         sessionServiceMock.Verify(s => s.Set(It.Is<OnboardingSessionModel>(m => m.Regions == submitmodel.Regions)));
     }
 
-    [MoqInlineAutoData(1, false, RouteNames.Onboarding.JoinTheNetwork)]
-    [MoqInlineAutoData(1, true, RouteNames.Onboarding.CheckYourAnswers)]
+    [MoqInlineAutoData(1, false, RouteNames.Onboarding.RegionalNetwork)]
+    [MoqInlineAutoData(1, true, RouteNames.Onboarding.RegionalNetwork)]
     [MoqInlineAutoData(2, true, RouteNames.Onboarding.AreasToEngageLocally)]
     [MoqInlineAutoData(2, false, RouteNames.Onboarding.AreasToEngageLocally)]
     [MoqInlineAutoData(3, true, RouteNames.Onboarding.AreasToEngageLocally)]
