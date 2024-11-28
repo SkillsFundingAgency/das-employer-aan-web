@@ -58,6 +58,8 @@ else
     app.UseHsts();
 }
 
+app.UseContentSecurityPolicy();
+
 app.Use(async (context, next) =>
 {
     if (context.Response.Headers.ContainsKey("X-Frame-Options"))
