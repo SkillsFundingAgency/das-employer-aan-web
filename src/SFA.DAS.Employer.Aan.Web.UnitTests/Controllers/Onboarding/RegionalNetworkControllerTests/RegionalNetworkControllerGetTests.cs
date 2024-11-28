@@ -12,7 +12,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.RegionalNetw
 
 public class RegionalNetworkControllerTests
 {
-    [TestCase(true, "Multi-regional network")]
+    [TestCase(true, "Multi-regional")]
     [TestCase(false, "Region 1")]
     public void Get_ViewModel_SelectedRegionBasedOnSessionData(
         bool isMultiRegional,
