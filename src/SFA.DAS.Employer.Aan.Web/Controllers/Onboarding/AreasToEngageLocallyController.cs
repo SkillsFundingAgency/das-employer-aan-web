@@ -58,9 +58,7 @@ public class AreasToEngageLocallyController : Controller
 
         _sessionService.Set(sessionModel);
 
-        return sessionModel.HasSeenPreview
-            ? RedirectToRoute(@RouteNames.Onboarding.CheckYourAnswers, new { submitModel.EmployerAccountId })!
-            : RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork, new { submitModel.EmployerAccountId });
+        return RedirectToRoute(RouteNames.Onboarding.RegionalNetwork, new { submitModel.EmployerAccountId });
     }
 
     private AreasToEngageLocallyViewModel GetViewModel(string employerAccountId)
