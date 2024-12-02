@@ -1,9 +1,8 @@
-﻿@using SFA.DAS.Employer.Aan.Web.Infrastructure
-@using SFA.DAS.Employer.Aan.Web.Models.Onboarding
+﻿@using SFA.DAS.Employer.Aan.Web.Models.Onboarding
 @addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
 @model JoinTheNetworkViewModel
 @{
-    ViewData["Title"] = "Reason To Join";
+    ViewData["Title"] = "How you want to be involved";
 }
 
 <div class="govuk-grid-row">
@@ -13,15 +12,21 @@
             @Html.HiddenFor(m => m.EmployerAccountId)
             <div class="govuk-form-group">
                 <fieldset class="govuk-fieldset">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                        <span class="govuk-caption-l govuk-!-margin-bottom-0">Create your ambassador profile</span>
+                        <h1 class="govuk-fieldset__heading">
+                            How you want to be involved
+                        </h1>
+                    </legend>
                     <div esfa-validation-marker-for="@Model.ReasonToJoin" class="govuk-form-group">
-                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                            <h1 class="govuk-fieldset__heading">
-                                Why do you want to join the network?
-                            </h1>
-                        </legend>
-                        <p />
+                        <h2 class="govuk-heading-m">
+                            Why do you want to join the network?
+                        </h2>
+                        <p class="govuk-body">
+                            We’ll show your answers on your profile so others can approach you.
+                        </p>
                         <div id="reasonsToJoin-hint" class="govuk-hint">
-                            You can choose multiple options.
+                            Select all that apply
                         </div>
                         <span asp-validation-for="@Model.ReasonToJoin" class="govuk-error-message"></span>
 
@@ -41,17 +46,16 @@
                                 }
                             }
                         </div>
-
                     </div>
                     <div esfa-validation-marker-for="@Model.Support" class="govuk-form-group">
-                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                            <h1 class="govuk-fieldset__heading">
-                                What support would you need from the network?
-                            </h1>
-                        </legend>
-                        <p />
-                        <div id="Support-hint" class="govuk-hint">
-                            You can choose multiple options.
+                        <h2 class="govuk-heading-m">
+                            What support would you need from the network?
+                        </h2>
+                        <p>
+                            We’ll show your answers on your profile so others can offer you help.
+                        </p>
+                        <div id="reasonsToJoin-hint" class="govuk-hint">
+                            Select all that apply
                         </div>
                         <span asp-validation-for="@Model.Support" class="govuk-error-message"></span>
 
@@ -71,15 +75,10 @@
                                 }
                             }
                         </div>
-
                     </div>
                 </fieldset>
             </div>
-            <p>
-                You can change your selections at any time in your profile settings.
-            </p>
             <div class="govuk-button-group">
-
                 <button id="continue-button" type="submit" class="govuk-button" data-module="govuk-button" data-disable-on-submit="true" asp-page-handler="Submit">
                     Continue
                 </button>

@@ -59,13 +59,13 @@ public class JoinTheNetworkControllerGetTests
         result.As<ViewResult>().Model.As<JoinTheNetworkViewModel>().Support.Should().Contain(x => x.Id == 202 && x.Category == Category.Support && !x.IsSelected);
     }
 
-    [MoqInlineAutoData(1, false, RouteNames.Onboarding.Regions)]
+    [MoqInlineAutoData(1, false, RouteNames.Onboarding.RegionalNetwork)]
     [MoqInlineAutoData(1, true, RouteNames.Onboarding.CheckYourAnswers)]
-    [MoqInlineAutoData(2, false, RouteNames.Onboarding.AreasToEngageLocally)]
+    [MoqInlineAutoData(2, false, RouteNames.Onboarding.RegionalNetwork)]
     [MoqInlineAutoData(2, true, RouteNames.Onboarding.CheckYourAnswers)]
-    [MoqInlineAutoData(3, false, RouteNames.Onboarding.AreasToEngageLocally)]
+    [MoqInlineAutoData(3, false, RouteNames.Onboarding.RegionalNetwork)]
     [MoqInlineAutoData(3, true, RouteNames.Onboarding.CheckYourAnswers)]
-    [MoqInlineAutoData(4, false, RouteNames.Onboarding.AreasToEngageLocally)]
+    [MoqInlineAutoData(4, false, RouteNames.Onboarding.RegionalNetwork)]
     [MoqInlineAutoData(4, true, RouteNames.Onboarding.CheckYourAnswers)]
     public void Get_ViewModel_HasCorrectBackLinkToRegions(
         int noOfRegionsSelected,
@@ -89,8 +89,8 @@ public class JoinTheNetworkControllerGetTests
         result.As<ViewResult>().Model.As<JoinTheNetworkViewModel>().BackLink.Should().Be(navigateUrl);
     }
 
-    [MoqInlineAutoData(5, false, false, RouteNames.Onboarding.AreasToEngageLocally)]
-    [MoqInlineAutoData(5, false, true, RouteNames.Onboarding.PrimaryEngagementWithinNetwork)]
+    [MoqInlineAutoData(5, false, false, RouteNames.Onboarding.RegionalNetwork)]
+    [MoqInlineAutoData(5, false, true, RouteNames.Onboarding.RegionalNetwork)]
     [MoqInlineAutoData(5, true, false, RouteNames.Onboarding.CheckYourAnswers)]
     [MoqInlineAutoData(5, true, true, RouteNames.Onboarding.CheckYourAnswers)]
     public void Get_ViewModel_HasCorrectBackLinkToRegionsWhenMoreThanFourRegionsSelected(
@@ -120,9 +120,9 @@ public class JoinTheNetworkControllerGetTests
     public void Get_ViewModel_HasCorrectBackLinkToPrimaryEngagementWithinNetwork(
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] JoinTheNetworkController sut,
-        string primaryEngagementWithinNetworkUrl)
+        string regionalNetworkUrl)
     {
-        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.PrimaryEngagementWithinNetwork, primaryEngagementWithinNetworkUrl);
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.RegionalNetwork, regionalNetworkUrl);
         OnboardingSessionModel sessionModel = new()
         {
             IsMultiRegionalOrganisation = true,
@@ -141,6 +141,6 @@ public class JoinTheNetworkControllerGetTests
 
         var result = sut.Get(Guid.NewGuid().ToString());
 
-        result.As<ViewResult>().Model.As<JoinTheNetworkViewModel>().BackLink.Should().Be(primaryEngagementWithinNetworkUrl);
+        result.As<ViewResult>().Model.As<JoinTheNetworkViewModel>().BackLink.Should().Be(regionalNetworkUrl);
     }
 }
