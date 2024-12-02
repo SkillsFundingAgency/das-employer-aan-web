@@ -5,8 +5,8 @@ namespace SFA.DAS.Employer.Aan.Web.Validators;
 
 public class JoinTheNetworkSubmitModelValidator : AbstractValidator<JoinTheNetworkSubmitModel>
 {
-    public const string NoSelectionForReasonToJoinErrorMessage = "Select at least one option to show why you want to join the network";
-    public const string NoSelectionForSupportErrorMessage = "Select at least one option to show what support would you need from the network";
+    public const string NoSelectionForReasonToJoinErrorMessage = "Select at least one thing that you can offer other ambassadors";
+    public const string NoSelectionForSupportErrorMessage = "Select at least one thing that you are hoping to gain from the network";
 
     public JoinTheNetworkSubmitModelValidator()
     {
