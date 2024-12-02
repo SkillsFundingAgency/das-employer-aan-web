@@ -29,7 +29,7 @@ public class RegionalNetworkControllerPostTests
     }
 
     [MoqAutoData]
-    public void Post_WhenHasNotSeenPreview_RedirectsToJoinTheNetwork(
+    public void Post_WhenHasNotSeenPreview_RedirectsToConfirmDetails(
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] RegionalNetworkController sut,
         RegionalNetworkViewModel submitModel)
@@ -39,7 +39,7 @@ public class RegionalNetworkControllerPostTests
 
         var result = sut.Post(submitModel);
 
-        result.As<RedirectToRouteResult>().RouteName.Should().Be(RouteNames.Onboarding.JoinTheNetwork);
+        result.As<RedirectToRouteResult>().RouteName.Should().Be(RouteNames.Onboarding.ConfirmDetails);
         result.As<RedirectToRouteResult>().RouteValues["employerAccountId"].Should().Be(submitModel.EmployerAccountId);
     }
 }

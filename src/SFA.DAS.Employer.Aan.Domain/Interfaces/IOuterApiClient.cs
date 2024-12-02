@@ -4,6 +4,7 @@ using SFA.DAS.Aan.SharedUi.Models.LeaveTheNetwork;
 using SFA.DAS.Aan.SharedUi.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
+using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Onboarding;
 
 namespace SFA.DAS.Employer.Aan.Domain.Interfaces;
 
@@ -40,6 +41,9 @@ public interface IOuterApiClient
 
     [Get("/calendars")]
     Task<List<Calendar>> GetCalendars(CancellationToken cancellationToken);
+
+    [Get("/accounts/{employerAccountId}/onboarding/confirm-details")]
+    Task<GetConfirmDetailsApiResponse> GetOnboardingConfirmDetails([Path] long employerAccountId);
 
     [Post("/employers")]
     Task<CreateEmployerMemberResponse> PostEmployerMember([Body] CreateEmployerMemberRequest request, CancellationToken cancellationToken);
