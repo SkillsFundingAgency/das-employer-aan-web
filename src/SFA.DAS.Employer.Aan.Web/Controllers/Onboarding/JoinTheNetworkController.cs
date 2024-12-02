@@ -81,7 +81,6 @@ public class JoinTheNetworkController : Controller
 
     private string GetCorrectBackLink(OnboardingSessionModel sessionModel, string employerAccountId)
     {
-        // TODO: Once EC-825 has been completed, update the backlink Route
-        return sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId })! : Url.RouteUrl(@RouteNames.Onboarding.RegionalNetwork, new { employerAccountId })!;
+        return sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId })! : Url.RouteUrl(@RouteNames.Onboarding.ConfirmDetails, new { employerAccountId })!;
     }
 }
