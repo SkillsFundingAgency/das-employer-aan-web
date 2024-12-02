@@ -62,9 +62,7 @@ public class RegionsController : Controller
     private IActionResult RedirectAccordingly(int selectedRegionCount, bool hasSeenPreview, string employerAccountId) =>
         selectedRegionCount switch
         {
-            1 => hasSeenPreview
-                    ? RedirectToRoute(RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId })!
-                    : RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork, new { employerAccountId }),
+            1 => RedirectToRoute(RouteNames.Onboarding.RegionalNetwork, new { employerAccountId }),
             (>= 2) and (<= 4) => RedirectToRoute(RouteNames.Onboarding.AreasToEngageLocally, new { employerAccountId })!,
             _ => RedirectToRoute(RouteNames.Onboarding.PrimaryEngagementWithinNetwork, new { employerAccountId })
         };
