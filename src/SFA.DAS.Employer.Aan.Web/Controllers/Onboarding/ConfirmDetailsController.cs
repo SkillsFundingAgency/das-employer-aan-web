@@ -37,7 +37,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
 
             return new ConfirmDetailsViewModel
             {
-                BackLink = "",
+                BackLink = Url.RouteUrl(RouteNames.Onboarding.RegionalNetwork, new { employerAccountId }),
                 EmployerAccountId = employerAccountId,
                 ActiveApprenticesCount = apiResponse.NumberOfActiveApprentices,
                 Sectors = apiResponse.Sectors,

@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Security.Policy;
 using AutoFixture.NUnit3;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authentication;
@@ -10,6 +11,7 @@ using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Extensions;
+using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 using SFA.DAS.Encoding;
@@ -26,8 +28,11 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.ConfirmDetai
             [Greedy] ConfirmDetailsController controller,
             string employerAccountId,
             int accountId,
+            string backLink,
             GetConfirmDetailsApiResponse apiResponse)
         {
+            // Arrange
+
             var authServiceMock = new Mock<IAuthenticationService>();
             authServiceMock
                 .Setup(_ => _.SignInAsync(It.IsAny<HttpContext>(), It.IsAny<string>(), It.IsAny<ClaimsPrincipal>(), It.IsAny<AuthenticationProperties>())).Returns(Task.CompletedTask);
@@ -37,7 +42,6 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.ConfirmDetai
                 .Setup(_ => _.GetService(typeof(IAuthenticationService)))
                 .Returns(authServiceMock.Object);
 
-            // Register ITempDataDictionaryFactory
             var tempDataDictionaryFactoryMock = new Mock<ITempDataDictionaryFactory>();
             serviceProviderMock
                 .Setup(_ => _.GetService(typeof(ITempDataDictionaryFactory)))
@@ -47,9 +51,10 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.ConfirmDetai
             var account = user.GetEmployerAccount(employerAccountId);
             controller.ControllerContext = new() { HttpContext = new DefaultHttpContext() { User = user, RequestServices = serviceProviderMock.Object } };
 
-            // Arrange
             mockEncodingService.Setup(x => x.Decode(employerAccountId.ToUpper(), EncodingType.AccountId)).Returns(accountId);
             mockApiClient.Setup(x => x.GetOnboardingConfirmDetails(accountId)).ReturnsAsync(apiResponse);
+
+            controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.RegionalNetwork, backLink);
 
             // Act
             var result = await controller.Index(employerAccountId) as ViewResult;
@@ -61,7 +66,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.ConfirmDetai
             var expectedResult = new
             {
                 EmployerAccountId = employerAccountId,
-                BackLink = "",
+                BackLink = backLink,
                 FullName = user.GetUserDisplayName(),
                 EmailAddress = user.GetEmail(),
                 account.EmployerName,
