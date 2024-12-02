@@ -6,8 +6,6 @@ using SFA.DAS.Aan.SharedUi.Infrastructure;
 using SFA.DAS.Aan.SharedUi.Models;
 using SFA.DAS.Aan.SharedUi.Models.NetworkEvents;
 using SFA.DAS.Aan.SharedUi.Services;
-using SFA.DAS.ApprenticeAan.Web.Models.NetworkEvents;
-using SFA.DAS.ApprenticeAan.Web.Services;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Authentication;
@@ -32,25 +30,24 @@ public class NetworkEventsController : Controller
     [HttpGet]
     public async Task<IActionResult> Index([FromRoute] string employerAccountId, GetNetworkEventsRequest request, CancellationToken cancellationToken)
     {
-        var memberId = _sessionService.GetMemberId();
-        var calendarEventsTask = _outerApiClient.GetCalendarEvents(memberId, QueryStringParameterBuilder.BuildQueryStringParameters(request), cancellationToken);
-        var calendarTask = _outerApiClient.GetCalendars(cancellationToken);
-        var regionTask = _outerApiClient.GetRegions(cancellationToken);
+        var calendarEvents = await _outerApiClient.GetCalendarEvents(_sessionService.GetMemberId(), QueryStringParameterBuilder.BuildQueryStringParameters(request), cancellationToken);
 
-        List<Task> tasks = [calendarEventsTask, calendarTask, regionTask];
+        var calendars = calendarEvents.Calendars;
+        var regions = calendarEvents.Regions;
 
-        await Task.WhenAll(tasks);
+        var regionOrdering = (regions.Any()) ? regions.Select(region => region.Ordering).Max() + 1 : 1;
 
-        var calendars = calendarTask.Result;
-        var regions = regionTask.Result.Regions;
-        regions.Add(new Region { Area = "National", Id = 0, Ordering = regions.Select(region => region.Ordering).Max() + 1 });
+        regions.Add(new Region { Area = "National", Id = 0, Ordering = regionOrdering });
 
-        var model = InitialiseViewModel(employerAccountId, calendarEventsTask.Result);
-
+        var model = InitialiseViewModel(employerAccountId,calendarEvents);
         var filterUrl = FilterBuilder.BuildFullQueryString(request, () => Url.RouteUrl(SharedRouteNames.NetworkEvents)!);
-        model.PaginationViewModel = SetupPagination(calendarEventsTask.Result, filterUrl);
+        model.PaginationViewModel = SetupPagination(calendarEvents, filterUrl);
+
         var filterChoices = PopulateFilterChoices(request, calendars, regions);
         model.FilterChoices = filterChoices;
+        model.OrderBy = request.OrderBy;
+        model.IsInvalidLocation = calendarEvents.IsInvalidLocation;
+        model.SearchedLocation = (request.Location != null) ? request.Location : string.Empty;
         model.SelectedFiltersModel.SelectedFilters = FilterBuilder.Build(request, () => Url.RouteUrl(SharedRouteNames.NetworkEvents)!, filterChoices.EventFormatChecklistDetails.Lookups, filterChoices.EventTypeChecklistDetails.Lookups, filterChoices.RegionChecklistDetails.Lookups);
         model.SelectedFiltersModel.ClearSelectedFiltersLink = Url.RouteUrl(SharedRouteNames.NetworkEvents)!;
         return View(model);
@@ -84,6 +81,8 @@ public class NetworkEventsController : Controller
         => new()
         {
             Keyword = request.Keyword?.Trim(),
+            Location = request.Location ?? "",
+            Radius = request.Radius ?? 5,
             FromDate = request.FromDate,
             ToDate = request.ToDate,
             EventFormatChecklistDetails = new ChecklistDetails
