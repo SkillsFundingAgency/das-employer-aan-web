@@ -10,9 +10,7 @@ using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
 {
     [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
-    [Route("accounts/{employerAccountId}/onboarding/receive-notifications",
-        Name = RouteNames.Onboarding.ReceiveNotifications)]
-
+    [Route("accounts/{employerAccountId}/onboarding/receive-notifications", Name = RouteNames.Onboarding.ReceiveNotifications)]
     public class ReceiveNotificationsController(
         IValidator<ReceiveNotificationsSubmitModel> validator,
         ISessionService sessionService) : Controller
