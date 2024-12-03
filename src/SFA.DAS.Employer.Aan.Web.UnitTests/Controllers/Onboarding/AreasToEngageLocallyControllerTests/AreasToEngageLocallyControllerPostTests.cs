@@ -37,8 +37,8 @@ public class AreasToEngageLocallyControllerPostTests
         sessionServiceMock.Verify(s => s.Set(It.Is<OnboardingSessionModel>(m => m.Regions.Find(x => x.Id == submitmodel.SelectedAreaToEngageLocallyId)!.IsConfirmed)));
     }
 
-    [MoqInlineAutoData(false, RouteNames.Onboarding.JoinTheNetwork)]
-    [MoqInlineAutoData(true, RouteNames.Onboarding.CheckYourAnswers)]
+    [MoqInlineAutoData(false, RouteNames.Onboarding.RegionalNetwork)]
+    [MoqInlineAutoData(true, RouteNames.Onboarding.RegionalNetwork)]
     public void Post_RedirectsTo_CorrectRoute(
         bool hasSeenPreview,
         string navigateRoute,

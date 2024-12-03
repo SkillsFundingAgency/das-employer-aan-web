@@ -28,8 +28,10 @@ public static class RouteNames
         public const string PreviousEngagement = nameof(PreviousEngagement);
         public const string JoinTheNetwork = nameof(JoinTheNetwork);
         public const string CheckYourAnswers = nameof(CheckYourAnswers);
+        public const string ConfirmDetails = nameof(ConfirmDetails);
         public const string AreasToEngageLocally = nameof(AreasToEngageLocally);
         public const string PrimaryEngagementWithinNetwork = nameof(PrimaryEngagementWithinNetwork);
+        public const string RegionalNetwork = nameof(RegionalNetwork);
         public const string ReceiveNotifications = nameof(ReceiveNotifications);
     }
 

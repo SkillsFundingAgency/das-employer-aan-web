@@ -70,8 +70,8 @@ public class PrimaryEngagementWithinNetworkControllerPostTests
         sut.ModelState.IsValid.Should().BeTrue();
     }
 
-    [MoqInlineAutoData(false, true, RouteNames.Onboarding.JoinTheNetwork)]
-    [MoqInlineAutoData(true, true, RouteNames.Onboarding.CheckYourAnswers)]
+    [MoqInlineAutoData(false, true, RouteNames.Onboarding.RegionalNetwork)]
+    [MoqInlineAutoData(true, true, RouteNames.Onboarding.RegionalNetwork)]
     [MoqInlineAutoData(true, false, RouteNames.Onboarding.AreasToEngageLocally)]
     [MoqInlineAutoData(false, false, RouteNames.Onboarding.AreasToEngageLocally)]
     public void Post_RedirectsTo_CorrectRoute(
