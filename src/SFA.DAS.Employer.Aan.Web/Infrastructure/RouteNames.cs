@@ -30,7 +30,7 @@ public static class RouteNames
         public const string CheckYourAnswers = nameof(CheckYourAnswers);
         public const string AreasToEngageLocally = nameof(AreasToEngageLocally);
         public const string PrimaryEngagementWithinNetwork = nameof(PrimaryEngagementWithinNetwork);
-
+        public const string ReceiveNotifications = nameof(ReceiveNotifications);
     }
 
     public static class AttendanceConfirmations
