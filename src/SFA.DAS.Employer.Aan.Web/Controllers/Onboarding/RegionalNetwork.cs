@@ -34,11 +34,9 @@ public class RegionalNetworkController : Controller
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
 
-        // TODO: Once EC-825 has been completed, update the RedirectToRoute
-
         return sessionModel.HasSeenPreview
             ? RedirectToRoute(@RouteNames.Onboarding.CheckYourAnswers, new { submitModel.EmployerAccountId })!
-            : RedirectToRoute(RouteNames.Onboarding.JoinTheNetwork, new { submitModel.EmployerAccountId });
+            : RedirectToRoute(RouteNames.Onboarding.ConfirmDetails, new { submitModel.EmployerAccountId });
     }
 
     private RegionalNetworkViewModel GetViewModel(OnboardingSessionModel sessionModel, string employerAccountId)
