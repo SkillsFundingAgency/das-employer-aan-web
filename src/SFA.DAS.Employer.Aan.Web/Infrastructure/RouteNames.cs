@@ -32,6 +32,8 @@ public static class RouteNames
         public const string AreasToEngageLocally = nameof(AreasToEngageLocally);
         public const string PrimaryEngagementWithinNetwork = nameof(PrimaryEngagementWithinNetwork);
         public const string RegionalNetwork = nameof(RegionalNetwork);
+        public const string ReceiveNotifications = nameof(ReceiveNotifications);
+        public const string SelectNotificationEvents = nameof(SelectNotificationEvents);
     }
 
     public static class AttendanceConfirmations

@@ -65,7 +65,7 @@ public class JoinTheNetworkController : Controller
 
         return sessionModel.HasSeenPreview
             ? RedirectToRoute(@RouteNames.Onboarding.CheckYourAnswers, new { submitModel.EmployerAccountId })!
-            : RedirectToRoute(RouteNames.Onboarding.PreviousEngagement, new { submitModel.EmployerAccountId });
+            : RedirectToRoute(RouteNames.Onboarding.ReceiveNotifications, new { submitModel.EmployerAccountId });
     }
 
     private JoinTheNetworkViewModel GetViewModel(string employerAccountId)
