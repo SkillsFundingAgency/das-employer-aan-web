@@ -1,0 +1,91 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using SFA.DAS.Employer.Aan.Web.Infrastructure
+@model SFA.DAS.Employer.Aan.Web.Models.Onboarding.ConfirmDetailsViewModel
+
+@{
+    ViewData["Title"] = "Create your ambassador profile";
+}
+
+<div class="govuk-grid-row">
+    
+    <form method="post" asp-route="@RouteNames.Onboarding.JoinTheNetwork" novalidate>
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l">Create your ambassador profile</h1>
+            
+            <p class="govuk-body">
+                Your profile will be shown on the AAN online portal. This is where other ambassadors can network with you.
+            </p>
+            
+            <h2 class="govuk-heading-m">Confirm your details</h2>
+            
+            <p class="govuk-inset-text">
+                These details will be displayed on your profile. Your profile is only visible to other ambassadors and DfE.
+            </p>
+            
+            <p class="govuk-body">
+                These details will also be sent to your regional network.
+            </p>
+
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Full name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.FullName
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Email address
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.EmailAddress
+                        <div class="govuk-hint">From your GOV.UK One Login</div>
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Employer's name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.EmployerName
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Number of active apprentices
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.ActiveApprenticesCount
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Apprenticeship sectors
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <ul class="govuk-list govuk-list--bullet">
+                            @{
+                                foreach (var sector in Model.Sectors)
+                                {
+                                    <li>@sector</li>
+                                }
+                            }
+                        </ul>
+                    </dd>
+                </div>
+            </dl>
+
+                <div class="govuk-body">
+                    If these details are incorrect, change them in your apprenticeship service account settings.
+                </div>
+                <div class="govuk-button-group">
+                    <button id="continue-button" type="submit" class="govuk-button" data-module="govuk-button" data-disable-on-submit="true" asp-page-handler="Submit">
+                        Confirm and continue
+                    </button>
+                </div>
+            </div>
+        
+    </form>
+</div>
