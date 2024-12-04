@@ -5,6 +5,7 @@ public class OnboardingSessionModel
     public EmployerDetailsModel EmployerDetails { get; set; } = new();
     public bool HasSeenPreview { get; set; }
     public List<ProfileModel> ProfileData { get; set; } = [];
+    public List<EventTypeModel>? EventTypes { get; set; }
     public bool HasAcceptedTerms { get; set; } = false;
     public bool IsValid => HasAcceptedTerms && ProfileData.Count > 0;
     public List<RegionModel> Regions { get; set; } = [];
