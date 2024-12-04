@@ -3,7 +3,8 @@
 public class NotificationsLocationsViewModel : NotificationsLocationsSubmitModel, IBackLink
 {
     public string BackLink { get; set; } = null!;
-    public string Title { get; set; } = "Notifications Location";
+    public string Title { get; set; } = "";
+    public string IntroText { get; set; } = "";
 }
 
 public class NotificationsLocationsSubmitModel : ViewModelBase

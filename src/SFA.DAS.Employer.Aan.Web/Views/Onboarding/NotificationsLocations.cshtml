@@ -10,15 +10,20 @@
             @Html.HiddenFor(m => m.EmployerAccountId)
             <fieldset class="govuk-fieldset">
                 
-                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                        <h1 class="govuk-heading-l">
-                            @Model.Title
-                        </h1>
-                    </legend>
-                    
-                    <p class="govuk-hint">
-                        
-                    </p>
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                    <span class="govuk-caption-l govuk-!-margin-bottom-0">Emails about upcoming events</span>
+                    <h1 class="govuk-heading-l">
+                        @Model.Title
+                    </h1>
+                </legend>
+                
+                <p class="govuk-body">
+                    @Model.IntroText
+                </p>
+                
+                <p class="govuk-body">
+                    You can add multiple locations. For example, if you have offices in more than one city.
+                </p>
 
             </fieldset>
             <div class="govuk-button-group">
