@@ -16,7 +16,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 [Route("accounts/{employerAccountId}/onboarding/select-notifications", Name = RouteNames.Onboarding.SelectNotificationEvents)]
 public class SelectNotificationsController : Controller
 {
-    public const string ViewPath = "~/Views/Onboarding/EventTypes.cshtml";
+    public const string ViewPath = "~/Views/Onboarding/SelectNotifications.cshtml";
     private readonly ISessionService _sessionService;
     private readonly IValidator<SelectNotificationsSubmitModel> _validator;
 
