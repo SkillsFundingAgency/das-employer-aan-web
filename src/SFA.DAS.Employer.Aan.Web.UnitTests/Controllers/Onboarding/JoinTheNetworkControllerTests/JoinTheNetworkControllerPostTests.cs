@@ -91,7 +91,7 @@ public class JoinTheNetworkControllerPostTests
         sessionServiceMock.Verify(s => s.Set(It.Is<OnboardingSessionModel>(m => m.GetProfileValue(2) == null)));
     }
 
-    [MoqInlineAutoData(false, RouteNames.Onboarding.PreviousEngagement)]
+    [MoqInlineAutoData(false, RouteNames.Onboarding.ReceiveNotifications)]
     [MoqInlineAutoData(true, RouteNames.Onboarding.CheckYourAnswers)]
     public void Post_RedirectsTo_CorrectRoute(
         bool hasSeenPreview,
