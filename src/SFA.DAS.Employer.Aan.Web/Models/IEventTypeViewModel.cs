@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Employer.Aan.Web.Models.Onboarding;
+﻿namespace SFA.DAS.Employer.Aan.Web.Models;
 
 public interface IEventTypeViewModel
 {

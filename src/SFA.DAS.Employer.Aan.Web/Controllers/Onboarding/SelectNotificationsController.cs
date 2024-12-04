@@ -13,16 +13,16 @@ using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
-[Route("accounts/{employerAccountId}/onboarding/event-types", Name = RouteNames.Onboarding.EventTypes)]
-public class EventTypesController : Controller
+[Route("accounts/{employerAccountId}/onboarding/select-notifications", Name = RouteNames.Onboarding.SelectNotificationEvents)]
+public class SelectNotificationsController : Controller
 {
     public const string ViewPath = "~/Views/Onboarding/EventTypes.cshtml";
     private readonly ISessionService _sessionService;
-    private readonly IValidator<EventTypesSubmitModel> _validator;
+    private readonly IValidator<SelectNotificationsSubmitModel> _validator;
 
-    public EventTypesController(
+    public SelectNotificationsController(
         ISessionService sessionService,
-        IValidator<EventTypesSubmitModel> validator)
+        IValidator<SelectNotificationsSubmitModel> validator)
     {
         _sessionService = sessionService;
         _validator = validator;
@@ -38,7 +38,7 @@ public class EventTypesController : Controller
     }
 
     [HttpPost]
-    public IActionResult Post(EventTypesSubmitModel submitModel, CancellationToken cancellationToken)
+    public IActionResult Post(SelectNotificationsSubmitModel submitModel, CancellationToken cancellationToken)
     {
         ValidationResult result = _validator.Validate(submitModel);
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
@@ -51,6 +51,13 @@ public class EventTypesController : Controller
             return View(ViewPath, model);
         }
 
+        //For Javascript disabled browser.Deselect other event types if 'All' is selected
+
+        if (submitModel.EventTypes.Any(e => e.EventType == EventType.All && e.IsSelected))
+        {
+            submitModel.EventTypes.ForEach(e => e.IsSelected = e.EventType == EventType.All);
+        }
+
         sessionModel.EventTypes = submitModel.EventTypes;
 
         _sessionService.Set(sessionModel);
@@ -60,24 +67,25 @@ public class EventTypesController : Controller
 
     private IActionResult RedirectAccordingly(List<EventTypeModel> eventTypes, bool hasSeenPreview, string employerAccountId)
     {
+        // TODO: Once EC-809 has been completed, update the RedirectToRoute
         return eventTypes.Any(e => e.IsSelected &&
                                    (e.EventType == EventType.Hybrid || e.EventType == EventType.InPerson || e.EventType == EventType.All))
             ? RedirectToRoute(RouteNames.Onboarding.PreviousEngagement, new { employerAccountId })
             : RedirectToRoute(RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId });
     }
 
-    private EventTypesViewModel GetViewModel(OnboardingSessionModel sessionModel, string employerAccountId)
+    private SelectNotificationsViewModel GetViewModel(OnboardingSessionModel sessionModel, string employerAccountId)
     {
         if (sessionModel.EventTypes == null || !sessionModel.EventTypes.Any())
         {
             sessionModel.EventTypes = InitializeDefaultEventTypes();
         }
 
-        return new EventTypesViewModel
+        return new SelectNotificationsViewModel
         {
             BackLink = sessionModel.HasSeenPreview
                 ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId })!
-                : Url.RouteUrl(@RouteNames.Onboarding.JoinTheNetwork, new { employerAccountId })!,
+                : Url.RouteUrl(@RouteNames.Onboarding.ReceiveNotifications, new { employerAccountId })!,
             EventTypes = sessionModel.EventTypes.OrderBy(e => e.Ordering).ToList()
         };
     }
