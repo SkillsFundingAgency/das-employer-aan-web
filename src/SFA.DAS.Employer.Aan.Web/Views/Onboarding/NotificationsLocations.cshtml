@@ -24,6 +24,35 @@
                 <p class="govuk-body">
                     You can add multiple locations. For example, if you have offices in more than one city.
                 </p>
+                
+                @if (Model.SubmittedLocations.Any())
+                {
+                    <ul class="govuk-list govuk-list--bullet">
+                    @foreach (var location in Model.SubmittedLocations)
+                    {
+                        <li>@location</li>
+                    }
+                    </ul>
+                }
+
+                <div class="govuk-form-group">
+                    <label class="govuk-body" for="location">
+                        City, town or postcode
+                    </label>
+                    <input class="govuk-input location-search-autocomplete" id="location" name="location" type="text" value="@Model.Location">
+                </div>
+                <div class="govuk-form-group">
+                    <label class="govuk-body" for="Radius">
+                        Within this distance
+                    </label>
+                    <br/>
+
+                    <select class="govuk-select" asp-for="Radius" asp-items="Model.RadiusOptions"></select>
+                </div>
+
+                <div class="govuk-form-group">
+                    <input class="govuk-button" value="Add location" type="submit"/>
+                </div>
 
             </fieldset>
             <div class="govuk-button-group">

@@ -21,10 +21,28 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
             _sessionService = sessionService;
         }
 
+        [HttpGet]
         public IActionResult Get(string employerAccountId)
         {
             var sessionModel = _sessionService.Get<OnboardingSessionModel>();
             var viewModel = GetViewModel(sessionModel, employerAccountId);
+            return View(ViewPath, viewModel);
+        }
+
+        [HttpPost]
+        public IActionResult Post(NotificationsLocationsSubmitModel submitModel)
+        {
+            var sessionModel = _sessionService.Get<OnboardingSessionModel>();
+
+            sessionModel.NotificationLocations.Add(new NotificationLocation
+            {
+                LocationName = submitModel.Location,
+                Radius = submitModel.Radius
+            });
+
+            _sessionService.Set(sessionModel);
+
+            var viewModel = GetViewModel(sessionModel, submitModel.EmployerAccountId);
             return View(ViewPath, viewModel);
         }
 
@@ -38,6 +56,10 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
             result.BackLink = sessionModel.HasSeenPreview
                 ? Url.RouteUrl(RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId})
                 : Url.RouteUrl(RouteNames.Onboarding.SelectNotificationEvents, new { employerAccountId });
+
+            result.SubmittedLocations = sessionModel.NotificationLocations
+                .Select(l => $"{l.LocationName}, within {l.Radius} miles").ToList();
+
             return result;
         }
 

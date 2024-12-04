@@ -14,6 +14,8 @@ public class OnboardingSessionModel
     public string? GetProfileValue(int id) => ProfileData.Single(p => p.Id == id)?.Value;
     public void SetProfileValue(int id, string value) => ProfileData.Single(p => p.Id == id).Value = value;
     public void ClearProfileValue(int id) => ProfileData.Single(p => p.Id == id).Value = null;
+
+    public List<NotificationLocation> NotificationLocations { get; set; } = [];
 }
 
 public class EmployerDetailsModel
@@ -22,4 +24,10 @@ public class EmployerDetailsModel
     public IEnumerable<string> Sectors { get; set; } = Enumerable.Empty<string>();
     public string OrganisationName { get; set; } = null!;
     public long AccountId { get; set; }
+}
+
+public class NotificationLocation
+{
+    public string LocationName { get; set; }
+    public int Radius { get; set; }
 }
