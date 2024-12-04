@@ -10,6 +10,7 @@ public class OnboardingSessionModel
     public bool IsValid => HasAcceptedTerms && ProfileData.Count > 0;
     public List<RegionModel> Regions { get; set; } = [];
     public bool? IsMultiRegionalOrganisation { get; set; }
+    public bool? ReceiveNotifications { get; set; }
     public string? GetProfileValue(int id) => ProfileData.Single(p => p.Id == id)?.Value;
     public void SetProfileValue(int id, string value) => ProfileData.Single(p => p.Id == id).Value = value;
     public void ClearProfileValue(int id) => ProfileData.Single(p => p.Id == id).Value = null;
