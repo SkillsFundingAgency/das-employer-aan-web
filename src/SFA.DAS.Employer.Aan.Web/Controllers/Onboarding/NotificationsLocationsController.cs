@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
+using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
 {
@@ -10,9 +11,12 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
     [Route("accounts/{employerAccountId}/onboarding/notifications-locations", Name = RouteNames.Onboarding.NotificationsLocations)]
     public class NotificationsLocationsController : Controller
     {
+        public const string ViewPath = "~/Views/Onboarding/NotificationsLocations.cshtml";
+
         public IActionResult Index()
         {
-            return View();
+            var viewModel = new NotificationsLocationsViewModel();
+            return View(ViewPath, viewModel);
         }
     }
 }

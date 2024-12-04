@@ -1,0 +1,31 @@
+﻿@using SFA.DAS.Employer.Aan.Web.Models.Onboarding
+@model NotificationsLocationsViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <partial name="_validationSummary" />
+        <form method="post">
+            @Html.HiddenFor(m => m.EmployerAccountId)
+            <fieldset class="govuk-fieldset">
+                
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                        <h1 class="govuk-heading-l">
+                            @Model.Title
+                        </h1>
+                    </legend>
+                    
+                    <p class="govuk-hint">
+                        
+                    </p>
+
+            </fieldset>
+            <div class="govuk-button-group">
+                <button id="continue" type="submit" class="govuk-button" data-module="govuk-button" data-disable-on-submit="true">
+                    Continue
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
