@@ -35,8 +35,7 @@ public class SelectNotificationsLocationController : Controller
     {
         // TODO: Once EC-811 has been completed, include radius in the location search if required
 
-        var sessionModel = _sessionService.Get<OnboardingSessionModel>();
-        var model = await GetViewModel(sessionModel, searchTerm, employerAccountId, cancellationToken);
+        var model = await GetViewModel(searchTerm, employerAccountId, cancellationToken);
         model.EmployerAccountId = employerAccountId;
         model.SearchTerm = searchTerm;
         return View(ViewPath, model);
@@ -51,7 +50,7 @@ public class SelectNotificationsLocationController : Controller
 
         if (!result.IsValid)
         {
-            var model = await GetViewModel(sessionModel, submitModel.SearchTerm, submitModel.EmployerAccountId, cancellationToken);
+            var model = await GetViewModel(submitModel.SearchTerm, submitModel.EmployerAccountId, cancellationToken);
             model.EmployerAccountId = submitModel.EmployerAccountId;
             result.AddToModelState(ModelState);
             return View(ViewPath, model);
@@ -68,7 +67,7 @@ public class SelectNotificationsLocationController : Controller
         return RedirectToRoute(RouteNames.Onboarding.ConfirmDetails, new { submitModel.EmployerAccountId });
     }
 
-    private async Task<SelectNotificationsLocationViewModel> GetViewModel(OnboardingSessionModel sessionModel, string searchTeam, string employerAccountId, CancellationToken cancellationToken)
+    private async Task<SelectNotificationsLocationViewModel> GetViewModel(string searchTeam, string employerAccountId, CancellationToken cancellationToken)
     {
         // TODO: Once EC-811 has been completed, change the back link
 
@@ -76,7 +75,7 @@ public class SelectNotificationsLocationController : Controller
 
         return new SelectNotificationsLocationViewModel
         {
-            BackLink = sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId })! : Url.RouteUrl(@RouteNames.Onboarding.TermsAndConditions, new { employerAccountId })!,
+            BackLink = Url.RouteUrl(@RouteNames.Onboarding.TermsAndConditions, new { employerAccountId })!,
             Title = $"We found more than one location that matches '{searchTeam}'",
             Locations = result.Locations
                 .Select(x => (LocationModel)x)
