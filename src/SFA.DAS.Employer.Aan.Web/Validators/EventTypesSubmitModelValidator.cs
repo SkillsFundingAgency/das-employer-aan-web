@@ -5,7 +5,7 @@ namespace SFA.DAS.Employer.Aan.Web.Validators;
 
 public class EventTypesSubmitModelValidator : AbstractValidator<SelectNotificationsSubmitModel>
 {
-    public const string NoSelectionErrorMessage = "select which types of events you want to be notified about";
+    public const string NoSelectionErrorMessage = "Select which types of events you want to be notified about";
 
     public EventTypesSubmitModelValidator()
     {
