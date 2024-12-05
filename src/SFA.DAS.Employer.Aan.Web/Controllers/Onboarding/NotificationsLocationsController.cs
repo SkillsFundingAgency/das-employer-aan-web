@@ -51,7 +51,9 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
             var result = new NotificationsLocationsViewModel();
             var eventTypeDescription = GetEventTypeDescription(sessionModel.EventTypes);
 
-            result.Title = $"Add locations for {eventTypeDescription}";
+            result.Title = sessionModel.NotificationLocations.Any()
+                ? $"Notifications for {eventTypeDescription}"
+                : $"Add locations for {eventTypeDescription}";
             result.IntroText = $"Tell us where you want to hear about upcoming {eventTypeDescription}.";
             result.BackLink = sessionModel.HasSeenPreview
                 ? Url.RouteUrl(RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId})
