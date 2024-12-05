@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
+using SFA.DAS.Employer.Aan.Web.Authentication;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers;
 
-[Authorize]
+[Authorize(Policy = nameof(PolicyNames.IsAuthenticated))]
 public class LocationsController : Controller
 {
     private readonly IOuterApiClient _outerApiClient;
