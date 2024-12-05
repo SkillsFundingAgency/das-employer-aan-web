@@ -9,12 +9,14 @@ public class NotificationsLocationsViewModel : NotificationsLocationsSubmitModel
     public string IntroText { get; set; } = "";
 
     public List<string> SubmittedLocations { get; set; } = [];
+    public string UnrecognisedLocation { get; set; } = "";
 }
 
 public class NotificationsLocationsSubmitModel : ViewModelBase
 {
-    public string Location { get; set; }
+    public string Location { get; set; } = "";
     public int Radius { get; set; } = 5;
+    public SubmitButtonOption SubmitButton { get; set; } = SubmitButtonOption.Add;
 
     public List<SelectListItem> RadiusOptions =>
     [
@@ -26,5 +28,10 @@ public class NotificationsLocationsSubmitModel : ViewModelBase
         new SelectListItem("100 miles", "100"),
         new SelectListItem("Across England", "0")
     ];
+
+    public enum SubmitButtonOption
+    {
+        Add, Continue
+    }
 
 }

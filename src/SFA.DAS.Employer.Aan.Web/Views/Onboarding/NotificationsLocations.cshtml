@@ -28,38 +28,59 @@
                 @if (Model.SubmittedLocations.Any())
                 {
                     <ul class="govuk-list govuk-list--bullet">
-                    @foreach (var location in Model.SubmittedLocations)
-                    {
-                        <li>@location</li>
-                    }
+                        @foreach (var location in Model.SubmittedLocations)
+                        {
+                            <li>@location</li>
+                        }
                     </ul>
                 }
+                
+                <div esfa-validation-marker-for="Location">
+                    <h2 class="govuk-heading-m">Add a location</h2>
+                    
+                    <p class="govuk-body">
+                        <label class="govuk-body" for="Location">
+                            City, town or postcode
+                            
+                        </label>
+                    </p>
+
+                    <div class="govuk-form-group">
+                        
+                        <span asp-validation-for="@Model.Location" class="govuk-error-message"></span>
+
+                        @if (!string.IsNullOrWhiteSpace(Model.UnrecognisedLocation))
+                        {
+                            <ul class="govuk-list govuk-list--bullet">
+                                <li>We do not recognise @Model.UnrecognisedLocation.</li>
+                                <li>Check the location you've entered or enter a different location that's nearby</li>
+                            </ul>
+                        }
+                        <input class="govuk-input location-search-autocomplete" asp-for="Location" type="text">
+                    </div>
+                    <div class="govuk-form-group">
+                        <label class="govuk-body" for="Radius">
+                            Within this distance
+                        </label>
+                        <br/>
+
+                        <select class="govuk-select" asp-for="Radius" asp-items="Model.RadiusOptions"></select>
+                    </div>
+
+                </div>
 
                 <div class="govuk-form-group">
-                    <label class="govuk-body" for="location">
-                        City, town or postcode
-                    </label>
-                    <input class="govuk-input location-search-autocomplete" id="location" name="location" type="text" value="@Model.Location">
+                    <button id="add" type="submit" name="SubmitButton" value="@NotificationsLocationsSubmitModel.SubmitButtonOption.Add" class="govuk-button govuk-button--secondary">Add location</button>
                 </div>
-                <div class="govuk-form-group">
-                    <label class="govuk-body" for="Radius">
-                        Within this distance
-                    </label>
-                    <br/>
-
-                    <select class="govuk-select" asp-for="Radius" asp-items="Model.RadiusOptions"></select>
+                
+                <div class="govuk-button-group">
+                    
+                    <button id="continue" type="submit" name="SubmitButton" value="@NotificationsLocationsSubmitModel.SubmitButtonOption.Continue" class="govuk-button-fix">Continue</button>
                 </div>
-
-                <div class="govuk-form-group">
-                    <input class="govuk-button" value="Add location" type="submit"/>
-                </div>
-
+                
             </fieldset>
-            <div class="govuk-button-group">
-                <button id="continue" type="submit" class="govuk-button" data-module="govuk-button" data-disable-on-submit="true">
-                    Continue
-                </button>
-            </div>
+            
         </form>
+        
     </div>
 </div>

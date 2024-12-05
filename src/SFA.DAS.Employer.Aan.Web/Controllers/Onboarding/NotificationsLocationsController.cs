@@ -6,6 +6,7 @@ using SFA.DAS.Employer.Aan.Web.Constant;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
+using static SFA.DAS.Employer.Aan.Web.Models.Onboarding.NotificationsLocationsSubmitModel;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
 {
@@ -14,11 +15,13 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
     public class NotificationsLocationsController : Controller
     {
         private readonly ISessionService _sessionService;
+        private readonly IOuterApiClient _apiClient;
         public const string ViewPath = "~/Views/Onboarding/NotificationsLocations.cshtml";
 
-        public NotificationsLocationsController(ISessionService sessionService)
+        public NotificationsLocationsController(ISessionService sessionService, IOuterApiClient apiClient)
         {
             _sessionService = sessionService;
+            _apiClient = apiClient;
         }
 
         [HttpGet]
@@ -30,20 +33,53 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
         }
 
         [HttpPost]
-        public IActionResult Post(NotificationsLocationsSubmitModel submitModel)
+        public async Task<IActionResult> Post(NotificationsLocationsSubmitModel submitModel)
         {
             var sessionModel = _sessionService.Get<OnboardingSessionModel>();
 
+            //todo: handle this with a fluent validator
+            if (submitModel.SubmitButton == SubmitButtonOption.Continue)
+            {
+                if (string.IsNullOrWhiteSpace(submitModel.Location) && sessionModel.NotificationLocations.Any())
+                {
+                    return new RedirectToRouteResult(RouteNames.Onboarding.PreviousEngagement,
+                        new { submitModel.EmployerAccountId });
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(submitModel.Location))
+            {
+                ModelState.AddModelError("Location", "Add a location to receive notifications");
+                var viewModel = GetViewModel(sessionModel, submitModel.EmployerAccountId);
+                viewModel.UnrecognisedLocation = string.Empty;
+                return View(ViewPath, viewModel);
+            }
+
+            var apiResponse = await
+                _apiClient.GetOnboardingNotificationsLocations(sessionModel.EmployerDetails.AccountId, submitModel.Location);
+
+            if (apiResponse.Locations.Count > 1)
+            {
+                return new RedirectToRouteResult(RouteNames.Onboarding.NotificationLocationDisambiguation);
+            }
+
+            if (apiResponse.Locations.Count == 0)
+            {
+                ModelState.AddModelError("Location", "We cannot find the location you entered");
+                var viewModel = GetViewModel(sessionModel, submitModel.EmployerAccountId);
+                viewModel.UnrecognisedLocation = submitModel.Location;
+                return View(ViewPath, viewModel);
+            }
+            
             sessionModel.NotificationLocations.Add(new NotificationLocation
             {
-                LocationName = submitModel.Location,
+                LocationName = apiResponse.Locations.First().Name,
                 Radius = submitModel.Radius
             });
 
             _sessionService.Set(sessionModel);
 
-            var viewModel = GetViewModel(sessionModel, submitModel.EmployerAccountId);
-            return View(ViewPath, viewModel);
+            return RedirectToRoute(RouteNames.Onboarding.NotificationsLocations, new { submitModel.EmployerAccountId });
         }
 
         private NotificationsLocationsViewModel GetViewModel(OnboardingSessionModel sessionModel, string employerAccountId)
