@@ -5,6 +5,7 @@ using SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using AutoFixture;
 using FluentAssertions;
+using FluentValidation;
 using SFA.DAS.Employer.Aan.Web.Constant;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
@@ -31,7 +32,8 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
 
             var mockSessionService = new Mock<ISessionService>();
             var mockApiClient = new Mock<IOuterApiClient>();
-            var controller = new NotificationsLocationsController(mockSessionService.Object, mockApiClient.Object);
+            var mockValidator = new Mock<IValidator<NotificationsLocationsSubmitModel>>();
+            var controller = new NotificationsLocationsController(mockSessionService.Object, mockApiClient.Object, mockValidator.Object);
 
             controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.CheckYourAnswers, "");
             controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.SelectNotificationEvents, "");
@@ -63,7 +65,8 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
 
             var mockSessionService = new Mock<ISessionService>();
             var mockApiClient = new Mock<IOuterApiClient>();
-            var controller = new NotificationsLocationsController(mockSessionService.Object, mockApiClient.Object);
+            var mockValidator = new Mock<IValidator<NotificationsLocationsSubmitModel>>();
+            var controller = new NotificationsLocationsController(mockSessionService.Object, mockApiClient.Object, mockValidator.Object);
             controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.CheckYourAnswers, "");
             controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.SelectNotificationEvents, "");
 
@@ -96,7 +99,8 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
 
             var mockSessionService = new Mock<ISessionService>();
             var mockApiClient = new Mock<IOuterApiClient>();
-            var controller = new NotificationsLocationsController(mockSessionService.Object, mockApiClient.Object);
+            var mockValidator = new Mock<IValidator<NotificationsLocationsSubmitModel>>();
+            var controller = new NotificationsLocationsController(mockSessionService.Object, mockApiClient.Object, mockValidator.Object);
             controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.CheckYourAnswers, "");
             controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.SelectNotificationEvents, "");
 

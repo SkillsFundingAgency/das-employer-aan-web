@@ -7,12 +7,15 @@ using SFA.DAS.Employer.Aan.Web.Constant;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
+using SFA.DAS.Validation.Mvc.Filters;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Attributes;
 using static SFA.DAS.Employer.Aan.Web.Models.Onboarding.NotificationsLocationsSubmitModel;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
 {
     [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
     [Route("accounts/{employerAccountId}/onboarding/notifications-locations", Name = RouteNames.Onboarding.NotificationsLocations)]
+    //[AutoValidationAttribute]
     public class NotificationsLocationsController : Controller
     {
         private readonly ISessionService _sessionService;
@@ -28,6 +31,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
         }
 
         [HttpGet]
+        [ValidateModelStateFilter]
         public IActionResult Get(string employerAccountId)
         {
             var sessionModel = _sessionService.Get<OnboardingSessionModel>();
@@ -36,6 +40,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
         }
 
         [HttpPost]
+        [ValidateModelStateFilter]
         public async Task<IActionResult> Post(NotificationsLocationsSubmitModel submitModel)
         {
             var sessionModel = _sessionService.Get<OnboardingSessionModel>();
@@ -52,9 +57,13 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
             var validationResult = await _validator.ValidateAsync(submitModel);
             if (!validationResult.IsValid)
             {
-                var viewModel = GetViewModel(sessionModel, submitModel.EmployerAccountId);
-                viewModel.UnrecognisedLocation = string.Empty;
-                return View(ViewPath, viewModel);
+                foreach (var e in validationResult.Errors)
+                {
+                    ModelState.AddModelError(e.PropertyName, e.ErrorMessage);
+                }
+                
+                return new RedirectToRouteResult(RouteNames.Onboarding.NotificationsLocations,
+                    new { submitModel.EmployerAccountId });
             }
 
             var apiResponse = await
@@ -68,9 +77,8 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
             if (apiResponse.Locations.Count == 0)
             {
                 ModelState.AddModelError("Location", "We cannot find the location you entered");
-                var viewModel = GetViewModel(sessionModel, submitModel.EmployerAccountId);
-                viewModel.UnrecognisedLocation = submitModel.Location;
-                return View(ViewPath, viewModel);
+                return new RedirectToRouteResult(RouteNames.Onboarding.NotificationsLocations,
+                    new { submitModel.EmployerAccountId });
             }
             
             sessionModel.NotificationLocations.Add(new NotificationLocation
@@ -101,6 +109,13 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
                 .Select(l => $"{l.LocationName}, within {l.Radius} miles").ToList();
 
             result.HasSubmittedLocations = sessionModel.NotificationLocations.Any();
+
+            if (ModelState.ContainsKey(nameof(NotificationsLocationsViewModel.Location)) &&
+                ModelState[nameof(NotificationsLocationsViewModel.Location)].Errors.Any())
+            {
+                result.UnrecognisedLocation =
+                    ModelState[nameof(NotificationsLocationsViewModel.Location)].AttemptedValue;
+            }
 
             return result;
         }

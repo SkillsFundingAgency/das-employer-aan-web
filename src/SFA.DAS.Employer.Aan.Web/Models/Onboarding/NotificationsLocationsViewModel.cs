@@ -14,7 +14,7 @@ public class NotificationsLocationsViewModel : NotificationsLocationsSubmitModel
 
 public class NotificationsLocationsSubmitModel : ViewModelBase
 {
-    public string Location { get; set; } = "";
+    public string? Location { get; set; }
     public int Radius { get; set; } = 5;
     public SubmitButtonOption SubmitButton { get; set; }
     public bool HasSubmittedLocations { get; set; }
