@@ -26,7 +26,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
             {
                 BackLink = sessionModel.HasSeenPreview
                     ? Url.RouteUrl(RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId })
-                    : Url.RouteUrl(RouteNames.Onboarding.JoinTheNetwork, new { employerAccountId}),
+                    : Url.RouteUrl(RouteNames.Onboarding.JoinTheNetwork, new { employerAccountId }),
                 ReceiveNotifications = sessionModel.ReceiveNotifications,
                 EmployerAccountId = employerAccountId,
             };
@@ -52,18 +52,23 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
             }
 
             var sessionModel = sessionService.Get<OnboardingSessionModel>();
-            var originalValue = sessionModel.ReceiveNotifications;
-            var newValue = submitModel.ReceiveNotifications!.Value;
 
-            sessionModel.ReceiveNotifications = newValue;
+            sessionModel.ReceiveNotifications = submitModel.ReceiveNotifications!.Value;
+
+            if (sessionModel.ReceiveNotifications == false)
+            {
+                sessionModel.EventTypes = null;
+            }
+
             sessionService.Set(sessionModel);
 
-            var gotoSummary = !newValue || originalValue is true;
-
-            return RedirectToRoute(gotoSummary
+            var route = submitModel.ReceiveNotifications.Value
+                ? RouteNames.Onboarding.SelectNotificationEvents
+                : sessionModel.HasSeenPreview
                     ? RouteNames.Onboarding.CheckYourAnswers
-                    : RouteNames.Onboarding.SelectNotificationEvents,
-                new { submitModel.EmployerAccountId });
+                    : RouteNames.Onboarding.PreviousEngagement;
+
+            return RedirectToRoute(route, new { submitModel.EmployerAccountId });
         }
     }
 }

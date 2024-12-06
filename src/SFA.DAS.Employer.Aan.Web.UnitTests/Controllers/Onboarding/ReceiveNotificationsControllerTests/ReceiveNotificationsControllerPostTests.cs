@@ -38,12 +38,12 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.ReceiveNotif
             mockSessionService.Verify(x => x.Set(It.Is<OnboardingSessionModel>(s => s.ReceiveNotifications == submitModel.ReceiveNotifications)), Times.Once);
         }
 
-        [TestCase(false, null, RouteNames.Onboarding.CheckYourAnswers)]
-        [TestCase(false, false, RouteNames.Onboarding.CheckYourAnswers)]
-        [TestCase(false, true, RouteNames.Onboarding.CheckYourAnswers)]
-        [TestCase(true, null, RouteNames.Onboarding.SelectNotificationEvents)]
-        [TestCase(true, false, RouteNames.Onboarding.SelectNotificationEvents)]
-        [TestCase(true, true, RouteNames.Onboarding.CheckYourAnswers)]
+        [TestCase(false, null, RouteNames.Onboarding.PreviousEngagement)] // ReceiveNotifications is false, HasSeenPreview is null
+        [TestCase(false, false, RouteNames.Onboarding.PreviousEngagement)] // ReceiveNotifications is false, HasSeenPreview is false
+        [TestCase(false, true, RouteNames.Onboarding.CheckYourAnswers)] // ReceiveNotifications is false, HasSeenPreview is true
+        [TestCase(true, null, RouteNames.Onboarding.SelectNotificationEvents)] // ReceiveNotifications is true
+        [TestCase(true, false, RouteNames.Onboarding.SelectNotificationEvents)] // ReceiveNotifications is true
+        [TestCase(true, true, RouteNames.Onboarding.SelectNotificationEvents)] // ReceiveNotifications is true
         public void Post_RedirectsToCorrectRoute(bool newValue, bool? previousValue, string expectedRouteName)
         {
             var validator = new Mock<IValidator<ReceiveNotificationsSubmitModel>>();
@@ -51,7 +51,8 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.ReceiveNotif
 
             var sessionModel = new OnboardingSessionModel
             {
-                ReceiveNotifications = previousValue
+                ReceiveNotifications = previousValue,
+                HasSeenPreview = previousValue == true 
             };
 
             validator.Setup(v => v.Validate(It.IsAny<ReceiveNotificationsSubmitModel>())).Returns(new ValidationResult());

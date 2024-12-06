@@ -58,6 +58,9 @@ public class SelectNotificationsController : Controller
             submitModel.EventTypes.ForEach(e => e.IsSelected = e.EventType == EventType.All);
         }
 
+        // TODO: Once EC-811 has been completed, If only event type 'online' is selected then clear the locations from session
+        //sessionModel.Locations=null 
+
         sessionModel.EventTypes = submitModel.EventTypes;
 
         _sessionService.Set(sessionModel);
@@ -67,11 +70,21 @@ public class SelectNotificationsController : Controller
 
     private IActionResult RedirectAccordingly(List<EventTypeModel> eventTypes, bool hasSeenPreview, string employerAccountId)
     {
-        // TODO: Once EC-809 has been completed, update the RedirectToRoute
-        return eventTypes.Any(e => e.IsSelected &&
-                                   (e.EventType == EventType.Hybrid || e.EventType == EventType.InPerson || e.EventType == EventType.All))
-            ? RedirectToRoute(RouteNames.Onboarding.PreviousEngagement, new { employerAccountId })
-            : RedirectToRoute(RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId });
+        var isOnlyOnlineSelected = eventTypes.Any(e => e.IsSelected && e.EventType == EventType.Online) &&
+                                   eventTypes.All(e => e.EventType == EventType.Online || !e.IsSelected);
+
+        if (hasSeenPreview && isOnlyOnlineSelected)
+        {
+            return RedirectToRoute(RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId });
+        }
+        // TODO: Once EC-811 has been completed, update the RedirectToRoute
+        if (eventTypes.Any(e => e.IsSelected &&
+                                (e.EventType == EventType.Hybrid || e.EventType == EventType.InPerson || e.EventType == EventType.All)))
+        {
+            return RedirectToRoute(RouteNames.Onboarding.PreviousEngagement, new { employerAccountId });
+        }
+
+        return RedirectToRoute(RouteNames.Onboarding.PreviousEngagement, new { employerAccountId });
     }
 
     private SelectNotificationsViewModel GetViewModel(OnboardingSessionModel sessionModel, string employerAccountId)
