@@ -71,7 +71,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
 
             if (apiResponse.Locations.Count > 1)
             {
-                return new RedirectToRouteResult(RouteNames.Onboarding.NotificationLocationDisambiguation);
+                return new RedirectToRouteResult(RouteNames.Onboarding.NotificationLocationDisambiguation, new { submitModel.EmployerAccountId });
             }
 
             if (apiResponse.Locations.Count == 0)
