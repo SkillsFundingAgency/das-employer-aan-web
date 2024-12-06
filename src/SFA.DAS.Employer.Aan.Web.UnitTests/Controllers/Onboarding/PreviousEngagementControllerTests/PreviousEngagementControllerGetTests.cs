@@ -22,19 +22,19 @@ public class PreviousEngagementControllerGetTests
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] PreviousEngagementController sut,
         string employerAccountId,
-        string joinTheNetworkUrl)
+        string receiveNotifications)
     {
         OnboardingSessionModel sessionModel = new()
         {
             HasSeenPreview = false
         };
         sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer, Value = "True" });
-        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.JoinTheNetwork, joinTheNetworkUrl);
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.ReceiveNotifications, receiveNotifications);
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
         var result = sut.Get(employerAccountId);
 
-        result.As<ViewResult>().Model.As<PreviousEngagementViewModel>().BackLink.Should().Be(joinTheNetworkUrl);
+        result.As<ViewResult>().Model.As<PreviousEngagementViewModel>().BackLink.Should().Be(receiveNotifications);
         result.As<ViewResult>().Model.As<ViewModelBase>().EmployerAccountId.Should().Be(employerAccountId);
     }
 
