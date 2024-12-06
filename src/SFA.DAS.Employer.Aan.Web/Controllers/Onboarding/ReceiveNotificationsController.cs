@@ -53,20 +53,20 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
 
             var sessionModel = sessionService.Get<OnboardingSessionModel>();
 
-            sessionModel.ReceiveNotifications = submitModel.ReceiveNotifications!.Value;
+            var originalValue = sessionModel.ReceiveNotifications;
+            var newValue = submitModel.ReceiveNotifications!.Value;
 
-            if (sessionModel.ReceiveNotifications == false)
-            {
-                sessionModel.EventTypes = null;
-            }
-
+            if (!newValue) sessionModel.EventTypes = null;
+            sessionModel.ReceiveNotifications = newValue;
             sessionService.Set(sessionModel);
 
-            var route = submitModel.ReceiveNotifications.Value
-                ? RouteNames.Onboarding.SelectNotificationEvents
-                : sessionModel.HasSeenPreview
-                    ? RouteNames.Onboarding.CheckYourAnswers
-                    : RouteNames.Onboarding.PreviousEngagement;
+            var route = sessionModel.HasSeenPreview && newValue == originalValue
+                ? RouteNames.Onboarding.CheckYourAnswers
+                : newValue
+                    ? RouteNames.Onboarding.SelectNotificationEvents
+                    : sessionModel.HasSeenPreview
+                        ? RouteNames.Onboarding.CheckYourAnswers
+                        : RouteNames.Onboarding.PreviousEngagement;
 
             return RedirectToRoute(route, new { submitModel.EmployerAccountId });
         }

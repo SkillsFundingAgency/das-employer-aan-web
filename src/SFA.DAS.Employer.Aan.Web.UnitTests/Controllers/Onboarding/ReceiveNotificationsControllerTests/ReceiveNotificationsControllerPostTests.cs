@@ -43,7 +43,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.ReceiveNotif
         [TestCase(false, true, RouteNames.Onboarding.CheckYourAnswers)] 
         [TestCase(true, null, RouteNames.Onboarding.SelectNotificationEvents)] 
         [TestCase(true, false, RouteNames.Onboarding.SelectNotificationEvents)] 
-        [TestCase(true, true, RouteNames.Onboarding.SelectNotificationEvents)]
+        [TestCase(true, true, RouteNames.Onboarding.CheckYourAnswers)]
         public void Post_RedirectsToCorrectRoute(bool newValue, bool? previousValue, string expectedRouteName)
         {
             var validator = new Mock<IValidator<ReceiveNotificationsSubmitModel>>();
