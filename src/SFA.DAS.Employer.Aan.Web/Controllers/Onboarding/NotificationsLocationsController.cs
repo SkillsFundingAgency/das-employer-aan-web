@@ -54,6 +54,16 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
                 }
             }
 
+            if (submitModel.SubmitButton.StartsWith(SubmitButtonOption.Delete))
+            {
+                var deleteIndex = Convert.ToInt32(submitModel.SubmitButton.Split("-").Last());
+                sessionModel.NotificationLocations.RemoveAt(deleteIndex);
+                _sessionService.Set(sessionModel);
+
+                return new RedirectToRouteResult(RouteNames.Onboarding.NotificationsLocations,
+                    new { submitModel.EmployerAccountId });
+            }
+
             var validationResult = await _validator.ValidateAsync(submitModel);
             if (!validationResult.IsValid)
             {

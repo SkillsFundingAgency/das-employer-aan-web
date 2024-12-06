@@ -16,7 +16,7 @@ public class NotificationsLocationsSubmitModel : ViewModelBase
 {
     public string? Location { get; set; }
     public int Radius { get; set; } = 5;
-    public SubmitButtonOption SubmitButton { get; set; }
+    public string SubmitButton { get; set; }
     public bool HasSubmittedLocations { get; set; }
 
     public List<SelectListItem> RadiusOptions =>
@@ -30,9 +30,10 @@ public class NotificationsLocationsSubmitModel : ViewModelBase
         new SelectListItem("Across England", "0")
     ];
 
-    public enum SubmitButtonOption
+    public static class SubmitButtonOption
     {
-        Add, Continue
+        public const string Add = "Add";
+        public const string Continue = "Continue";
+        public const string Delete = "Delete";
     }
-
 }

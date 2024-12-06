@@ -134,5 +134,37 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
                     m.NotificationLocations.Any(n => n.LocationName == "Valid Location" && n.Radius == 5))),
                 Times.Once);
         }
+
+        [Test, MoqAutoData]
+        public async Task Post_SubmitButtonDelete_ShouldRemoveLocationAndRedirect(
+            [Frozen] Mock<ISessionService> mockSessionService,
+            NotificationsLocationsSubmitModel submitModel,
+            OnboardingSessionModel sessionModel,
+            [Greedy] NotificationsLocationsController controller)
+        {
+            // Arrange
+            submitModel.SubmitButton = SubmitButtonOption.Delete + "-0";
+            sessionModel.NotificationLocations = new List<NotificationLocation>
+            {
+                new NotificationLocation { LocationName = "Location to be deleted", Radius = 5 },
+                new NotificationLocation { LocationName = "Another Location", Radius = 10 }
+            };
+            mockSessionService.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
+
+            // Act
+            var result = await controller.Post(submitModel);
+
+            // Assert
+            var redirectResult = result as RedirectToRouteResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult!.RouteName.Should().Be(RouteNames.Onboarding.NotificationsLocations);
+            redirectResult.RouteValues["employerAccountId"].Should().Be(submitModel.EmployerAccountId);
+
+            // Verify that the location was removed
+            sessionModel.NotificationLocations.Should().HaveCount(1);
+            sessionModel.NotificationLocations.Should().NotContain(n => n.LocationName == "Location to be deleted");
+            mockSessionService.Verify(s => s.Set(sessionModel), Times.Once);
+        }
+
     }
 }

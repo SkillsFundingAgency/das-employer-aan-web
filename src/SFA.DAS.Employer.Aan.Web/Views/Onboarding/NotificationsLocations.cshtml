@@ -29,9 +29,12 @@
                 @if (Model.SubmittedLocations.Any())
                 {
                     <ul class="govuk-list govuk-list--bullet">
+                        @{ var i = 0;}
                         @foreach (var location in Model.SubmittedLocations)
                         {
                             <li>@location</li>
+                            <button class="govuk-link govuk-link--no-visited-state" type="submit" name="SubmitButton" value="@NotificationsLocationsSubmitModel.SubmitButtonOption.Delete-@i">Delete</button>
+                            i++;
                         }
                     </ul>
                 }
@@ -71,7 +74,7 @@
                 </div>
 
                 <div class="govuk-form-group">
-                    <button id="add" type="submit" name="SubmitButton" value="@NotificationsLocationsSubmitModel.SubmitButtonOption.Add" class="govuk-button govuk-button--secondary">Add location</button>
+                    <button id="add" type="submit" name="SubmitButton" value="@NotificationsLocationsSubmitModel.SubmitButtonOption.Add" class="govuk-button-fix govuk-button--secondary">Add location</button>
                 </div>
                 
                 <div class="govuk-button-group">
