@@ -38,12 +38,12 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.ReceiveNotif
             mockSessionService.Verify(x => x.Set(It.Is<OnboardingSessionModel>(s => s.ReceiveNotifications == submitModel.ReceiveNotifications)), Times.Once);
         }
 
-        [TestCase(false, null, RouteNames.Onboarding.PreviousEngagement)] // ReceiveNotifications is false, HasSeenPreview is null
-        [TestCase(false, false, RouteNames.Onboarding.PreviousEngagement)] // ReceiveNotifications is false, HasSeenPreview is false
-        [TestCase(false, true, RouteNames.Onboarding.CheckYourAnswers)] // ReceiveNotifications is false, HasSeenPreview is true
-        [TestCase(true, null, RouteNames.Onboarding.SelectNotificationEvents)] // ReceiveNotifications is true
-        [TestCase(true, false, RouteNames.Onboarding.SelectNotificationEvents)] // ReceiveNotifications is true
-        [TestCase(true, true, RouteNames.Onboarding.SelectNotificationEvents)] // ReceiveNotifications is true
+        [TestCase(false, null, RouteNames.Onboarding.PreviousEngagement)] 
+        [TestCase(false, false, RouteNames.Onboarding.PreviousEngagement)] 
+        [TestCase(false, true, RouteNames.Onboarding.CheckYourAnswers)] 
+        [TestCase(true, null, RouteNames.Onboarding.SelectNotificationEvents)] 
+        [TestCase(true, false, RouteNames.Onboarding.SelectNotificationEvents)] 
+        [TestCase(true, true, RouteNames.Onboarding.SelectNotificationEvents)]
         public void Post_RedirectsToCorrectRoute(bool newValue, bool? previousValue, string expectedRouteName)
         {
             var validator = new Mock<IValidator<ReceiveNotificationsSubmitModel>>();
