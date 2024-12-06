@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Authentication;
@@ -16,12 +17,14 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
     {
         private readonly ISessionService _sessionService;
         private readonly IOuterApiClient _apiClient;
+        private readonly IValidator<NotificationsLocationsSubmitModel> _validator;
         public const string ViewPath = "~/Views/Onboarding/NotificationsLocations.cshtml";
 
-        public NotificationsLocationsController(ISessionService sessionService, IOuterApiClient apiClient)
+        public NotificationsLocationsController(ISessionService sessionService, IOuterApiClient apiClient, IValidator<NotificationsLocationsSubmitModel> validator)
         {
             _sessionService = sessionService;
             _apiClient = apiClient;
+            _validator = validator;
         }
 
         [HttpGet]
@@ -37,7 +40,6 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
         {
             var sessionModel = _sessionService.Get<OnboardingSessionModel>();
 
-            //todo: handle this with a fluent validator
             if (submitModel.SubmitButton == SubmitButtonOption.Continue)
             {
                 if (string.IsNullOrWhiteSpace(submitModel.Location) && sessionModel.NotificationLocations.Any())
@@ -47,9 +49,9 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
                 }
             }
 
-            if (string.IsNullOrWhiteSpace(submitModel.Location))
+            var validationResult = await _validator.ValidateAsync(submitModel);
+            if (!validationResult.IsValid)
             {
-                ModelState.AddModelError("Location", "Add a location to receive notifications");
                 var viewModel = GetViewModel(sessionModel, submitModel.EmployerAccountId);
                 viewModel.UnrecognisedLocation = string.Empty;
                 return View(ViewPath, viewModel);
@@ -97,6 +99,8 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
 
             result.SubmittedLocations = sessionModel.NotificationLocations
                 .Select(l => $"{l.LocationName}, within {l.Radius} miles").ToList();
+
+            result.HasSubmittedLocations = sessionModel.NotificationLocations.Any();
 
             return result;
         }

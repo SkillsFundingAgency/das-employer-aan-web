@@ -30,7 +30,8 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
             var employerAccountId = fixture.Create<string>();
 
             var mockSessionService = new Mock<ISessionService>();
-            var controller = new NotificationsLocationsController(mockSessionService.Object);
+            var mockApiClient = new Mock<IOuterApiClient>();
+            var controller = new NotificationsLocationsController(mockSessionService.Object, mockApiClient.Object);
 
             controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.CheckYourAnswers, "");
             controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.SelectNotificationEvents, "");
@@ -61,7 +62,8 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
             var employerAccountId = fixture.Create<string>();
 
             var mockSessionService = new Mock<ISessionService>();
-            var controller = new NotificationsLocationsController(mockSessionService.Object);
+            var mockApiClient = new Mock<IOuterApiClient>();
+            var controller = new NotificationsLocationsController(mockSessionService.Object, mockApiClient.Object);
             controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.CheckYourAnswers, "");
             controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.SelectNotificationEvents, "");
 
@@ -93,7 +95,8 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
             var employerAccountId = fixture.Create<string>();
 
             var mockSessionService = new Mock<ISessionService>();
-            var controller = new NotificationsLocationsController(mockSessionService.Object);
+            var mockApiClient = new Mock<IOuterApiClient>();
+            var controller = new NotificationsLocationsController(mockSessionService.Object, mockApiClient.Object);
             controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.CheckYourAnswers, "");
             controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.SelectNotificationEvents, "");
 
