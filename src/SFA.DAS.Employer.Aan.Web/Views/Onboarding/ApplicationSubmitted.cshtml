@@ -1,30 +1,33 @@
-﻿@using SFA.DAS.Employer.Aan.Web.Infrastructure;
-@using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
+﻿@using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 @model ApplicationSubmittedViewModel
+@{
+    ViewData["Title"] = "You have joined the Apprenticeship Ambassador Network";
+}
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <div class="govuk-panel govuk-panel--confirmation">
             <h1 class="govuk-panel__title">
-                Registration complete
+                You have joined the Apprenticeship Ambassador Network
             </h1>
         </div>
-
-        <h2 class="govuk-heading-m">What happens next?</h2>
-
-        <p class="govuk-body">We have sent you a confirmation email.</p>
-
         <p class="govuk-body">
-            You can now continue to your ambassador hub, where you can learn more about the network and opportunities available to you.
+            Thank you for joining the network. Members help us inspire the next generation of apprentices.
         </p>
-
+        <h2 class="govuk-heading-m">What to do next</h2>
+        <h3 class="govuk-heading-s">Wait to hear from your regional network</h3>
         <p class="govuk-body">
-            Thank you for joining the network. Members play a vital role in championing apprenticeships across England.
+            Your regional network will email you within the next <strong>2 weeks</strong>.
         </p>
-
-        <a href="@Model.NetworkHubLink" role="button" draggable="false" class="govuk-button govuk-button--start" data-module="govuk-button">
-            Continue to ambassador hub
-        </a>
+        <h3 class="govuk-heading-s">Use the online portal</h3>
+        <p class="govuk-body">
+            Use the portal to sign up to network events.
+        </p>
+        <p class="govuk-body">
+            Before attending your first event, sign up to a Your Story training session. You'll get tips on how to talk about your apprenticeship experience.
+        </p>
+        <p class="govuk-body">
+            <a class="govuk-link" rel="noreferrer noopener" href="@Model.NetworkHubLink">Go to the online portal</a>
+        </P>
     </div>
-
 </div>
