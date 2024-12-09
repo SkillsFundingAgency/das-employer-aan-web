@@ -31,8 +31,8 @@
                             @foreach (var location in Model.Locations!)
                             {
                                 <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" type="radio" id="@location.Name" value="@location.Name" asp-for="@Model.SelectedLocation">
-                                    <label class="govuk-label govuk-radios__label" for="@location.Name">
+                                    <input class="govuk-radios__input" type="radio" id="@location.LocationId" value="@location.Name" asp-for="@Model.SelectedLocation">
+                                    <label class="govuk-label govuk-radios__label" for="@location.LocationId">
                                         @location.Name
                                     </label>
                                 </div>
