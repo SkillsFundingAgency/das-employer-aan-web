@@ -116,8 +116,11 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
                 ? Url.RouteUrl(RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId})
                 : Url.RouteUrl(RouteNames.Onboarding.SelectNotificationEvents, new { employerAccountId });
 
+
             result.SubmittedLocations = sessionModel.NotificationLocations
-                .Select(l => $"{l.LocationName}, within {l.Radius} miles").ToList();
+                .Select(l => l.Radius==0 ?
+                    "Across England"
+                    : $"{l.LocationName}, within {l.Radius} miles").ToList();
 
             result.HasSubmittedLocations = sessionModel.NotificationLocations.Any();
 
