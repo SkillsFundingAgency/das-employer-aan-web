@@ -3,11 +3,11 @@ using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
 namespace SFA.DAS.Employer.Aan.Web.Validators;
 
-public class SelectNotificationsLocationValidator : AbstractValidator<SelectNotificationsLocationSubmitModel>
+public class NotificationLocationDisambiguationSubmitModelValidator : AbstractValidator<NotificationLocationDisambiguationSubmitModel>
 {
     public const string NoSelectionErrorMessage = "Select a location";
 
-    public SelectNotificationsLocationValidator()
+    public NotificationLocationDisambiguationSubmitModelValidator()
     {
         RuleFor(x => x.SelectedLocation)
             .NotNull().WithMessage(NoSelectionErrorMessage);

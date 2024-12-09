@@ -1,14 +1,15 @@
 ﻿namespace SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
-public class SelectNotificationsLocationViewModel : SelectNotificationsLocationSubmitModel, IBackLink
+public class NotificationLocationDisambiguationViewModel : NotificationLocationDisambiguationSubmitModel, IBackLink
 {
     public string BackLink { get; set; } = null!;
     public string Title { get; set; } = "Select Notifications Location";
     public List<LocationModel>? Locations { get; set; }
 }
 
-public class SelectNotificationsLocationSubmitModel : ViewModelBase
+public class NotificationLocationDisambiguationSubmitModel : ViewModelBase
 {
-    public string SearchTerm { get; set; } = string.Empty;
+    public string Location { get; set; } = string.Empty;
+    public int Radius { get; set; }
     public string? SelectedLocation { get; set; }
 }

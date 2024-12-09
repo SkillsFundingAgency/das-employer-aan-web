@@ -1,6 +1,6 @@
 ﻿@using SFA.DAS.Employer.Aan.Web.Models.Onboarding
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-@model SelectNotificationsLocationViewModel
+@model NotificationLocationDisambiguationViewModel
 @{
     ViewData["Title"] = Model.Title;
 }
@@ -9,7 +9,8 @@
         <partial name="_validationSummary" />
         <form method="post">
             @Html.HiddenFor(m => m.EmployerAccountId)
-            @Html.HiddenFor(m => m.SearchTerm)
+            @Html.HiddenFor(m => m.Location)
+            @Html.HiddenFor(m => m.Radius)
             <fieldset class="govuk-fieldset">
                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                     <h1 class="govuk-fieldset__heading">

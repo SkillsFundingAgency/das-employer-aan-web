@@ -10,20 +10,20 @@ using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Testing.AutoFixture;
 
-namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.SelectNotificationsLocationControllerTests
+namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.NotificationLocationDisambiguationControllerTests
 {
     [TestFixture]
-    public class SelectNotificationsLocationControllerPostTests
+    public class NotificationLocationDisambiguationControllerPostTests
     {
         [Test, MoqAutoData]
         public async Task Post_ValidModel_UpdatesSessionAndRedirects(
-            [Frozen] Mock<IValidator<SelectNotificationsLocationSubmitModel>> mockValidator,
+            [Frozen] Mock<IValidator<NotificationLocationDisambiguationSubmitModel>> mockValidator,
             [Frozen] Mock<ISessionService> mockSessionService,
-            SelectNotificationsLocationSubmitModel submitModel,
+            NotificationLocationDisambiguationSubmitModel submitModel,
             ValidationResult validationResult,
             OnboardingSessionModel sessionModel,
             CancellationToken cancellationToken,
-            [Greedy] SelectNotificationsLocationController controller)
+            [Greedy] NotificationLocationDisambiguationController controller)
         {
             validationResult.Errors.Clear();
             mockValidator.Setup(v => v.Validate(submitModel)).Returns(validationResult);
@@ -32,7 +32,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.SelectNotifi
             var result = await controller.Post(submitModel, cancellationToken) as RedirectToRouteResult;
 
             result.Should().NotBeNull();
-            result!.RouteName.Should().Be(RouteNames.Onboarding.ConfirmDetails);
+            result!.RouteName.Should().Be(RouteNames.Onboarding.NotificationsLocations);
             result.RouteValues["employerAccountId"].Should().Be(submitModel.EmployerAccountId);
 
             mockSessionService.Verify(s => s.Set(It.Is<OnboardingSessionModel>(m =>
