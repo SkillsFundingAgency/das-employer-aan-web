@@ -32,8 +32,12 @@
                         @{ var i = 0;}
                         @foreach (var location in Model.SubmittedLocations)
                         {
-                            <li>@location</li>
-                            <button class="govuk-link govuk-link--no-visited-state" type="submit" name="SubmitButton" value="@NotificationsLocationsSubmitModel.SubmitButtonOption.Delete-@i">Delete</button>
+                            <li>
+                                @location
+                                &nbsp;
+                                <button class="das-button--inline-link" data-module="govuk-button" type="submit" name="SubmitButton" value="@NotificationsLocationsSubmitModel.SubmitButtonOption.Delete-@i">Delete</button>
+                            </li>
+                            
                             i++;
                         }
                     </ul>
