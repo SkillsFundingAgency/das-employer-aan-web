@@ -67,10 +67,9 @@ public class SelectNotificationsController : Controller
 
     private IActionResult RedirectAccordingly(List<EventTypeModel> eventTypes, bool hasSeenPreview, string employerAccountId)
     {
-        // TODO: Once EC-811 has been completed, update the RedirectToRoute
         return eventTypes.Any(e => e.IsSelected &&
                                    (e.EventType == EventType.Hybrid || e.EventType == EventType.InPerson || e.EventType == EventType.All))
-            ? RedirectToRoute(RouteNames.Onboarding.PreviousEngagement, new { employerAccountId })
+            ? RedirectToRoute(RouteNames.Onboarding.NotificationsLocations, new { employerAccountId })
             : RedirectToRoute(RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId });
     }
 
