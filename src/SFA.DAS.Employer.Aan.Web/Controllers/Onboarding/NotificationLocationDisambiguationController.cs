@@ -36,7 +36,6 @@ public class NotificationLocationDisambiguationController : Controller
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
         var model = await GetViewModel(sessionModel, radius, location, employerAccountId);
         model.EmployerAccountId = employerAccountId;
-        model.Location = location;
         return View(ViewPath, model);
     }
 

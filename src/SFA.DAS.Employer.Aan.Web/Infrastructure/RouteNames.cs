@@ -34,7 +34,6 @@ public static class RouteNames
         public const string NotificationsLocations = nameof(NotificationsLocations);
         public const string NotificationLocationDisambiguation = nameof(NotificationLocationDisambiguation);
         public const string RegionalNetwork = nameof(RegionalNetwork);
-        public const string SelectNotificationsLocation = nameof(SelectNotificationsLocation);
         public const string ReceiveNotifications = nameof(ReceiveNotifications);
         public const string SelectNotificationEvents = nameof(SelectNotificationEvents);
     }
