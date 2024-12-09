@@ -3,11 +3,11 @@ using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
 namespace SFA.DAS.Employer.Aan.Web.Validators;
 
-public class EventTypesSubmitModelValidator : AbstractValidator<SelectNotificationsSubmitModel>
+public class SelectNotificationsSubmitModelValidator : AbstractValidator<SelectNotificationsSubmitModel>
 {
     public const string NoSelectionErrorMessage = "Select which types of events you want to be notified about";
 
-    public EventTypesSubmitModelValidator()
+    public SelectNotificationsSubmitModelValidator()
     {
         RuleFor(m => m.EventTypes)
             .NotNull()

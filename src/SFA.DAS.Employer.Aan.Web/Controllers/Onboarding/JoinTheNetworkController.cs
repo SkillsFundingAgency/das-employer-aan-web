@@ -61,8 +61,6 @@ public class JoinTheNetworkController : Controller
 
         _sessionService.Set(sessionModel);
 
-        // TODO: Once EC - 789 has been completed, update the Route
-
         return sessionModel.HasSeenPreview
             ? RedirectToRoute(@RouteNames.Onboarding.CheckYourAnswers, new { submitModel.EmployerAccountId })!
             : RedirectToRoute(RouteNames.Onboarding.ReceiveNotifications, new { submitModel.EmployerAccountId });
