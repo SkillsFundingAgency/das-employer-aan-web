@@ -55,16 +55,15 @@ public class NotificationLocationDisambiguationController : Controller
             return View(ViewPath, model);
         }
 
-        // TODO: Once EC-811 has been completed, assign the Location to sessionModel
+        var apiResponse = await
+            _outerApiClient.GetOnboardingNotificationsLocations(sessionModel.EmployerDetails.AccountId, submitModel.SelectedLocation!);
 
-        //var apiResponse = await
-        //    _outerApiClient.GetOnboardingNotificationsLocations(sessionModel.EmployerDetails.AccountId, submitModel.SelectedLocation!);
-
-        //sessionModel.NotificationLocations.Add(new NotificationLocation
-        //{
-        //    LocationName = apiResponse.Locations.First().Name,
-        //    Radius = submitModel.Radius
-        //});
+        sessionModel.NotificationLocations.Add(new NotificationLocation
+        {
+            LocationName = apiResponse.Locations.First().Name,
+            GeoPoint = apiResponse.Locations.First().GeoPoint,
+            Radius = submitModel.Radius
+        });
 
         _sessionService.Set(sessionModel);
 
@@ -73,10 +72,8 @@ public class NotificationLocationDisambiguationController : Controller
 
     private async Task<NotificationLocationDisambiguationViewModel> GetViewModel(OnboardingSessionModel sessionModel, int radius, string location, string employerAccountId)
     {
-        // TODO: Once EC-811 has been completed,Call the outer api for locations
-
-        //var apiResponse = await
-        //          _outerApiClient.GetOnboardingNotificationsLocations(sessionModel.EmployerDetails.AccountId, location);
+        var apiResponse = await
+                  _outerApiClient.GetOnboardingNotificationsLocations(sessionModel.EmployerDetails.AccountId, location);
 
         return new NotificationLocationDisambiguationViewModel
         {
@@ -84,10 +81,10 @@ public class NotificationLocationDisambiguationController : Controller
             Title = $"We found more than one location that matches '{location}'",
             Radius = radius,
             Location = location,
-            //Locations = apiResponse.Locations
-            //    .Select(x => (LocationModel)x)
-            //    .Take(10)
-            //    .ToList()
+            Locations = apiResponse.Locations
+                .Select(x => (LocationModel)x)
+                .Take(10)
+                .ToList()
         };
     }
 }
