@@ -13,7 +13,7 @@ public class NotificationsLocationsViewModel : NotificationsLocationsSubmitModel
     public string UnrecognisedLocation { get; set; } = "";
 }
 
-public class NotificationsLocationsSubmitModel : ViewModelBase
+public class NotificationsLocationsSubmitModel : ViewModelBase, INotificationsLocationsPartialSubmitModel
 {
     public string? Location { get; set; }
     public int Radius { get; set; } = 5;

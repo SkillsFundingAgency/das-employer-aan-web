@@ -1,11 +1,9 @@
 ﻿using FluentValidation;
-using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Models.Shared;
-using static SFA.DAS.Employer.Aan.Web.Models.Onboarding.NotificationsLocationsSubmitModel;
 
-namespace SFA.DAS.Employer.Aan.Web.Validators.Onboarding
+namespace SFA.DAS.Employer.Aan.Web.Validators.Shared
 {
-    public class NotificationsLocationsSubmitModelValidator : AbstractValidator<NotificationsLocationsSubmitModel>
+    public class NotificationsLocationsSubmitModelValidator : AbstractValidator<INotificationsLocationsPartialSubmitModel>
     {
         public const string EmptyLocationErrorMessage = "Add a location to receive notifications";
 

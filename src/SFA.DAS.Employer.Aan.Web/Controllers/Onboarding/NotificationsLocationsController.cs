@@ -9,22 +9,19 @@ using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Models.Shared;
 using SFA.DAS.Validation.Mvc.Filters;
-using SharpGrip.FluentValidation.AutoValidation.Mvc.Attributes;
-using static SFA.DAS.Employer.Aan.Web.Models.Onboarding.NotificationsLocationsSubmitModel;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
 {
     [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
     [Route("accounts/{employerAccountId}/onboarding/notifications-locations", Name = RouteNames.Onboarding.NotificationsLocations)]
-    //[AutoValidationAttribute]
     public class NotificationsLocationsController : Controller
     {
         private readonly ISessionService _sessionService;
         private readonly IOuterApiClient _apiClient;
-        private readonly IValidator<NotificationsLocationsSubmitModel> _validator;
+        private readonly IValidator<INotificationsLocationsPartialSubmitModel> _validator;
         public const string ViewPath = "~/Views/Onboarding/NotificationsLocations.cshtml";
 
-        public NotificationsLocationsController(ISessionService sessionService, IOuterApiClient apiClient, IValidator<NotificationsLocationsSubmitModel> validator)
+        public NotificationsLocationsController(ISessionService sessionService, IOuterApiClient apiClient, IValidator<INotificationsLocationsPartialSubmitModel> validator)
         {
             _sessionService = sessionService;
             _apiClient = apiClient;
