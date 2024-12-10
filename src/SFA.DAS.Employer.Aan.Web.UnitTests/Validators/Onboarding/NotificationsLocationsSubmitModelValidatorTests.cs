@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Models.Shared;
-using SFA.DAS.Employer.Aan.Web.Validators.Onboarding;
+using SFA.DAS.Employer.Aan.Web.Validators.Shared;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Validators.Onboarding
 {

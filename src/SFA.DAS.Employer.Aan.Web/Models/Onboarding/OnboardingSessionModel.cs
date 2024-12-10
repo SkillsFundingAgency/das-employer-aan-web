@@ -1,6 +1,8 @@
-﻿namespace SFA.DAS.Employer.Aan.Web.Models.Onboarding;
+﻿using SFA.DAS.Employer.Aan.Web.Models.Shared;
 
-public class OnboardingSessionModel
+namespace SFA.DAS.Employer.Aan.Web.Models.Onboarding;
+
+public class OnboardingSessionModel : INotificationLocationsSessionModel
 {
     public EmployerDetailsModel EmployerDetails { get; set; } = new();
     public bool HasSeenPreview { get; set; }

@@ -8,6 +8,7 @@ using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Models.Shared;
+using SFA.DAS.Employer.Aan.Web.Orchestrators.Shared;
 using SFA.DAS.Validation.Mvc.Filters;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
@@ -19,13 +20,15 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
         private readonly ISessionService _sessionService;
         private readonly IOuterApiClient _apiClient;
         private readonly IValidator<INotificationsLocationsPartialSubmitModel> _validator;
+        private readonly INotificationsLocationsOrchestrator _orchestrator;
         public const string ViewPath = "~/Views/Onboarding/NotificationsLocations.cshtml";
 
-        public NotificationsLocationsController(ISessionService sessionService, IOuterApiClient apiClient, IValidator<INotificationsLocationsPartialSubmitModel> validator)
+        public NotificationsLocationsController(ISessionService sessionService, IOuterApiClient apiClient, IValidator<INotificationsLocationsPartialSubmitModel> validator, INotificationsLocationsOrchestrator orchestrator)
         {
             _sessionService = sessionService;
             _apiClient = apiClient;
             _validator = validator;
+            _orchestrator = orchestrator;
         }
 
         [HttpGet]
@@ -33,7 +36,13 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
         public IActionResult Get(string employerAccountId)
         {
             var sessionModel = _sessionService.Get<OnboardingSessionModel>();
-            var viewModel = GetViewModel(sessionModel, employerAccountId);
+
+            var viewModel = _orchestrator.GetViewModel(sessionModel, ModelState);
+
+            viewModel.BackLink = sessionModel.HasSeenPreview
+                ? Url.RouteUrl(RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId })
+                : Url.RouteUrl(RouteNames.Onboarding.SelectNotificationEvents, new { employerAccountId });
+
             return View(ViewPath, viewModel);
         }
 
@@ -101,58 +110,5 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
             return RedirectToRoute(RouteNames.Onboarding.NotificationsLocations, new { submitModel.EmployerAccountId });
         }
 
-        private NotificationsLocationsViewModel GetViewModel(OnboardingSessionModel sessionModel, string employerAccountId)
-        {
-            var result = new NotificationsLocationsViewModel();
-            var eventTypeDescription = GetEventTypeDescription(sessionModel.EventTypes);
-
-            result.Title = sessionModel.NotificationLocations.Any()
-                ? $"Notifications for {eventTypeDescription}"
-                : $"Add locations for {eventTypeDescription}";
-            result.IntroText = $"Tell us where you want to hear about upcoming {eventTypeDescription}.";
-            result.BackLink = sessionModel.HasSeenPreview
-                ? Url.RouteUrl(RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId})
-                : Url.RouteUrl(RouteNames.Onboarding.SelectNotificationEvents, new { employerAccountId });
-
-
-            result.SubmittedLocations = sessionModel.NotificationLocations
-                .Select(l => l.Radius==0 ?
-                    "Across England"
-                    : $"{l.LocationName}, within {l.Radius} miles").ToList();
-
-            result.HasSubmittedLocations = sessionModel.NotificationLocations.Any();
-
-            if (ModelState.ContainsKey(nameof(NotificationsLocationsViewModel.Location)) &&
-                ModelState[nameof(NotificationsLocationsViewModel.Location)].Errors.Any())
-            {
-                result.UnrecognisedLocation =
-                    ModelState[nameof(NotificationsLocationsViewModel.Location)].AttemptedValue;
-            }
-
-            return result;
-        }
-
-        private string GetEventTypeDescription(IEnumerable<EventTypeModel> eventTypes)
-        {
-            var selectedEventTypes = eventTypes.Where(x => x.IsSelected).ToList();
-
-            if (selectedEventTypes.Any(t => t.EventType == EventType.All))
-            {
-                return "in-person and hybrid events";
-            }
-
-            if (selectedEventTypes.Any(t => t.EventType == EventType.Hybrid))
-            {
-                return selectedEventTypes.Any(e => e.EventType == EventType.InPerson) ?
-                    "in-person and hybrid events" : "hybrid events";
-            }
-
-            if (selectedEventTypes.Any(e => e.EventType == EventType.InPerson))
-            {
-                return "in-person events";
-            }
-
-            throw new InvalidOperationException();
-        }
     }
 }

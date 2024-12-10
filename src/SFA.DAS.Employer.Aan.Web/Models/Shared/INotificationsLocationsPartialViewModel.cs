@@ -2,9 +2,8 @@
 
 namespace SFA.DAS.Employer.Aan.Web.Models.Shared
 {
-    public interface INotificationsLocationsPartialViewModel : INotificationsLocationsPartialSubmitModel
+    public interface INotificationsLocationsPartialViewModel : INotificationsLocationsPartialSubmitModel, IBackLink
     {
-        string EmployerAccountId { get; }
         string Title { get; }
         string IntroText { get; }
 
@@ -15,6 +14,7 @@ namespace SFA.DAS.Employer.Aan.Web.Models.Shared
 
     public interface INotificationsLocationsPartialSubmitModel
     {
+        string EmployerAccountId { get; }
         string? Location { get; set; }
         int Radius { get; set; }
         string SubmitButton { get; set; }
