@@ -7,6 +7,7 @@ using SFA.DAS.Employer.Aan.Web.Constant;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
+using SFA.DAS.Employer.Aan.Web.Models.Shared;
 using SFA.DAS.Validation.Mvc.Filters;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Attributes;
 using static SFA.DAS.Employer.Aan.Web.Models.Onboarding.NotificationsLocationsSubmitModel;
@@ -45,7 +46,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
         {
             var sessionModel = _sessionService.Get<OnboardingSessionModel>();
 
-            if (submitModel.SubmitButton == SubmitButtonOption.Continue)
+            if (submitModel.SubmitButton == NotificationsLocationsSubmitButtonOption.Continue)
             {
                 if (string.IsNullOrWhiteSpace(submitModel.Location) && sessionModel.NotificationLocations.Any())
                 {
@@ -54,7 +55,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
                 }
             }
 
-            if (submitModel.SubmitButton.StartsWith(SubmitButtonOption.Delete))
+            if (submitModel.SubmitButton.StartsWith(NotificationsLocationsSubmitButtonOption.Delete))
             {
                 var deleteIndex = Convert.ToInt32(submitModel.SubmitButton.Split("-").Last());
                 sessionModel.NotificationLocations.RemoveAt(deleteIndex);

@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
-@using SFA.DAS.Employer.Aan.Web.Models.Onboarding
+@using SFA.DAS.Employer.Aan.Web.Models.Shared
 @model SFA.DAS.Employer.Aan.Web.Models.Shared.INotificationsLocationsPartialViewModel
 
 @{
@@ -39,7 +39,7 @@
                             <li>
                                 @location
                                 &nbsp;
-                                <button class="das-button--inline-link" data-module="govuk-button" type="submit" name="SubmitButton" value="@SubmitButtonOption.Delete-@i">Delete</button>
+                                <button class="das-button--inline-link" data-module="govuk-button" type="submit" name="SubmitButton" value="@NotificationsLocationsSubmitButtonOption.Delete-@i">Delete</button>
                             </li>
 
                             i++;
@@ -82,12 +82,12 @@
                 </div>
 
                 <div class="govuk-form-group">
-                    <button id="add" type="submit" name="SubmitButton" value="@SubmitButtonOption.Add" class="govuk-button-fix govuk-button--secondary">Add location</button>
+                    <button id="add" type="submit" name="SubmitButton" value="@NotificationsLocationsSubmitButtonOption.Add" class="govuk-button-fix govuk-button--secondary">Add location</button>
                 </div>
 
                 <div class="govuk-button-group">
 
-                    <button id="continue" type="submit" name="SubmitButton" value="@SubmitButtonOption.Continue" class="govuk-button-fix">Continue</button>
+                    <button id="continue" type="submit" name="SubmitButton" value="@NotificationsLocationsSubmitButtonOption.Continue" class="govuk-button-fix">Continue</button>
                 </div>
 
             </fieldset>

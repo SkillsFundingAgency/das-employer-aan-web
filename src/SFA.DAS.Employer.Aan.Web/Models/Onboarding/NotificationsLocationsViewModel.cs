@@ -31,10 +31,3 @@ public class NotificationsLocationsSubmitModel : ViewModelBase
         new SelectListItem("Across England", "0")
     ];
 }
-
-public static class SubmitButtonOption
-{
-    public const string Add = "Add";
-    public const string Continue = "Continue";
-    public const string Delete = "Delete";
-}

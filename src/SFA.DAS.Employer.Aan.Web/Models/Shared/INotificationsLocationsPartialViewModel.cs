@@ -21,4 +21,10 @@ namespace SFA.DAS.Employer.Aan.Web.Models.Shared
         bool HasSubmittedLocations { get; set; }
     }
 
+    public static class NotificationsLocationsSubmitButtonOption
+    {
+        public const string Add = "Add";
+        public const string Continue = "Continue";
+        public const string Delete = "Delete";
+    }
 }

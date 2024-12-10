@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
+using SFA.DAS.Employer.Aan.Web.Models.Shared;
 using static SFA.DAS.Employer.Aan.Web.Models.Onboarding.NotificationsLocationsSubmitModel;
 
 namespace SFA.DAS.Employer.Aan.Web.Validators.Onboarding
@@ -12,12 +13,12 @@ namespace SFA.DAS.Employer.Aan.Web.Validators.Onboarding
         {
             RuleFor(x => x.Location)
                 .NotEmpty()
-                .When(x => x.SubmitButton == SubmitButtonOption.Add)
+                .When(x => x.SubmitButton == NotificationsLocationsSubmitButtonOption.Add)
                 .WithMessage(EmptyLocationErrorMessage);
 
             RuleFor(x => x.Location)
                 .NotEmpty()
-                .When(x => x.SubmitButton == SubmitButtonOption.Continue && !x.HasSubmittedLocations)
+                .When(x => x.SubmitButton == NotificationsLocationsSubmitButtonOption.Continue && !x.HasSubmittedLocations)
                 .WithMessage(EmptyLocationErrorMessage);
         }
     }
