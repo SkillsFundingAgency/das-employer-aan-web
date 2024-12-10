@@ -2,7 +2,26 @@
 
 namespace SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
-public class NotificationsLocationsViewModel : NotificationsLocationsSubmitModel, IBackLink
+public interface INotificationsLocationsPartialViewModel : INotificationsLocationsPartialSubmitModel
+{
+    string EmployerAccountId { get; }
+    string Title { get; }
+    string IntroText { get; }
+
+    List<string> SubmittedLocations { get; }
+    string UnrecognisedLocation { get; }
+    List<SelectListItem> RadiusOptions { get; }
+}
+
+public interface INotificationsLocationsPartialSubmitModel
+{
+    string? Location { get; set; }
+    int Radius { get; set; }
+    string SubmitButton { get; set; }
+    bool HasSubmittedLocations { get; set; }
+}
+
+public class NotificationsLocationsViewModel : NotificationsLocationsSubmitModel, INotificationsLocationsPartialViewModel, IBackLink
 {
     public string BackLink { get; set; } = null!;
     public string Title { get; set; } = "";
@@ -29,11 +48,11 @@ public class NotificationsLocationsSubmitModel : ViewModelBase
         new SelectListItem("100 miles", "100"),
         new SelectListItem("Across England", "0")
     ];
+}
 
-    public static class SubmitButtonOption
-    {
-        public const string Add = "Add";
-        public const string Continue = "Continue";
-        public const string Delete = "Delete";
-    }
+public static class SubmitButtonOption
+{
+    public const string Add = "Add";
+    public const string Continue = "Continue";
+    public const string Delete = "Delete";
 }
