@@ -25,8 +25,17 @@
                 </p>
 
                 <p class="govuk-body">
-                    You can add multiple locations. For example, if you have offices in more than one city.
+                    You can add up to @Model.MaxLocationsString locations. For example, if you have offices in more than one city.
                 </p>
+                
+                @if (Model.SubmittedLocations.Count >= @Model.MaxLocations)
+                {
+                    <div class="govuk-inset-text">
+                        You have added the maximum number of locations.
+                        <br/><br/>
+                        To add a new location, delete one first.
+                    </div>
+                }
 
                 @if (Model.SubmittedLocations.Any())
                 {
@@ -46,44 +55,53 @@
                         }
                     </ul>
                 }
+                
+                @if (Model.SubmittedLocations.Count < @Model.MaxLocations)
+                {
 
-                <div esfa-validation-marker-for="Location">
-                    <h2 class="govuk-heading-m">Add a location</h2>
+                    <div esfa-validation-marker-for="Location">
+                        <h2 class="govuk-heading-m">Add a location</h2>
 
-                    <p class="govuk-body">
-                        <label class="govuk-body" for="Location">
-                            City, town or postcode
+                        <p class="govuk-body">
+                            <label class="govuk-body" for="Location">
+                                City, town or postcode
 
-                        </label>
-                    </p>
+                            </label>
+                        </p>
+
+                        <div class="govuk-form-group">
+
+                            <span asp-validation-for="@Model.Location" class="govuk-error-message"></span>
+
+                            @if (!string.IsNullOrWhiteSpace(Model.UnrecognisedLocation))
+                            {
+                                <ul class="govuk-list govuk-list--bullet">
+                                    <li>We do not recognise <strong>@Model.UnrecognisedLocation</strong>.</li>
+                                    <li>Check the location you've entered or enter a different location that's nearby</li>
+                                </ul>
+                            }
+                            <input class="govuk-input location-search-autocomplete" asp-for="Location" type="text" value="">
+                        </div>
+                        <div class="govuk-form-group">
+                            <label class="govuk-body" for="Radius">
+                                Within this distance
+                            </label>
+                            <br/>
+
+                            <select class="govuk-select" asp-for="Radius" asp-items="Model.RadiusOptions"></select>
+                        </div>
+
+                    </div>
 
                     <div class="govuk-form-group">
-
-                        <span asp-validation-for="@Model.Location" class="govuk-error-message"></span>
-
-                        @if (!string.IsNullOrWhiteSpace(Model.UnrecognisedLocation))
-                        {
-                            <ul class="govuk-list govuk-list--bullet">
-                                <li>We do not recognise <strong>@Model.UnrecognisedLocation</strong>.</li>
-                                <li>Check the location you've entered or enter a different location that's nearby</li>
-                            </ul>
-                        }
-                        <input class="govuk-input location-search-autocomplete" asp-for="Location" type="text" value="">
-                    </div>
-                    <div class="govuk-form-group">
-                        <label class="govuk-body" for="Radius">
-                            Within this distance
-                        </label>
-                        <br />
-
-                        <select class="govuk-select" asp-for="Radius" asp-items="Model.RadiusOptions"></select>
+                        <button id="add" type="submit" name="SubmitButton" value="@NotificationsLocationsSubmitButtonOption.Add" class="govuk-button-fix govuk-button--secondary">Add location</button>
                     </div>
 
-                </div>
-
-                <div class="govuk-form-group">
-                    <button id="add" type="submit" name="SubmitButton" value="@NotificationsLocationsSubmitButtonOption.Add" class="govuk-button-fix govuk-button--secondary">Add location</button>
-                </div>
+                }
+                else
+                {
+                    <br/>
+                }
 
                 <div class="govuk-button-group">
 

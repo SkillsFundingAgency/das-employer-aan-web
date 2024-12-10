@@ -10,6 +10,8 @@ namespace SFA.DAS.Employer.Aan.Web.Models.Shared
         List<string> SubmittedLocations { get; }
         string UnrecognisedLocation { get; }
         List<SelectListItem> RadiusOptions { get; }
+        int MaxLocations { get; }
+        string MaxLocationsString { get; }
     }
 
     public interface INotificationsLocationsPartialSubmitModel

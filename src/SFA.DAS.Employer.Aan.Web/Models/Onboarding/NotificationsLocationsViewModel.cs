@@ -11,6 +11,8 @@ public class NotificationsLocationsViewModel : NotificationsLocationsSubmitModel
 
     public List<string> SubmittedLocations { get; set; } = [];
     public string UnrecognisedLocation { get; set; } = "";
+    public int MaxLocations => 5;
+    public string MaxLocationsString => "five";
 }
 
 public class NotificationsLocationsSubmitModel : ViewModelBase, INotificationsLocationsPartialSubmitModel
