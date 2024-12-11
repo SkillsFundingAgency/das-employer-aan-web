@@ -1,20 +1,21 @@
 ﻿using FluentAssertions;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
-using SFA.DAS.Employer.Aan.Web.Validators.Onboarding;
+using SFA.DAS.Employer.Aan.Web.Models.Shared;
+using SFA.DAS.Employer.Aan.Web.Validators.Shared;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Validators.Onboarding
 {
     [TestFixture]
     public class NotificationsLocationsSubmitModelValidatorTests
     {
-        [TestCase("test location", NotificationsLocationsSubmitModel.SubmitButtonOption.Add, true, true)]
-        [TestCase("test location", NotificationsLocationsSubmitModel.SubmitButtonOption.Add, false, true)]
-        [TestCase("test location", NotificationsLocationsSubmitModel.SubmitButtonOption.Continue, true, true)]
-        [TestCase("test location", NotificationsLocationsSubmitModel.SubmitButtonOption.Continue, false, true)]
-        [TestCase("", NotificationsLocationsSubmitModel.SubmitButtonOption.Continue, true, true)]
-        [TestCase("", NotificationsLocationsSubmitModel.SubmitButtonOption.Continue, false, false)]
-        [TestCase("", NotificationsLocationsSubmitModel.SubmitButtonOption.Add, true, false)]
-        [TestCase("", NotificationsLocationsSubmitModel.SubmitButtonOption.Add, true, false)]
+        [TestCase("test location", NotificationsLocationsSubmitButtonOption.Add, true, true)]
+        [TestCase("test location", NotificationsLocationsSubmitButtonOption.Add, false, true)]
+        [TestCase("test location", NotificationsLocationsSubmitButtonOption.Continue, true, true)]
+        [TestCase("test location", NotificationsLocationsSubmitButtonOption.Continue, false, true)]
+        [TestCase("", NotificationsLocationsSubmitButtonOption.Continue, true, true)]
+        [TestCase("", NotificationsLocationsSubmitButtonOption.Continue, false, false)]
+        [TestCase("", NotificationsLocationsSubmitButtonOption.Add, true, false)]
+        [TestCase("", NotificationsLocationsSubmitButtonOption.Add, true, false)]
         public void Location_Is_Mandatory(string location, string submitOption, bool hasAddedLocations, bool expectIsValid)
         {
             var validator = new NotificationsLocationsSubmitModelValidator();
