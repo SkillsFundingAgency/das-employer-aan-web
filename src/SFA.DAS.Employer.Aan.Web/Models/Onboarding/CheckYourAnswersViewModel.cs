@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Constants;
+using SFA.DAS.Employer.Aan.Web.Constant;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using static SFA.DAS.Aan.SharedUi.Constants.ProfileConstants;
 
@@ -12,7 +13,16 @@ public class CheckYourAnswersSubmitModel : ViewModelBase
 public class CheckYourAnswersViewModel : CheckYourAnswersSubmitModel
 {
     public string RegionChangeLink { get; }
+    public string LocationLabel { get; }
+    public string ReceiveNotificationsChangeLink { get; }
+    public string SelectNotificationEventsChangeLink { get; }
+    public string NotificationsLocationsChangeLink { get; }
     public List<string>? Region { get; }
+    public List<string>? EventTypes { get; }
+    public bool ReceiveNotifications { get; }
+    public bool ShowAllEventNotificationQuestions { get; }
+    public string SelectedRegion { get; }
+    public List<string> NotificationLocations { get; }
     public string ReasonChangeLink { get; }
     public List<string>? Reason { get; }
     public List<string>? Support { get; }
@@ -43,6 +53,25 @@ public class CheckYourAnswersViewModel : CheckYourAnswersSubmitModel
 
         OrganisationName = sessionModel.EmployerDetails.OrganisationName;
 
+        ReceiveNotificationsChangeLink = url.RouteUrl(@RouteNames.Onboarding.ReceiveNotifications, new { EmployerAccountId = employerAccountId })!;
+        ReceiveNotifications = sessionModel.ReceiveNotifications ?? false;
+
+        SelectNotificationEventsChangeLink = url.RouteUrl(@RouteNames.Onboarding.SelectNotificationEvents, new { EmployerAccountId = employerAccountId })!;
+        EventTypes = GetEventTypes(sessionModel);
+
+        SelectedRegion = sessionModel.IsMultiRegionalOrganisation == true
+            ? "Multi-regional"
+            : sessionModel.Regions?.FirstOrDefault(region => region.IsConfirmed)?.Area ?? "Unknown";
+
+        NotificationsLocationsChangeLink = url.RouteUrl(@RouteNames.Onboarding.NotificationsLocations, new { EmployerAccountId = employerAccountId })!;
+        NotificationLocations = GetNotificationLocations(sessionModel);
+
+        LocationLabel = GetLocationLabel(sessionModel);
+
+        ShowAllEventNotificationQuestions = sessionModel.ReceiveNotifications == true
+                                            && sessionModel.EventTypes != null
+                                            && sessionModel.EventTypes.Any(x => x.IsSelected && x.EventType != EventType.Online);
+
         IsRegionConfirmationDone = sessionModel.Regions.Exists(x => x.IsConfirmed) || sessionModel.IsMultiRegionalOrganisation.GetValueOrDefault();
     }
 
@@ -65,6 +94,46 @@ public class CheckYourAnswersViewModel : CheckYourAnswersSubmitModel
     private static List<string>? GetReason(OnboardingSessionModel sessionModel)
     {
         return sessionModel.ProfileData.Where(x => x.Category == Category.ReasonToJoin && x.Value != null).Select(x => x.Description).ToList()!;
+    }
+
+    private static string GetLocationLabel(OnboardingSessionModel sessionModel)
+    {
+        if (sessionModel.EventTypes == null || !sessionModel.EventTypes.Any(x => x.IsSelected))
+            return string.Empty;
+
+        var selectedTypes = sessionModel.EventTypes.Where(x => x.IsSelected).Select(x => x.EventType).ToList();
+
+        if (selectedTypes.Contains(EventType.All) ||
+            (selectedTypes.Contains(EventType.Hybrid) && selectedTypes.Contains(EventType.InPerson)))
+            return "inPerson and hybrid";
+
+        if (selectedTypes.Contains(EventType.Hybrid))
+            return "hybrid";
+
+        if (selectedTypes.Contains(EventType.InPerson))
+            return "in-person";
+
+        return string.Empty;
+    }
+
+    private static List<string> GetNotificationLocations(OnboardingSessionModel sessionModel)
+    {
+        return sessionModel.NotificationLocations?
+            .Select(x => $"{x.LocationName}, within {x.Radius} miles")
+            .ToList() ?? new List<string>();
+    }
+
+    private static List<string> GetEventTypes(OnboardingSessionModel sessionModel)
+    {
+        if (sessionModel.EventTypes == null || !sessionModel.EventTypes.Any())
+        {
+            return new List<string>();
+        }
+
+        bool isAllSelected = sessionModel.EventTypes.Any(x => x.IsSelected && x.EventType == EventType.All);
+        return isAllSelected
+            ? sessionModel.EventTypes.Where(x => x.EventType != EventType.All).Select(x => x.EventType).ToList()
+            : sessionModel.EventTypes.Where(x => x.IsSelected && x.EventType != EventType.All).Select(x => x.EventType).ToList();
     }
 
     private static List<string>? GetSupport(OnboardingSessionModel sessionModel)

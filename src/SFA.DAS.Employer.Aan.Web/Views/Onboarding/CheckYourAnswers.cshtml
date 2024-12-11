@@ -1,43 +1,43 @@
 ﻿@using SFA.DAS.Employer.Aan.Web.Infrastructure
 @using SFA.DAS.Employer.Aan.Web.Models.Onboarding
+@using SFA.DAS.Employer.Aan.Web.Constant
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model CheckYourAnswersViewModel
 @{
-    ViewData["Title"] = "Check your answers";
+    ViewData["Title"] = "Register with the Apprenticeship Ambassador Network";
 }
 
 <div class="govuk-grid-row">
     <partial name="_validationSummary" />
     <form method="post" asp-route="@RouteNames.Onboarding.CheckYourAnswers" enctype="multipart/form-data" novalidate>
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-l">Check the information you have provided before completing your registration</h1>
-            <div class="govuk-hint">
-                Here are the details you have provided.
-            </div>
+            <h1 class="govuk-heading-l">Register with the Apprenticeship Ambassador Network</h1>
+            <h2 class="govuk-heading-m">Your regional network</h2>
             <span asp-validation-for="IsRegionConfirmationDone" class="govuk-error-message"></span>
 
             <dl class="govuk-summary-list">
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
                         <div esfa-validation-marker-for="IsRegionConfirmationDone" class="govuk-form-group">
-                            Region and preferences
+                            Which regions does your company work in?
                         </div>
                     </dt>
                     <dd class="govuk-summary-list__value">
                         @{
                             if (Model.Region!.Count == 1)
                             {
-                                @Model.Region[0];
+                                @Model.Region[0]
                             }
                             else
                             {
-                                <ul id="IsRegionConfirmationDone" class="govuk-list govuk-list--bullet">
-                                @{
-                                    foreach (var region in Model.Region!)
-                                    {
-                                        <li>@region</li>
+                                                                                        <ul id="IsRegionConfirmationDone" class="govuk-list govuk-list--bullet">
+                                    @{
+                                        foreach (var region in Model.Region!)
+                                        {
+                                                                                                                                                            <li>@region</li>
+                                        }
                                     }
-                                }
-                                </ul>
+                                                                                        </ul>
                             }
                         }
                     </dd>
@@ -45,73 +45,16 @@
                         <a href=@Model.RegionChangeLink class="govuk-link govuk-link--no-visited-state">Change</a>
                     </dd>
                 </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Reasons for registering</dt>
-                    <dd class="govuk-summary-list__value">
-                        @{
-                            if (Model.Reason!.Count == 1)
-                            {
-                                @Model.Reason[0];
-                            }
-                            else
-                            {
-                                <ul class="govuk-list govuk-list--bullet">
-                                @{
-                                    foreach (var reasonToJoin in Model.Reason!)
-                                    {
-                                        <li>@reasonToJoin</li>
-                                    }
-                                }
-                                </ul>
-                            }
-                        }
-                    </dd>
-                    <dd class="govuk-summary-list__actions">
-                        <a href=@Model.ReasonChangeLink class="govuk-link govuk-link--no-visited-state">Change</a>
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Support needed</dt>
-                    <dd class="govuk-summary-list__value">
-                        @{
-                            if (Model.Support!.Count == 1)
-                            {
-                                @Model.Support[0];
-                            }
-                            else
-                            {
-                                <ul class="govuk-list govuk-list--bullet">
-                                @{
-                                    foreach (var neededSupport in Model.Support!)
-                                    {
-                                        <li>@neededSupport</li>
-                                    }
-                                }
-                                </ul>
-                            }
-                        }
-                    </dd>
-                    <dd class="govuk-summary-list__actions">
-                        <a href=@Model.ReasonChangeLink class="govuk-link govuk-link--no-visited-state">Change</a>
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Previous engagement with network ambassadors</dt>
-                    <dd class="govuk-summary-list__value">
-                        @Model.PreviousEngagement
-                    </dd>
-                    <dd class="govuk-summary-list__actions">
-                        <a href=@Model.PreviousEngagementChangeLink class="govuk-link govuk-link--no-visited-state">Change</a>
-                    </dd>
-                </div>
             </dl>
+            <p class="govuk-body">Your network will be the <strong>@Model.SelectedRegion Apprenticeship Ambassador Network</strong>.</p>
             <div>
                 <h2 class="govuk-heading-m">
-                    Here are your existing details from your account
+                    Your ambassador profile
                 </h2>
-                <div class="govuk-hint">
-                    This information will be included in your registration and shared with your regional chair so they can welcome you into network.
-                </div>
+                <h3 class="govuk-heading-s">
+                    From your apprenticeship service account
+                </h3>
+
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
@@ -131,50 +74,186 @@
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Organisation Name
+                            Organisation
                         </dt>
                         <dd class="govuk-summary-list__value">
                             @Model.OrganisationName
                         </dd>
                     </div>
-                </dl>
-                <h2 class="govuk-heading-m">
-                    Here are existing details we hold about your organisation
-                </h2>
-                <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Number of active apprentices
+                            Current apprentices
                         </dt>
                         <dd class="govuk-summary-list__value">
                             @Model.ActiveApprenticesCount
                         </dd>
-                    </div>                    
+                    </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Apprenticeship sectors
+                            Sectors
                         </dt>
                         <dd class="govuk-summary-list__value">
                             <ul class="govuk-list govuk-list--bullet">
                                 @{
                                     foreach (var sector in Model.Sectors)
                                     {
-                                        <li>@sector</li>
+                                                                                                <li>@sector</li>
                                     }
                                 }
                             </ul>
                         </dd>
                     </div>
                 </dl>
+
+                <h3 class="govuk-heading-s">
+                    How you want to be involved
+                </h3>
+
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">What can you offer other ambassadors?</dt>
+                        <dd class="govuk-summary-list__value">
+                            @{
+                                if (Model.Reason!.Count == 1)
+                                {
+                                    @Model.Reason[0]
+                                }
+                                else
+                                {
+                                                                                            <ul class="govuk-list govuk-list--bullet">
+                                        @{
+                                            foreach (var reasonToJoin in Model.Reason!)
+                                            {
+                                                                                                                                                                <li>@reasonToJoin</li>
+                                            }
+                                        }
+                                                                                            </ul>
+                                }
+                            }
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href=@Model.ReasonChangeLink class="govuk-link govuk-link--no-visited-state">Change</a>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">What are you hoping to gain from the network?</dt>
+                        <dd class="govuk-summary-list__value">
+                            @{
+                                if (Model.Support!.Count == 1)
+                                {
+                                    @Model.Support[0]
+                                }
+                                else
+                                {
+                                                                                            <ul class="govuk-list govuk-list--bullet">
+                                        @{
+                                            foreach (var neededSupport in Model.Support!)
+                                            {
+                                                                                                                                                                <li>@neededSupport</li>
+                                            }
+                                        }
+                                                                                            </ul>
+                                }
+                            }
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href=@Model.ReasonChangeLink class="govuk-link govuk-link--no-visited-state">Change</a>
+                        </dd>
+                    </div>
+                </dl>
+
                 <h2 class="govuk-heading-m">
-                    Now submit your registration
+                    Receive a monthly email about upcoming events
                 </h2>
-                <div class="govuk-hint">
-                    By submitting this registration you are confirming that all the details you are providing are correct.
-                </div>
+
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Do you want to receive a monthly email about upcoming events?</dt>
+                        <dd class="govuk-summary-list__value">
+                            @(Model.ReceiveNotifications == true ? "Yes" : "No")
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href=@Model.ReceiveNotificationsChangeLink class="govuk-link govuk-link--no-visited-state">Change</a>
+                        </dd>
+                    </div>
+
+                    @if (Model.ReceiveNotifications)
+                    {
+                                                    <div class="govuk-summary-list__row">
+                                                        <dt class="govuk-summary-list__key">Which events would you like to hear about?</dt>
+                                                        <dd class="govuk-summary-list__value">
+                                @{
+                                    if (Model.EventTypes!.Count == 1)
+                                    {
+                                                                                            <span>@(Model.EventTypes[0] == EventType.InPerson ? "In-Person Events" : $"{Model.EventTypes[0]} events")</span>
+                                    }
+                                    else
+                                    {
+                                                                                                                            <ul class="govuk-list govuk-list--bullet">
+                                            @{
+                                                foreach (var eventTypes in Model.EventTypes!)
+                                                {
+                                                                                                                                                                                                <li>@(eventTypes == EventType.InPerson ? "In-Person events" : $"{eventTypes} events")</li>
+                                                }
+                                            }
+                                                                                                                            </ul>
+                                    }
+                                }
+                                                        </dd>
+                                                        <dd class="govuk-summary-list__actions">
+                                                            <a href=@Model.SelectNotificationEventsChangeLink class="govuk-link govuk-link--no-visited-state">Change</a>
+                                                        </dd>
+                                                    </div>
+                        if (Model.ShowAllEventNotificationQuestions)
+                        {
+                                                                                    <div class="govuk-summary-list__row">
+                                                                                        <dt class="govuk-summary-list__key">Locations for @Model.LocationLabel events</dt>
+                                                                                        <dd class="govuk-summary-list__value">
+                                    @{
+                                        if (Model.NotificationLocations!.Count == 1)
+                                        {
+                                            @Model.NotificationLocations[0]
+                                        }
+                                        else
+                                        {
+                                                                                                                                                            <ul class="govuk-list govuk-list--bullet">
+                                                @{
+                                                    foreach (var notificationLocations in Model.NotificationLocations)
+                                                    {
+                                                                                                                                                                                                                                <li>@notificationLocations</li>
+                                                    }
+                                                }
+                                                                                                                                                            </ul>
+                                        }
+                                    }
+                                                                                        </dd>
+                                                                                        <dd class="govuk-summary-list__actions">
+                                                                                            <a href=@Model.NotificationsLocationsChangeLink class="govuk-link govuk-link--no-visited-state">Change</a>
+                                                                                        </dd>
+                                                                                    </div>
+                        }
+                    }
+                </dl>
+
+                <h2 class="govuk-heading-m">
+                    Engagement with apprenticeship ambassadors
+                </h2>
+
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Have you met another apprenticeship ambassador before?</dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.PreviousEngagement
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href=@Model.PreviousEngagementChangeLink class="govuk-link govuk-link--no-visited-state">Change</a>
+                        </dd>
+                    </div>
+                </dl>
+
                 <div class="govuk-button-group">
                     <button id="continue-button" type="submit" class="govuk-button" data-module="govuk-button" data-disable-on-submit="true" asp-page-handler="Submit">
-                        Accept and submit
+                        Submit
                     </button>
                 </div>
             </div>

@@ -61,7 +61,7 @@ public class SelectNotificationsController : Controller
         if (submitModel.EventTypes.Count(x => x.IsSelected) == 1 &&
             submitModel.EventTypes.Any(x => x.IsSelected && x.EventType == EventType.Online))
         {
-            sessionModel.NotificationLocations = null;
+            sessionModel.NotificationLocations = new List<NotificationLocation>();
         }
 
         var originalValue = sessionModel.EventTypes;
