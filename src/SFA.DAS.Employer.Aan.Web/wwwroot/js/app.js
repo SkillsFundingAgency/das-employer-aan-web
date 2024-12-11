@@ -133,34 +133,3 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
-
-
-
-// Temporary workaround
-(function () {
-    var originalInit = d.forms.init;
-
-    d.forms.init = function () {
-        // Call the original init method
-        originalInit.call(d.forms);
-
-        // Add the new function
-        this.preventDoubleSubmitFix();
-    };
-
-    d.forms.preventDoubleSubmitFix = function () {
-        $("form").not(".das-ajax-form").on("submit", function (e) {
-            var i = $(this).find(".govuk-button-fix");
-            setTimeout(function () {
-                i.attr("disabled", "disabled");
-                setTimeout(function () {
-                    i.removeAttr("disabled");
-                }, 20000);
-            }, 0); // Ensure it disables after submission
-        });
-
-    };
-})();
-
-// Call the init method to initialize both functions
-d.forms.init();

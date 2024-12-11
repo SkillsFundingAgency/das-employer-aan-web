@@ -8,7 +8,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <partial name="_validationSummary" />
-        <form method="post">
+        <form method="post" class="das-ajax-form">
             @Html.HiddenFor(m => m.EmployerAccountId)
             @Html.HiddenFor(m => m.HasSubmittedLocations)
             <fieldset class="govuk-fieldset">
@@ -94,7 +94,7 @@
                     </div>
 
                     <div class="govuk-form-group">
-                        <button id="add" type="submit" name="SubmitButton" value="@NotificationsLocationsSubmitButtonOption.Add" class="govuk-button-fix govuk-button--secondary">Add location</button>
+                        <button id="add" type="submit" name="SubmitButton" value="@NotificationsLocationsSubmitButtonOption.Add" class="govuk-button govuk-button--secondary">Add location</button>
                     </div>
 
                 }
@@ -105,7 +105,7 @@
 
                 <div class="govuk-button-group">
 
-                    <button id="continue" type="submit" name="SubmitButton" value="@NotificationsLocationsSubmitButtonOption.Continue" class="govuk-button-fix">Continue</button>
+                    <button id="continue" type="submit" name="SubmitButton" value="@NotificationsLocationsSubmitButtonOption.Continue" class="govuk-button">Continue</button>
                 </div>
 
             </fieldset>
