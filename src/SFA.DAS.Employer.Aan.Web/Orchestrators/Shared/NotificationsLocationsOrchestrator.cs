@@ -1,17 +1,24 @@
-﻿using SFA.DAS.Employer.Aan.Web.Constant;
+﻿using FluentValidation;
+using SFA.DAS.Employer.Aan.Web.Constant;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Models.Shared;
+using SFA.DAS.Encoding;
 
 namespace SFA.DAS.Employer.Aan.Web.Orchestrators.Shared
 {
     public interface INotificationsLocationsOrchestrator
     {
         INotificationsLocationsPartialViewModel GetViewModel(INotificationLocationsSessionModel sessionModel, ModelStateDictionary modelState);
+        Task<NotificationsLocationsOrchestrator.RedirectTarget> ApplySubmitModel<T>(
+            INotificationsLocationsPartialSubmitModel submitModel,
+            ModelStateDictionary modelState) where T : INotificationLocationsSessionModel;
     }
 
-    public class NotificationsLocationsOrchestrator : INotificationsLocationsOrchestrator
+    public class NotificationsLocationsOrchestrator(ISessionService sessionService, IValidator<INotificationsLocationsPartialSubmitModel> validator, IOuterApiClient apiClient, IEncodingService encodingService)
+        : INotificationsLocationsOrchestrator
     {
         public INotificationsLocationsPartialViewModel GetViewModel(INotificationLocationsSessionModel sessionModel, ModelStateDictionary modelState)
         {
@@ -40,6 +47,65 @@ namespace SFA.DAS.Employer.Aan.Web.Orchestrators.Shared
             return result;
         }
 
+        public async Task<RedirectTarget> ApplySubmitModel<T>(INotificationsLocationsPartialSubmitModel submitModel,
+            ModelStateDictionary modelState) where T : INotificationLocationsSessionModel
+        {
+            var sessionModel = sessionService.Get<T>();
+
+            if (submitModel.SubmitButton == NotificationsLocationsSubmitButtonOption.Continue)
+            {
+                if (string.IsNullOrWhiteSpace(submitModel.Location) && sessionModel.NotificationLocations.Any())
+                {
+                    return RedirectTarget.NextPage;
+                }
+            }
+
+            if (submitModel.SubmitButton.StartsWith(NotificationsLocationsSubmitButtonOption.Delete))
+            {
+                var deleteIndex = Convert.ToInt32(submitModel.SubmitButton.Split("-").Last());
+                sessionModel.NotificationLocations.RemoveAt(deleteIndex);
+                sessionService.Set(sessionModel);
+
+                return RedirectTarget.Self;
+            }
+
+            var validationResult = await validator.ValidateAsync(submitModel);
+            if (!validationResult.IsValid)
+            {
+                foreach (var e in validationResult.Errors)
+                {
+                    modelState.AddModelError(e.PropertyName, e.ErrorMessage);
+                }
+
+                return RedirectTarget.Self;
+            }
+
+            var accountId = encodingService.Decode(submitModel.EmployerAccountId, EncodingType.AccountId);
+            var apiResponse = await apiClient.GetOnboardingNotificationsLocations(accountId, submitModel.Location);
+
+            if (apiResponse.Locations.Count > 1)
+            {
+                return RedirectTarget.Disambiguation;
+            }
+
+            if (apiResponse.Locations.Count == 0)
+            {
+                modelState.AddModelError("Location", "We cannot find the location you entered");
+                return RedirectTarget.Self;
+            }
+
+            sessionModel.NotificationLocations.Add(new NotificationLocation
+            {
+                LocationName = apiResponse.Locations.First().Name,
+                GeoPoint = apiResponse.Locations.First().GeoPoint,
+                Radius = submitModel.Radius
+            });
+
+            sessionService.Set(sessionModel);
+
+            return submitModel.SubmitButton == NotificationsLocationsSubmitButtonOption.Continue ? RedirectTarget.NextPage : RedirectTarget.Self;
+        }
+
         private string GetEventTypeDescription(IEnumerable<EventTypeModel> eventTypes)
         {
             var selectedEventTypes = eventTypes.Where(x => x.IsSelected).ToList();
@@ -61,6 +127,13 @@ namespace SFA.DAS.Employer.Aan.Web.Orchestrators.Shared
             }
 
             throw new InvalidOperationException();
+        }
+
+        public enum RedirectTarget
+        {
+            Self,
+            NextPage,
+            Disambiguation
         }
     }
 }

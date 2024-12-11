@@ -10,6 +10,8 @@ using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Onboarding;
 using AutoFixture.NUnit3;
 using SFA.DAS.Employer.Aan.Web.Models.Shared;
+using SFA.DAS.Employer.Aan.Web.Orchestrators.Shared;
+using SFA.DAS.Encoding;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.NotificationsLocationsControllerTests
@@ -21,9 +23,9 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
         public async Task Post_SubmitButtonContinue_WithValidLocationsAlreadyAdded_ShouldRedirectToPreviousEngagement(
             [Frozen] Mock<ISessionService> mockSessionService,
             [Frozen] Mock<IValidator<INotificationsLocationsPartialSubmitModel>> mockValidator,
+            [Frozen] Mock<IOuterApiClient> mockApiClient,
             NotificationsLocationsSubmitModel submitModel,
-            OnboardingSessionModel sessionModel,
-            [Greedy] NotificationsLocationsController controller)
+            OnboardingSessionModel sessionModel)
         {
             // Arrange
             submitModel.SubmitButton = NotificationsLocationsSubmitButtonOption.Continue;
@@ -31,6 +33,9 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
             sessionModel.NotificationLocations = new List<NotificationLocation> { new NotificationLocation { LocationName = "Test Location", Radius = 5 } };
             mockSessionService.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
             mockValidator.Setup(v => v.ValidateAsync(submitModel, default)).ReturnsAsync(new ValidationResult());
+
+            var orchestrator = new NotificationsLocationsOrchestrator(mockSessionService.Object, mockValidator.Object, mockApiClient.Object, Mock.Of<IEncodingService>());
+            var controller = new NotificationsLocationsController(mockSessionService.Object, orchestrator);
 
             // Act
             var result = await controller.Post(submitModel);
@@ -75,8 +80,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
             [Frozen] Mock<IValidator<INotificationsLocationsPartialSubmitModel>> mockValidator,
             [Frozen] Mock<IOuterApiClient> mockApiClient,
             NotificationsLocationsSubmitModel submitModel,
-            OnboardingSessionModel sessionModel,
-            [Greedy] NotificationsLocationsController controller)
+            OnboardingSessionModel sessionModel)
         {
             // Arrange
             var validationResult = new ValidationResult(new[] { new ValidationFailure("Location", "test message") });
@@ -86,6 +90,9 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
             mockValidator.Setup(v => v.ValidateAsync(submitModel, default)).ReturnsAsync(validationResult);
             mockApiClient.Setup(a => a.GetOnboardingNotificationsLocations(It.IsAny<long>(), It.IsAny<string>()))
                 .ReturnsAsync(new GetNotificationsLocationsApiResponse { Locations = new List<GetNotificationsLocationsApiResponse.Location>() });
+
+            var orchestrator = new NotificationsLocationsOrchestrator(mockSessionService.Object, mockValidator.Object, mockApiClient.Object, Mock.Of<IEncodingService>());
+            var controller = new NotificationsLocationsController(mockSessionService.Object, orchestrator);
 
             // Act
             var result = await controller.Post(submitModel);
@@ -104,8 +111,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
             [Frozen] Mock<IValidator<INotificationsLocationsPartialSubmitModel>> mockValidator,
             [Frozen] Mock<IOuterApiClient> mockApiClient,
             NotificationsLocationsSubmitModel submitModel,
-            OnboardingSessionModel sessionModel,
-            [Greedy] NotificationsLocationsController controller)
+            OnboardingSessionModel sessionModel)
         {
             // Arrange
             submitModel.SubmitButton = NotificationsLocationsSubmitButtonOption.Add;
@@ -119,6 +125,9 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
             mockValidator.Setup(v => v.ValidateAsync(submitModel, default)).ReturnsAsync(new ValidationResult());
             mockApiClient.Setup(a => a.GetOnboardingNotificationsLocations(It.IsAny<long>(), It.IsAny<string>()))
                 .ReturnsAsync(apiResponse);
+
+            var orchestrator = new NotificationsLocationsOrchestrator(mockSessionService.Object, mockValidator.Object, mockApiClient.Object, Mock.Of<IEncodingService>());
+            var controller = new NotificationsLocationsController(mockSessionService.Object, orchestrator);
 
             // Act
             var result = await controller.Post(submitModel);
@@ -142,8 +151,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
             [Frozen] Mock<IValidator<INotificationsLocationsPartialSubmitModel>> mockValidator,
             [Frozen] Mock<IOuterApiClient> mockApiClient,
             NotificationsLocationsSubmitModel submitModel,
-            OnboardingSessionModel sessionModel,
-            [Greedy] NotificationsLocationsController controller)
+            OnboardingSessionModel sessionModel)
         {
             // Arrange
             submitModel.SubmitButton = NotificationsLocationsSubmitButtonOption.Continue;
@@ -157,6 +165,9 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
             mockValidator.Setup(v => v.ValidateAsync(submitModel, default)).ReturnsAsync(new ValidationResult());
             mockApiClient.Setup(a => a.GetOnboardingNotificationsLocations(It.IsAny<long>(), It.IsAny<string>()))
                 .ReturnsAsync(apiResponse);
+
+            var orchestrator = new NotificationsLocationsOrchestrator(mockSessionService.Object, mockValidator.Object, mockApiClient.Object, Mock.Of<IEncodingService>());
+            var controller = new NotificationsLocationsController(mockSessionService.Object, orchestrator);
 
             // Act
             var result = await controller.Post(submitModel);
@@ -176,9 +187,10 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
         [Test, MoqAutoData]
         public async Task Post_SubmitButtonDelete_ShouldRemoveLocationAndRedirect(
             [Frozen] Mock<ISessionService> mockSessionService,
+            [Frozen] Mock<IValidator<INotificationsLocationsPartialSubmitModel>> mockValidator,
+            [Frozen] Mock<IOuterApiClient> mockApiClient,
             NotificationsLocationsSubmitModel submitModel,
-            OnboardingSessionModel sessionModel,
-            [Greedy] NotificationsLocationsController controller)
+            OnboardingSessionModel sessionModel)
         {
             // Arrange
             submitModel.SubmitButton = NotificationsLocationsSubmitButtonOption.Delete + "-0";
@@ -188,6 +200,9 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
                 new NotificationLocation { LocationName = "Another Location", Radius = 10 }
             };
             mockSessionService.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
+
+            var orchestrator = new NotificationsLocationsOrchestrator(mockSessionService.Object, mockValidator.Object, mockApiClient.Object, Mock.Of<IEncodingService>());
+            var controller = new NotificationsLocationsController(mockSessionService.Object, orchestrator);
 
             // Act
             var result = await controller.Post(submitModel);
