@@ -107,7 +107,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
 
             _sessionService.Set(sessionModel);
 
-            return RedirectToRoute(RouteNames.Onboarding.NotificationsLocations, new { submitModel.EmployerAccountId });
+            return RedirectToRoute(submitModel.SubmitButton == NotificationsLocationsSubmitButtonOption.Continue ? RouteNames.Onboarding.PreviousEngagement : RouteNames.Onboarding.NotificationsLocations, new { submitModel.EmployerAccountId });
         }
 
     }
