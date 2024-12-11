@@ -7,9 +7,9 @@ using SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
-using static SFA.DAS.Employer.Aan.Web.Models.Onboarding.NotificationsLocationsSubmitModel;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Onboarding;
 using AutoFixture.NUnit3;
+using SFA.DAS.Employer.Aan.Web.Models.Shared;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.NotificationsLocationsControllerTests
@@ -18,15 +18,15 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
     public class NotificationsLocationsControllerPostTests
     {
         [Test, MoqAutoData]
-        public async Task Post_SubmitButtonContinueWithValidLocation_ShouldRedirectToPreviousEngagement(
+        public async Task Post_SubmitButtonContinue_WithValidLocationsAlreadyAdded_ShouldRedirectToPreviousEngagement(
             [Frozen] Mock<ISessionService> mockSessionService,
-            [Frozen] Mock<IValidator<NotificationsLocationsSubmitModel>> mockValidator,
+            [Frozen] Mock<IValidator<INotificationsLocationsPartialSubmitModel>> mockValidator,
             NotificationsLocationsSubmitModel submitModel,
             OnboardingSessionModel sessionModel,
             [Greedy] NotificationsLocationsController controller)
         {
             // Arrange
-            submitModel.SubmitButton = SubmitButtonOption.Continue;
+            submitModel.SubmitButton = NotificationsLocationsSubmitButtonOption.Continue;
             submitModel.Location = "";
             sessionModel.NotificationLocations = new List<NotificationLocation> { new NotificationLocation { LocationName = "Test Location", Radius = 5 } };
             mockSessionService.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
@@ -45,13 +45,13 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
         [Test, MoqAutoData]
         public async Task Post_InvalidModel_ShouldRedirectToNotificationsLocations(
             [Frozen] Mock<ISessionService> mockSessionService,
-            [Frozen] Mock<IValidator<NotificationsLocationsSubmitModel>> mockValidator,
+            [Frozen] Mock<IValidator<INotificationsLocationsPartialSubmitModel>> mockValidator,
             NotificationsLocationsSubmitModel submitModel,
             OnboardingSessionModel sessionModel,
             [Greedy] NotificationsLocationsController controller)
         {
             // Arrange
-            submitModel.SubmitButton = SubmitButtonOption.Add;
+            submitModel.SubmitButton = NotificationsLocationsSubmitButtonOption.Add;
             submitModel.Location = "";
             mockSessionService.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
             mockValidator.Setup(v => v.ValidateAsync(submitModel, default)).ReturnsAsync(new ValidationResult
@@ -72,17 +72,18 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
         [Test, MoqAutoData]
         public async Task Post_LocationNotFound_ShouldReturnErrorAndRedirect(
             [Frozen] Mock<ISessionService> mockSessionService,
-            [Frozen] Mock<IValidator<NotificationsLocationsSubmitModel>> mockValidator,
+            [Frozen] Mock<IValidator<INotificationsLocationsPartialSubmitModel>> mockValidator,
             [Frozen] Mock<IOuterApiClient> mockApiClient,
             NotificationsLocationsSubmitModel submitModel,
             OnboardingSessionModel sessionModel,
             [Greedy] NotificationsLocationsController controller)
         {
             // Arrange
-            submitModel.SubmitButton = SubmitButtonOption.Add;
+            var validationResult = new ValidationResult(new[] { new ValidationFailure("Location", "test message") });
+            submitModel.SubmitButton = NotificationsLocationsSubmitButtonOption.Add;
             submitModel.Location = "Unknown Location";
             mockSessionService.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
-            mockValidator.Setup(v => v.ValidateAsync(submitModel, default)).ReturnsAsync(new ValidationResult());
+            mockValidator.Setup(v => v.ValidateAsync(submitModel, default)).ReturnsAsync(validationResult);
             mockApiClient.Setup(a => a.GetOnboardingNotificationsLocations(It.IsAny<long>(), It.IsAny<string>()))
                 .ReturnsAsync(new GetNotificationsLocationsApiResponse { Locations = new List<GetNotificationsLocationsApiResponse.Location>() });
 
@@ -94,21 +95,20 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
             redirectResult.Should().NotBeNull();
             redirectResult!.RouteName.Should().Be(RouteNames.Onboarding.NotificationsLocations);
             redirectResult.RouteValues["employerAccountId"].Should().Be(submitModel.EmployerAccountId);
-            controller.ModelState[nameof(NotificationsLocationsSubmitModel.Location)].Errors
-                .Should().Contain(e => e.ErrorMessage == "We cannot find the location you entered");
+            controller.ModelState["Location"].Errors.Any(e => e.ErrorMessage == "test message");
         }
 
         [Test, MoqAutoData]
-        public async Task Post_ValidLocation_ShouldAddToSessionAndRedirect(
+        public async Task Post_ValidLocation_Add_Clicked_ShouldAddToSessionAndReload(
             [Frozen] Mock<ISessionService> mockSessionService,
-            [Frozen] Mock<IValidator<NotificationsLocationsSubmitModel>> mockValidator,
+            [Frozen] Mock<IValidator<INotificationsLocationsPartialSubmitModel>> mockValidator,
             [Frozen] Mock<IOuterApiClient> mockApiClient,
             NotificationsLocationsSubmitModel submitModel,
             OnboardingSessionModel sessionModel,
             [Greedy] NotificationsLocationsController controller)
         {
             // Arrange
-            submitModel.SubmitButton = SubmitButtonOption.Add;
+            submitModel.SubmitButton = NotificationsLocationsSubmitButtonOption.Add;
             submitModel.Location = "Valid Location";
             submitModel.Radius = 5;
             var apiResponse = new GetNotificationsLocationsApiResponse
@@ -135,6 +135,44 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
                 Times.Once);
         }
 
+
+        [Test, MoqAutoData]
+        public async Task Post_ValidLocation_Continue_Clicked_ShouldAddToSession_AndRedirect_Onward(
+            [Frozen] Mock<ISessionService> mockSessionService,
+            [Frozen] Mock<IValidator<INotificationsLocationsPartialSubmitModel>> mockValidator,
+            [Frozen] Mock<IOuterApiClient> mockApiClient,
+            NotificationsLocationsSubmitModel submitModel,
+            OnboardingSessionModel sessionModel,
+            [Greedy] NotificationsLocationsController controller)
+        {
+            // Arrange
+            submitModel.SubmitButton = NotificationsLocationsSubmitButtonOption.Continue;
+            submitModel.Location = "Valid location";
+            submitModel.Radius = 5;
+            var apiResponse = new GetNotificationsLocationsApiResponse
+            {
+                Locations = new List<GetNotificationsLocationsApiResponse.Location> { new GetNotificationsLocationsApiResponse.Location() { Name = "Valid Location" } }
+            };
+            mockSessionService.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
+            mockValidator.Setup(v => v.ValidateAsync(submitModel, default)).ReturnsAsync(new ValidationResult());
+            mockApiClient.Setup(a => a.GetOnboardingNotificationsLocations(It.IsAny<long>(), It.IsAny<string>()))
+                .ReturnsAsync(apiResponse);
+
+            // Act
+            var result = await controller.Post(submitModel);
+
+            // Assert
+            var redirectResult = result as RedirectToRouteResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult!.RouteName.Should().Be(RouteNames.Onboarding.PreviousEngagement);
+            redirectResult.RouteValues["employerAccountId"].Should().Be(submitModel.EmployerAccountId);
+
+            mockSessionService.Verify(
+                x => x.Set(It.Is<OnboardingSessionModel>(m =>
+                    m.NotificationLocations.Any(n => n.LocationName == "Valid Location" && n.Radius == 5))),
+                Times.Once);
+        }
+
         [Test, MoqAutoData]
         public async Task Post_SubmitButtonDelete_ShouldRemoveLocationAndRedirect(
             [Frozen] Mock<ISessionService> mockSessionService,
@@ -143,7 +181,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
             [Greedy] NotificationsLocationsController controller)
         {
             // Arrange
-            submitModel.SubmitButton = SubmitButtonOption.Delete + "-0";
+            submitModel.SubmitButton = NotificationsLocationsSubmitButtonOption.Delete + "-0";
             sessionModel.NotificationLocations = new List<NotificationLocation>
             {
                 new NotificationLocation { LocationName = "Location to be deleted", Radius = 5 },
@@ -165,6 +203,5 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
             sessionModel.NotificationLocations.Should().NotContain(n => n.LocationName == "Location to be deleted");
             mockSessionService.Verify(s => s.Set(sessionModel), Times.Once);
         }
-
     }
 }

@@ -9,6 +9,8 @@ using FluentValidation;
 using SFA.DAS.Employer.Aan.Web.Constant;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
+using SFA.DAS.Employer.Aan.Web.Models.Shared;
+using SFA.DAS.Employer.Aan.Web.Orchestrators.Shared;
 using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.NotificationsLocationsControllerTests
@@ -32,8 +34,9 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
 
             var mockSessionService = new Mock<ISessionService>();
             var mockApiClient = new Mock<IOuterApiClient>();
-            var mockValidator = new Mock<IValidator<NotificationsLocationsSubmitModel>>();
-            var controller = new NotificationsLocationsController(mockSessionService.Object, mockApiClient.Object, mockValidator.Object);
+            var mockValidator = new Mock<IValidator<INotificationsLocationsPartialSubmitModel>>();
+            var orchestrator = new NotificationsLocationsOrchestrator();
+            var controller = new NotificationsLocationsController(mockSessionService.Object, mockApiClient.Object, mockValidator.Object, orchestrator);
 
             controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.CheckYourAnswers, "");
             controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.SelectNotificationEvents, "");
@@ -65,8 +68,9 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
 
             var mockSessionService = new Mock<ISessionService>();
             var mockApiClient = new Mock<IOuterApiClient>();
-            var mockValidator = new Mock<IValidator<NotificationsLocationsSubmitModel>>();
-            var controller = new NotificationsLocationsController(mockSessionService.Object, mockApiClient.Object, mockValidator.Object);
+            var mockValidator = new Mock<IValidator<INotificationsLocationsPartialSubmitModel>>();
+            var orchestrator = new NotificationsLocationsOrchestrator();
+            var controller = new NotificationsLocationsController(mockSessionService.Object, mockApiClient.Object, mockValidator.Object, orchestrator);
             controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.CheckYourAnswers, "");
             controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.SelectNotificationEvents, "");
 
@@ -99,8 +103,9 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
 
             var mockSessionService = new Mock<ISessionService>();
             var mockApiClient = new Mock<IOuterApiClient>();
-            var mockValidator = new Mock<IValidator<NotificationsLocationsSubmitModel>>();
-            var controller = new NotificationsLocationsController(mockSessionService.Object, mockApiClient.Object, mockValidator.Object);
+            var mockValidator = new Mock<IValidator<INotificationsLocationsPartialSubmitModel>>();
+            var orchestrator = new NotificationsLocationsOrchestrator();
+            var controller = new NotificationsLocationsController(mockSessionService.Object, mockApiClient.Object, mockValidator.Object, orchestrator);
             controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.CheckYourAnswers, "");
             controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.SelectNotificationEvents, "");
 

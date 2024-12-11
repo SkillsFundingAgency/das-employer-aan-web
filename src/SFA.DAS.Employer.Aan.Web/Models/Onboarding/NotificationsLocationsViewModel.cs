@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using SFA.DAS.Employer.Aan.Web.Models.Shared;
 
 namespace SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
-public class NotificationsLocationsViewModel : NotificationsLocationsSubmitModel, IBackLink
+public class NotificationsLocationsViewModel : NotificationsLocationsSubmitModel, INotificationsLocationsPartialViewModel, IBackLink
 {
     public string BackLink { get; set; } = null!;
     public string Title { get; set; } = "";
@@ -10,9 +11,11 @@ public class NotificationsLocationsViewModel : NotificationsLocationsSubmitModel
 
     public List<string> SubmittedLocations { get; set; } = [];
     public string UnrecognisedLocation { get; set; } = "";
+    public int MaxLocations => 5;
+    public string MaxLocationsString => "five";
 }
 
-public class NotificationsLocationsSubmitModel : ViewModelBase
+public class NotificationsLocationsSubmitModel : ViewModelBase, INotificationsLocationsPartialSubmitModel
 {
     public string? Location { get; set; }
     public int Radius { get; set; } = 5;
@@ -29,11 +32,4 @@ public class NotificationsLocationsSubmitModel : ViewModelBase
         new SelectListItem("100 miles", "100"),
         new SelectListItem("Across England", "0")
     ];
-
-    public static class SubmitButtonOption
-    {
-        public const string Add = "Add";
-        public const string Continue = "Continue";
-        public const string Delete = "Delete";
-    }
 }
