@@ -6,7 +6,6 @@
 @{
     ViewData["Title"] = "Register with the Apprenticeship Ambassador Network";
 }
-
 <div class="govuk-grid-row">
     <partial name="_validationSummary" />
     <form method="post" asp-route="@RouteNames.Onboarding.CheckYourAnswers" enctype="multipart/form-data" novalidate>
@@ -14,7 +13,6 @@
             <h1 class="govuk-heading-l">Register with the Apprenticeship Ambassador Network</h1>
             <h2 class="govuk-heading-m">Your regional network</h2>
             <span asp-validation-for="IsRegionConfirmationDone" class="govuk-error-message"></span>
-
             <dl class="govuk-summary-list">
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
@@ -30,14 +28,14 @@
                             }
                             else
                             {
-                                                                                        <ul id="IsRegionConfirmationDone" class="govuk-list govuk-list--bullet">
+                                <ul id="IsRegionConfirmationDone" class="govuk-list govuk-list--bullet">
                                     @{
                                         foreach (var region in Model.Region!)
                                         {
-                                                                                                                                                            <li>@region</li>
+                                            <li>@region</li>
                                         }
                                     }
-                                                                                        </ul>
+                                </ul>
                             }
                         }
                     </dd>
@@ -54,7 +52,6 @@
                 <h3 class="govuk-heading-s">
                     From your apprenticeship service account
                 </h3>
-
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
@@ -97,18 +94,16 @@
                                 @{
                                     foreach (var sector in Model.Sectors)
                                     {
-                                                                                                <li>@sector</li>
+                                        <li>@sector</li>
                                     }
                                 }
                             </ul>
                         </dd>
                     </div>
                 </dl>
-
                 <h3 class="govuk-heading-s">
                     How you want to be involved
                 </h3>
-
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">What can you offer other ambassadors?</dt>
@@ -120,14 +115,14 @@
                                 }
                                 else
                                 {
-                                                                                            <ul class="govuk-list govuk-list--bullet">
+                                    <ul class="govuk-list govuk-list--bullet">
                                         @{
                                             foreach (var reasonToJoin in Model.Reason!)
                                             {
-                                                                                                                                                                <li>@reasonToJoin</li>
+                                                <li>@reasonToJoin</li>
                                             }
                                         }
-                                                                                            </ul>
+                                    </ul>
                                 }
                             }
                         </dd>
@@ -145,14 +140,14 @@
                                 }
                                 else
                                 {
-                                                                                            <ul class="govuk-list govuk-list--bullet">
+                                    <ul class="govuk-list govuk-list--bullet">
                                         @{
                                             foreach (var neededSupport in Model.Support!)
                                             {
-                                                                                                                                                                <li>@neededSupport</li>
+                                                <li>@neededSupport</li>
                                             }
                                         }
-                                                                                            </ul>
+                                    </ul>
                                 }
                             }
                         </dd>
@@ -161,11 +156,9 @@
                         </dd>
                     </div>
                 </dl>
-
                 <h2 class="govuk-heading-m">
                     Receive a monthly email about upcoming events
                 </h2>
-
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Do you want to receive a monthly email about upcoming events?</dt>
@@ -176,39 +169,38 @@
                             <a href=@Model.ReceiveNotificationsChangeLink class="govuk-link govuk-link--no-visited-state">Change</a>
                         </dd>
                     </div>
-
                     @if (Model.ReceiveNotifications)
                     {
-                                                    <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key">Which events would you like to hear about?</dt>
-                                                        <dd class="govuk-summary-list__value">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Which events would you like to hear about?</dt>
+                            <dd class="govuk-summary-list__value">
                                 @{
                                     if (Model.EventTypes!.Count == 1)
                                     {
-                                                                                            <span>@(Model.EventTypes[0] == EventType.InPerson ? "In-Person Events" : $"{Model.EventTypes[0]} events")</span>
+                                        <span>@(Model.EventTypes[0] == EventType.InPerson ? "In-Person Events" : $"{Model.EventTypes[0]} events")</span>
                                     }
                                     else
                                     {
-                                                                                                                            <ul class="govuk-list govuk-list--bullet">
+                                        <ul class="govuk-list govuk-list--bullet">
                                             @{
                                                 foreach (var eventTypes in Model.EventTypes!)
                                                 {
-                                                                                                                                                                                                <li>@(eventTypes == EventType.InPerson ? "In-Person events" : $"{eventTypes} events")</li>
+                                                    <li>@(eventTypes == EventType.InPerson ? "In-Person events" : $"{eventTypes} events")</li>
                                                 }
                                             }
-                                                                                                                            </ul>
+                                        </ul>
                                     }
                                 }
-                                                        </dd>
-                                                        <dd class="govuk-summary-list__actions">
-                                                            <a href=@Model.SelectNotificationEventsChangeLink class="govuk-link govuk-link--no-visited-state">Change</a>
-                                                        </dd>
-                                                    </div>
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <a href=@Model.SelectNotificationEventsChangeLink class="govuk-link govuk-link--no-visited-state">Change</a>
+                            </dd>
+                        </div>
                         if (Model.ShowAllEventNotificationQuestions)
                         {
-                                                                                    <div class="govuk-summary-list__row">
-                                                                                        <dt class="govuk-summary-list__key">Locations for @Model.LocationLabel events</dt>
-                                                                                        <dd class="govuk-summary-list__value">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Locations for @Model.LocationLabel events</dt>
+                                <dd class="govuk-summary-list__value">
                                     @{
                                         if (Model.NotificationLocations!.Count == 1)
                                         {
@@ -216,29 +208,27 @@
                                         }
                                         else
                                         {
-                                                                                                                                                            <ul class="govuk-list govuk-list--bullet">
+                                            <ul class="govuk-list govuk-list--bullet">
                                                 @{
                                                     foreach (var notificationLocations in Model.NotificationLocations)
                                                     {
-                                                                                                                                                                                                                                <li>@notificationLocations</li>
+                                                        <li>@notificationLocations</li>
                                                     }
                                                 }
-                                                                                                                                                            </ul>
+                                            </ul>
                                         }
                                     }
-                                                                                        </dd>
-                                                                                        <dd class="govuk-summary-list__actions">
-                                                                                            <a href=@Model.NotificationsLocationsChangeLink class="govuk-link govuk-link--no-visited-state">Change</a>
-                                                                                        </dd>
-                                                                                    </div>
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <a href=@Model.NotificationsLocationsChangeLink class="govuk-link govuk-link--no-visited-state">Change</a>
+                                </dd>
+                            </div>
                         }
                     }
                 </dl>
-
                 <h2 class="govuk-heading-m">
                     Engagement with apprenticeship ambassadors
                 </h2>
-
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Have you met another apprenticeship ambassador before?</dt>
@@ -250,7 +240,6 @@
                         </dd>
                     </div>
                 </dl>
-
                 <div class="govuk-button-group">
                     <button id="continue-button" type="submit" class="govuk-button" data-module="govuk-button" data-disable-on-submit="true" asp-page-handler="Submit">
                         Submit
