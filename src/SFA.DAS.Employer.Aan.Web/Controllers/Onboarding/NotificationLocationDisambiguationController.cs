@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
-using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
+using SFA.DAS.Employer.Aan.Web.Orchestrators.Shared;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 
@@ -19,23 +19,29 @@ public class NotificationLocationDisambiguationController : Controller
     private readonly ISessionService _sessionService;
     private readonly IOuterApiClient _outerApiClient;
     private readonly IValidator<NotificationLocationDisambiguationSubmitModel> _validator;
+    private readonly INotificationLocationDisambiguationOrchestrator _orchestrator;
 
     public NotificationLocationDisambiguationController(
         ISessionService sessionService,
         IOuterApiClient outerApiClient,
-        IValidator<NotificationLocationDisambiguationSubmitModel> validator)
+        IValidator<NotificationLocationDisambiguationSubmitModel> validator,
+        INotificationLocationDisambiguationOrchestrator orchestrator)
     {
         _sessionService = sessionService;
         _outerApiClient = outerApiClient;
         _validator = validator;
+        _orchestrator = orchestrator;
     }
 
     [HttpGet]
     public async Task<IActionResult> Get([FromRoute] string employerAccountId, int radius, string location)
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
-        var model = await GetViewModel(sessionModel, radius, location, employerAccountId);
-        model.EmployerAccountId = employerAccountId;
+
+        var model = await _orchestrator.GetViewModel(sessionModel.EmployerDetails.AccountId, radius, location);
+
+        model.BackLink = Url.RouteUrl(@RouteNames.Onboarding.NotificationsLocations, new { employerAccountId });
+
         return View(ViewPath, model);
     }
 
@@ -48,8 +54,9 @@ public class NotificationLocationDisambiguationController : Controller
 
         if (!result.IsValid)
         {
-            var model = await GetViewModel(sessionModel, submitModel.Radius, submitModel.Location, submitModel.EmployerAccountId);
-            model.EmployerAccountId = submitModel.EmployerAccountId;
+
+            var model = await _orchestrator.GetViewModel(sessionModel.EmployerDetails.AccountId, submitModel.Radius, submitModel.Location);
+            model.BackLink = Url.RouteUrl(@RouteNames.Onboarding.NotificationsLocations, new { submitModel.EmployerAccountId });
             result.AddToModelState(ModelState);
             return View(ViewPath, model);
         }
@@ -67,23 +74,5 @@ public class NotificationLocationDisambiguationController : Controller
         _sessionService.Set(sessionModel);
 
         return RedirectToRoute(RouteNames.Onboarding.NotificationsLocations, new { submitModel.EmployerAccountId });
-    }
-
-    private async Task<NotificationLocationDisambiguationViewModel> GetViewModel(OnboardingSessionModel sessionModel, int radius, string location, string employerAccountId)
-    {
-        var apiResponse = await
-                  _outerApiClient.GetOnboardingNotificationsLocations(sessionModel.EmployerDetails.AccountId, location);
-
-        return new NotificationLocationDisambiguationViewModel
-        {
-            BackLink = Url.RouteUrl(@RouteNames.Onboarding.NotificationsLocations, new { employerAccountId })!,
-            Title = $"We found more than one location that matches '{location}'",
-            Radius = radius,
-            Location = location,
-            Locations = apiResponse.Locations
-                .Select(x => (LocationModel)x)
-                .Take(10)
-                .ToList()
-        };
     }
 }

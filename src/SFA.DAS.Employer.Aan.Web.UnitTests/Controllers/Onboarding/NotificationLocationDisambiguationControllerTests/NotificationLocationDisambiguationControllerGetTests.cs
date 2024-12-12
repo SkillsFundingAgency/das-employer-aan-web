@@ -6,7 +6,9 @@ using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
+using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
+using SFA.DAS.Employer.Aan.Web.Orchestrators.Shared;
 using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 using SFA.DAS.Testing.AutoFixture;
 
@@ -19,21 +21,31 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
         public async Task Get_WhenCalled_ReturnsViewWithViewModel(
             [Frozen] Mock<ISessionService> mockSessionService,
             [Frozen] Mock<IOuterApiClient> mockOuterApiClient,
+            [Frozen] Mock<INotificationLocationDisambiguationOrchestrator> mockOrchestrator,
             string employerAccountId,
             int radius,
             string location,
-            string termsAndConditionsUrl,
             List<GetNotificationsLocationsApiResponse.Location> locations,
+            NotificationLocationDisambiguationViewModel orchestratorViewModel,
+            string notificationsLocationsUrl,
+            OnboardingSessionModel sessionModel,
             [Greedy] NotificationLocationDisambiguationController controller)
         {
-            var apiResult = new GetNotificationsLocationsApiResponse { Locations = locations };
-            int employerId = int.TryParse(employerAccountId, out var parsedId) ? parsedId : 0;
+            sessionModel.EmployerDetails = new EmployerDetailsModel { AccountId = 1234 };
+            mockSessionService.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
-            mockOuterApiClient.Setup(client => client.GetOnboardingNotificationsLocations(employerId, location))
-                .ReturnsAsync(apiResult);
+            orchestratorViewModel.Location = location;
+            orchestratorViewModel.Locations = locations
+                .Select(x => new LocationModel { Name = x.Name, LocationId = x.Name })
+                .Take(10)
+                .ToList();
+
+            mockOrchestrator
+                .Setup(o => o.GetViewModel(sessionModel.EmployerDetails.AccountId, radius, location))
+                .ReturnsAsync(orchestratorViewModel);
 
             controller.AddUrlHelperMock()
-                .AddUrlForRoute(RouteNames.Onboarding.TermsAndConditions, termsAndConditionsUrl);
+                .AddUrlForRoute(RouteNames.Onboarding.NotificationsLocations, notificationsLocationsUrl);
 
             var result = await controller.Get(employerAccountId, radius, location) as ViewResult;
 
@@ -42,7 +54,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
 
             var viewModel = result.Model as NotificationLocationDisambiguationViewModel;
             viewModel.Should().NotBeNull();
-            viewModel!.EmployerAccountId.Should().Be(employerAccountId);
+            viewModel!.BackLink.Should().Be(notificationsLocationsUrl);
             viewModel.Location.Should().Be(location);
             viewModel.Locations.Should().HaveCountLessOrEqualTo(10);
         }
