@@ -3,7 +3,8 @@
     public class EventNotificationSettingsViewModel
     {
         public List<EventFormatViewModel> EventFormats { get; set; }
-        //public IEnumerable<NotificationLocationsViewModel> eventNotificationLocations { get; set; } = new List<NotificationLocationsViewModel>();
+        public List<NotificationLocationsViewModel> EventNotificationLocations { get; set; }
+        public bool ReceiveMonthlyNotifications { get; set; }
         public string ChangeMonthlyEmailUrl { get; set; } = "#";
         public string ChangeEventTypeUrl { get; set; } = "#";
         public string ChangeLocationsUrl { get; set; } = "#";

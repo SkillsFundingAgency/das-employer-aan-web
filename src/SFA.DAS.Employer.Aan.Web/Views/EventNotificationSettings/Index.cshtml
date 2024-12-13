@@ -23,10 +23,7 @@
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell" style="width: 40%;"><strong>Do you want to get a monthly email about upcoming events?</strong></td>
                     <td class="govuk-table__cell" style="width: 50%;">
-                        @for (int i = 0; i < Model.EventFormats.Count; i++)
-                        {
-                            <div>@Model.EventFormats[i].EventFormat.ToString()</div>
-                        }
+                        TODO
                     </td>
                     <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href=@Model.ChangeMonthlyEmailUrl>Change</a></td>
                 </tr>
@@ -34,14 +31,25 @@
                 <!-- Event Types -->
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell"><strong>Which types of events do you want to be emailed about?</strong></td>
-                    <td class="govuk-table__cell">TODO</td>
+                    <td class="govuk-table__cell">
+
+                        @for (int i = 0; i < Model.EventFormats.Count; i++)
+                        {
+                            <div>@Model.EventFormats[i].EventFormat.ToString()</div>
+                        }
+                    </td>
                     <td class="govuk-table__cell"><a class="govuk-link" href=@Model.ChangeEventTypeUrl>Change</a></td>
                 </tr>
 
                 <!-- Locations -->
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell"><strong>Locations</strong></td>
-                    <td class="govuk-table__cell">TODO</td>
+                    <td class="govuk-table__cell">
+                        @for (int i = 0; i < Model.EventNotificationLocations.Count; i++)
+                        {
+                            <div>@Model.EventNotificationLocations[i].Name.ToString()</div>
+                        }
+                    </td>
                     <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href=@Model.ChangeLocationsUrl>Change</a></td>
                 </tr>
 

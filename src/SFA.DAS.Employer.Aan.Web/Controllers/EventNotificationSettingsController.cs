@@ -25,14 +25,55 @@ public class EventNotificationSettingsController : Controller
     {
         var memberId = _sessionService.GetMemberId();
 
-        var apiResponse = await _apiClient.GetMemberNotificationEventFormats(memberId, cancellationToken);
+        var apiResponse = await _apiClient.GetMemberNotificationEventSettings(memberId, cancellationToken);
 
         var vm = InitialiseViewModel(employerAccountId, apiResponse);
 
         return View(vm);
     }
+    
+    private EventNotificationSettingsViewModel InitialiseViewModel(string employerAccountId, GetMemberNotificationSettingsResponse apiResponse)
+    {
+        var eventFormats = new List<EventFormatViewModel>();
+        var locations = new List<NotificationLocationsViewModel>();
 
-    private EventNotificationSettingsViewModel InitialiseViewModel(string employerAccountId, GetMemberNotificationEventFormatsResponse apiResponse)
+        foreach (var format in apiResponse.MemberNotificationEventFormats)
+        {
+            var eventFormatVm = new EventFormatViewModel
+            {
+                MemberId = format.MemberId,
+                EventFormat = format.EventFormat,
+                Ordering = format.Ordering,
+                ReceiveNotifications = format.ReceiveNotifications
+            };
+
+            eventFormats.Add(eventFormatVm);
+        }
+
+        foreach (var location in apiResponse.MemberNotificationLocations)
+        {
+            var locationVm = new NotificationLocationsViewModel
+            {
+                MemberId = location.MemberId,
+                Name = location.Name,
+                Radius = location.Radius,
+                Latitude = location.Latitude,
+                Longitude = location.Longitude
+            };
+
+            locations.Add(locationVm);
+        }
+
+        return new EventNotificationSettingsViewModel
+        {
+            EventFormats = eventFormats,
+            EventNotificationLocations = locations,
+            ReceiveMonthlyNotifications = apiResponse.ReceiveMonthlyNotifications,
+            ChangeEventTypeUrl = Url.RouteUrl(RouteNames.Onboarding.SelectNotificationEvents, new { employerAccountId })
+        };
+    }
+
+    private EventNotificationSettingsViewModel InitialiseViewModel2(string employerAccountId, GetMemberNotificationEventFormatsResponse apiResponse)
     {
         var eventFormats = new List<EventFormatViewModel>();
 
