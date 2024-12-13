@@ -48,7 +48,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.SelectNotifi
         [TestCase(true, "In-Person", RouteNames.Onboarding.NotificationsLocations)]
         [TestCase(true, "Hybrid", RouteNames.Onboarding.NotificationsLocations)]
         [TestCase(true, "All", RouteNames.Onboarding.NotificationsLocations)]
-        [TestCase(true, "Online", RouteNames.Onboarding.CheckYourAnswers)]
+        [TestCase(true, "Online", RouteNames.Onboarding.PreviousEngagement)]
         public void Post_RedirectsToCorrectRouteBasedOnEventTypes(
             bool isSelected,
             string eventType,

@@ -6,15 +6,19 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Models.Shared;
 using SFA.DAS.Encoding;
+using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Onboarding;
 
 namespace SFA.DAS.Employer.Aan.Web.Orchestrators.Shared
 {
     public interface INotificationsLocationsOrchestrator
     {
         INotificationsLocationsPartialViewModel GetViewModel(INotificationLocationsSessionModel sessionModel, ModelStateDictionary modelState);
+
         Task<NotificationsLocationsOrchestrator.RedirectTarget> ApplySubmitModel<T>(
             INotificationsLocationsPartialSubmitModel submitModel,
-            ModelStateDictionary modelState) where T : INotificationLocationsSessionModel;
+            ModelStateDictionary modelState,
+            Func<long, string, Task<GetNotificationsLocationsApiResponse>> getNotificationsLocations)
+            where T : INotificationLocationsSessionModel;
     }
 
     public class NotificationsLocationsOrchestrator(ISessionService sessionService, IValidator<INotificationsLocationsPartialSubmitModel> validator, IOuterApiClient apiClient, IEncodingService encodingService)
@@ -47,8 +51,10 @@ namespace SFA.DAS.Employer.Aan.Web.Orchestrators.Shared
             return result;
         }
 
-        public async Task<RedirectTarget> ApplySubmitModel<T>(INotificationsLocationsPartialSubmitModel submitModel,
-            ModelStateDictionary modelState) where T : INotificationLocationsSessionModel
+        public async Task<RedirectTarget> ApplySubmitModel<T>(
+    INotificationsLocationsPartialSubmitModel submitModel,
+    ModelStateDictionary modelState,
+    Func<long, string, Task<GetNotificationsLocationsApiResponse>> getNotificationsLocations) where T : INotificationLocationsSessionModel
         {
             var sessionModel = sessionService.Get<T>();
 
@@ -81,7 +87,7 @@ namespace SFA.DAS.Employer.Aan.Web.Orchestrators.Shared
             }
 
             var accountId = encodingService.Decode(submitModel.EmployerAccountId, EncodingType.AccountId);
-            var apiResponse = await apiClient.GetOnboardingNotificationsLocations(accountId, submitModel.Location);
+            var apiResponse = await getNotificationsLocations(accountId, submitModel.Location);
 
             if (apiResponse.Locations.Count > 1)
             {

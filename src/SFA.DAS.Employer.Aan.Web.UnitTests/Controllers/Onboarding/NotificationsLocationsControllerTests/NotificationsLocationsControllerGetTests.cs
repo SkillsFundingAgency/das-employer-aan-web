@@ -37,7 +37,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
             var mockApiClient = new Mock<IOuterApiClient>();
             var mockValidator = new Mock<IValidator<INotificationsLocationsPartialSubmitModel>>();
             var orchestrator = new NotificationsLocationsOrchestrator(mockSessionService.Object, mockValidator.Object, mockApiClient.Object, Mock.Of<IEncodingService>());
-            var controller = new NotificationsLocationsController(mockSessionService.Object, orchestrator);
+            var controller = new NotificationsLocationsController(mockSessionService.Object, orchestrator, mockApiClient.Object);
 
             controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.CheckYourAnswers, "");
             controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.SelectNotificationEvents, "");
@@ -71,7 +71,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
             var mockApiClient = new Mock<IOuterApiClient>();
             var mockValidator = new Mock<IValidator<INotificationsLocationsPartialSubmitModel>>();
             var orchestrator = new NotificationsLocationsOrchestrator(mockSessionService.Object, mockValidator.Object, mockApiClient.Object, Mock.Of<IEncodingService>());
-            var controller = new NotificationsLocationsController(mockSessionService.Object, orchestrator);
+            var controller = new NotificationsLocationsController(mockSessionService.Object, orchestrator, mockApiClient.Object);
             controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.CheckYourAnswers, "");
             controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.SelectNotificationEvents, "");
 
@@ -106,7 +106,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
             var mockApiClient = new Mock<IOuterApiClient>();
             var mockValidator = new Mock<IValidator<INotificationsLocationsPartialSubmitModel>>();
             var orchestrator = new NotificationsLocationsOrchestrator(mockSessionService.Object, mockValidator.Object, mockApiClient.Object, Mock.Of<IEncodingService>());
-            var controller = new NotificationsLocationsController(mockSessionService.Object, orchestrator);
+            var controller = new NotificationsLocationsController(mockSessionService.Object, orchestrator, mockApiClient.Object);
             controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.CheckYourAnswers, "");
             controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.SelectNotificationEvents, "");
 
