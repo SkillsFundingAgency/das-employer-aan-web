@@ -19,7 +19,7 @@ public class NotificationsLocationsSubmitModel : ViewModelBase, INotificationsLo
 {
     public string? Location { get; set; }
     public int Radius { get; set; } = 5;
-    public string SubmitButton { get; set; }
+    public string SubmitButton { get; set; } = "";
     public bool HasSubmittedLocations { get; set; }
 
     public List<SelectListItem> RadiusOptions =>
