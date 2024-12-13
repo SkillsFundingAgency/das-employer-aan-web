@@ -2,6 +2,8 @@
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Models.Shared;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using FluentValidation;
 
 namespace SFA.DAS.Employer.Aan.Web.Orchestrators.Shared
 {
@@ -9,16 +11,56 @@ namespace SFA.DAS.Employer.Aan.Web.Orchestrators.Shared
     {
         Task<INotificationLocationDisambiguationPartialViewModel> GetViewModel(long employerAccountId,
             int radius, string location);
+
+        Task<NotificationLocationDisambiguationOrchestrator.RedirectTarget> ApplySubmitModel<T>(
+            INotificationLocationDisambiguationPartialSubmitModel submitModel,
+            ModelStateDictionary modelState);
     }
 
     public class NotificationLocationDisambiguationOrchestrator : INotificationLocationDisambiguationOrchestrator
     {
+        private readonly ISessionService _sessionService;
+        private readonly IValidator<INotificationLocationDisambiguationPartialSubmitModel> _validator;
         private readonly IOuterApiClient _outerApiClient;
-
         public NotificationLocationDisambiguationOrchestrator(
-            IOuterApiClient outerApiClient)
+            ISessionService sessionService,
+            IValidator<INotificationLocationDisambiguationPartialSubmitModel> validator,
+            IOuterApiClient apiClient)
         {
-            _outerApiClient = outerApiClient;
+            _sessionService = sessionService;
+            _validator = validator;
+            _outerApiClient = apiClient;
+        }
+
+        public async Task<RedirectTarget> ApplySubmitModel<T>(
+            INotificationLocationDisambiguationPartialSubmitModel submitModel,
+            ModelStateDictionary modelState)
+        {
+            var validationResult = await _validator.ValidateAsync(submitModel);
+            if (!validationResult.IsValid)
+            {
+                foreach (var e in validationResult.Errors)
+                {
+                    modelState.AddModelError(e.PropertyName, e.ErrorMessage);
+                }
+
+                return RedirectTarget.Self;
+            }
+
+            var onboardingSessionModel = _sessionService.Get<OnboardingSessionModel>();
+
+            var apiResponse = await _outerApiClient.GetOnboardingNotificationsLocations(onboardingSessionModel.EmployerDetails.AccountId, submitModel.SelectedLocation!);
+
+            onboardingSessionModel.NotificationLocations.Add(new NotificationLocation
+            {
+                LocationName = apiResponse.Locations.First().Name,
+                GeoPoint = apiResponse.Locations.First().GeoPoint,
+                Radius = submitModel.Radius
+            });
+
+            _sessionService.Set(onboardingSessionModel);
+
+            return RedirectTarget.NextPage;
         }
 
         public async Task<INotificationLocationDisambiguationPartialViewModel> GetViewModel(
@@ -39,6 +81,12 @@ namespace SFA.DAS.Employer.Aan.Web.Orchestrators.Shared
                     .Take(10)
                     .ToList()
             };
+        }
+
+        public enum RedirectTarget
+        {
+            Self,
+            NextPage,
         }
     }
 }
