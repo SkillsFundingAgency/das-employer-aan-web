@@ -86,13 +86,12 @@ public class SelectNotificationsController : Controller
         if (hasSeenPreview && eventTypes.All(e => e.EventType == EventType.Online || !e.IsSelected))
             return RedirectToRoute(RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId });
 
-        // TODO: Once EC-811 has been completed, update the RedirectToRoute
         if (eventTypes.Any(e => e.IsSelected &&
                                 (e.EventType == EventType.Hybrid ||
                                  e.EventType == EventType.InPerson ||
                                  e.EventType == EventType.All)))
         {
-            return RedirectToRoute(RouteNames.Onboarding.PreviousEngagement, new { employerAccountId });
+            return RedirectToRoute(RouteNames.Onboarding.NotificationsLocations, new { employerAccountId });
         }
 
         return RedirectToRoute(RouteNames.Onboarding.PreviousEngagement, new { employerAccountId });
