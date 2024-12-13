@@ -36,16 +36,13 @@ public class TermsAndConditionsController : Controller
     [HttpPost]
     public async Task<IActionResult> Post([FromRoute] string employerAccountId)
     {
-        if (!_sessionService.Contains<OnboardingSessionModel>())
+        var profiles = await _outerApiClient.GetProfilesByUserType("employer", null);
+        OnboardingSessionModel sessionModel = new()
         {
-            var profiles = await _outerApiClient.GetProfilesByUserType("employer", null);
-            OnboardingSessionModel sessionModel = new()
-            {
-                ProfileData = profiles.Profiles.Select(p => (ProfileModel)p).ToList(),
-                HasAcceptedTerms = true
-            };
-            _sessionService.Set(sessionModel);
-        }
+            ProfileData = profiles.Profiles.Select(p => (ProfileModel)p).ToList(),
+            HasAcceptedTerms = true
+        };
+        _sessionService.Set(sessionModel);
 
         return RedirectToRoute(RouteNames.Onboarding.Regions, new { EmployerAccountId = employerAccountId });
     }
