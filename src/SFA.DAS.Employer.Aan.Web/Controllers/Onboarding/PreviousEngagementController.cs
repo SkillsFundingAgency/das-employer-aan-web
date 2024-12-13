@@ -80,11 +80,21 @@ public class PreviousEngagementController : Controller
 
     private PreviousEngagementViewModel GetViewModel(OnboardingSessionModel sessionModel, string employerAccountId)
     {
+        // TODO: Once EC-811 has been completed, update the RedirectToRoute
+
+        string backLink = sessionModel switch
+        {
+            { HasSeenPreview: true } => RouteNames.Onboarding.CheckYourAnswers,
+            //{ Locations: { Count: > 0 } } => RouteNames.Onboarding.Locations,
+            { EventTypes: { Count: > 0 } } => RouteNames.Onboarding.SelectNotificationEvents,
+            _ => RouteNames.Onboarding.ReceiveNotifications
+        };
+
         var previousEngagement = sessionModel.GetProfileValue(ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer);
         return new PreviousEngagementViewModel()
         {
             HasPreviousEngagement = bool.TryParse(previousEngagement, out var result) ? result : null,
-            BackLink = sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId })! : Url.RouteUrl(@RouteNames.Onboarding.JoinTheNetwork, new { employerAccountId })!
+            BackLink = Url.RouteUrl(backLink, new { employerAccountId })!
         };
     }
 }

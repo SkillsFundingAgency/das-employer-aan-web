@@ -26,12 +26,6 @@ builder.Services
     .AddValidatorsFromAssembly(typeof(ConnectWithMemberSubmitModelValidator).Assembly)
     .AddMaMenuConfiguration(RouteNames.SignOut, rootConfiguration["ResourceEnvironmentName"]);
 
-//builder.Services.AddValidatorsFromAssemblyContaining<ReceiveNotificationsSubmitModelValidator>();
-//builder.Services.AddFluentValidationAutoValidation(options =>
-//{
-//    options.ValidationStrategy = ValidationStrategy.Annotations;
-//});
-
 builder.Services.AddHealthChecks();
 
 builder.Services

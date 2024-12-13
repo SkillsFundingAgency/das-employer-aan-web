@@ -58,20 +58,45 @@ public class SelectNotificationsController : Controller
             submitModel.EventTypes.ForEach(e => e.IsSelected = e.EventType == EventType.All);
         }
 
+        // TODO: Once EC-811 has been completed, If only event type 'online' is selected then clear the locations from session
+        //sessionModel.Locations=null 
+
+        var originalValue = sessionModel.EventTypes;
+        var newValue = submitModel.EventTypes;
+
         sessionModel.EventTypes = submitModel.EventTypes;
 
         _sessionService.Set(sessionModel);
 
-        return RedirectAccordingly(sessionModel.EventTypes, sessionModel.HasSeenPreview, submitModel.EmployerAccountId);
+        var areEventTypesMatching = sessionModel.HasSeenPreview &&
+                                    AreEventTypesMatching(originalValue, newValue);
+
+        return RedirectAccordingly(areEventTypesMatching, sessionModel.EventTypes, sessionModel.HasSeenPreview, submitModel.EmployerAccountId);
     }
 
-    private IActionResult RedirectAccordingly(List<EventTypeModel> eventTypes, bool hasSeenPreview, string employerAccountId)
+    private IActionResult RedirectAccordingly(
+        bool areEventTypesMatching,
+        List<EventTypeModel> eventTypes,
+        bool hasSeenPreview,
+        string employerAccountId)
     {
-        return eventTypes.Any(e => e.IsSelected &&
-                                   (e.EventType == EventType.Hybrid || e.EventType == EventType.InPerson || e.EventType == EventType.All))
-            ? RedirectToRoute(RouteNames.Onboarding.NotificationsLocations, new { employerAccountId })
-            : RedirectToRoute(RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId });
+        if (areEventTypesMatching)
+            return RedirectToRoute(RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId });
+
+        if (hasSeenPreview && eventTypes.All(e => e.EventType == EventType.Online || !e.IsSelected))
+            return RedirectToRoute(RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId });
+
+        if (eventTypes.Any(e => e.IsSelected &&
+                                (e.EventType == EventType.Hybrid ||
+                                 e.EventType == EventType.InPerson ||
+                                 e.EventType == EventType.All)))
+        {
+            return RedirectToRoute(RouteNames.Onboarding.NotificationsLocations, new { employerAccountId });
+        }
+
+        return RedirectToRoute(RouteNames.Onboarding.PreviousEngagement, new { employerAccountId });
     }
+
 
     private SelectNotificationsViewModel GetViewModel(OnboardingSessionModel sessionModel, string employerAccountId)
     {
@@ -95,4 +120,21 @@ public class SelectNotificationsController : Controller
         new EventTypeModel { EventType = EventType.Online, IsSelected = false, Ordering = 2 },
         new EventTypeModel { EventType = EventType.All, IsSelected = false, Ordering = 4 }
     };
+
+    private bool AreEventTypesMatching(List<EventTypeModel>? originalValue, List<EventTypeModel>? newValue)
+    {
+        if (originalValue == null && newValue == null)
+            return true;
+
+        if (originalValue == null || newValue == null)
+            return false;
+
+        if (originalValue.Count != newValue.Count)
+            return false;
+
+        return originalValue.OrderBy(e => e.Ordering).SequenceEqual(
+            newValue.OrderBy(e => e.Ordering),
+            new EventTypeModelComparer()
+        );
+    }
 }
