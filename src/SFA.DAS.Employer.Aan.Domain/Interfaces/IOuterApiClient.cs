@@ -82,4 +82,11 @@ public interface IOuterApiClient
     [Post("/members/{memberId}/reinstate")]
     [AllowAnyStatusCode]
     Task PostMemberReinstate([Path] Guid memberId, CancellationToken cancellationToken);
+
+    [Get("/memberNotificationEventFormats/{memberId}")]
+    Task<GetMemberNotificationEventFormatsResponse> GetMemberNotificationEventFormats([Path] Guid memberId, CancellationToken cancellationToken);
+
+
+    [Get("/memberNotificationEventSettings/{memberId}")]
+    Task<GetMemberNotificationSettingsResponse> GetMemberNotificationEventSettings([Path] Guid memberId, CancellationToken cancellationToken);
 }
