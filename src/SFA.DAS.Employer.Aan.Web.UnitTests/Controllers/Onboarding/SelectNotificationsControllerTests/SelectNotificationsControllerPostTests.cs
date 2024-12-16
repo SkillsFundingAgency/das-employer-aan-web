@@ -45,7 +45,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.SelectNotifi
             )), Times.Once);
         }
 
-        [TestCase(true, "In-Person", RouteNames.Onboarding.NotificationsLocations)]
+        [TestCase(true, "InPerson", RouteNames.Onboarding.NotificationsLocations)]
         [TestCase(true, "Hybrid", RouteNames.Onboarding.NotificationsLocations)]
         [TestCase(true, "All", RouteNames.Onboarding.NotificationsLocations)]
         [TestCase(true, "Online", RouteNames.Onboarding.PreviousEngagement)]

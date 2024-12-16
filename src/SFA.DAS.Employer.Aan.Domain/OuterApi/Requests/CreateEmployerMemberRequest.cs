@@ -9,8 +9,13 @@ public class CreateEmployerMemberRequest
     public int? RegionId { get; set; }
     public string? OrganisationName { get; set; } = null!;
     public List<ProfileValue> ProfileValues { get; set; } = [];
+    public List<MemberNotificationEventFormatValues> MemberNotificationEventFormatValues { get; set; } = new();
+    public List<MemberNotificationLocationValues> MemberNotificationLocationValues { get; set; } = new();
+    public bool ReceiveNotifications { get; set; }
     public long AccountId { get; set; }
     public Guid UserRef { get; set; }
 }
 
 public record class ProfileValue(int Id, string Value);
+public record class MemberNotificationEventFormatValues(string EventFormat, int Ordering, bool ReceiveNotifications);
+public record class MemberNotificationLocationValues(string Name, int Radius, double Latitude, double Longitude);

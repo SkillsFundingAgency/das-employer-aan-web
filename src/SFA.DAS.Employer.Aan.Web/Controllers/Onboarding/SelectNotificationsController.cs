@@ -58,8 +58,11 @@ public class SelectNotificationsController : Controller
             submitModel.EventTypes.ForEach(e => e.IsSelected = e.EventType == EventType.All);
         }
 
-        // TODO: Once EC-811 has been completed, If only event type 'online' is selected then clear the locations from session
-        //sessionModel.Locations=null 
+        if (submitModel.EventTypes.Count(x => x.IsSelected) == 1 &&
+            submitModel.EventTypes.Any(x => x.IsSelected && x.EventType == EventType.Online))
+        {
+            sessionModel.NotificationLocations = new List<NotificationLocation>();
+        }
 
         var originalValue = sessionModel.EventTypes;
         var newValue = submitModel.EventTypes;
