@@ -8,7 +8,7 @@ using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
-[Route("accounts/{employerAccountId}/event-notification-settings", Name = RouteNames.UpcomingEventsNotifications)]
+[Route("accounts/{employerAccountId}/event-notification-settings", Name = RouteNames.EventNotificationSettings.EmailNotificationSettings)]
 public class EventNotificationSettingsController : Controller
 {
     private readonly IOuterApiClient _apiClient;
@@ -77,9 +77,9 @@ public class EventNotificationSettingsController : Controller
             ReceiveMonthlyNotifications = apiResponse.ReceiveMonthlyNotifications,
             ReceiveMonthlyNotificationsText = apiResponse.ReceiveMonthlyNotifications ? "Yes" : "No",
             UserWithNotificationSettings = apiResponse.UserWithNotificationSettings,
-            ChangeMonthlyEmailUrl = Url.RouteUrl(RouteNames.NotificationSettings.ReceiveNotifications, new { employerAccountId }),
-            ChangeEventTypeUrl = Url.RouteUrl(RouteNames.NotificationSettings.SelectNotificationEvents, new { employerAccountId }), 
-            ChangeLocationsUrl = Url.RouteUrl(RouteNames.NotificationSettings.NotificationsLocations, new { employerAccountId }),
+            ChangeMonthlyEmailUrl = Url.RouteUrl(RouteNames.EventNotificationSettings.MonthlyNotifications, new { employerAccountId }),
+            ChangeEventTypeUrl = Url.RouteUrl(RouteNames.EventNotificationSettings.EventTypes, new { employerAccountId }), 
+            ChangeLocationsUrl = Url.RouteUrl(RouteNames.EventNotificationSettings.NotificationLocations, new { employerAccountId }),
             BackLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId })
         };
     }
