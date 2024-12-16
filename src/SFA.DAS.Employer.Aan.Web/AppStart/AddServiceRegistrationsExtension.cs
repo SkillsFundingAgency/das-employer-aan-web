@@ -31,6 +31,7 @@ public static class AddServiceRegistrationsExtension
         services.AddTransient<IEncodingService, EncodingService>();
         services.AddTransient<IEmployerAccountsService, EmployerAccountsService>();
         services.AddTransient<INotificationsLocationsOrchestrator, NotificationsLocationsOrchestrator>();
+        services.AddTransient<INotificationLocationDisambiguationOrchestrator, NotificationLocationDisambiguationOrchestrator>();
         return services;
     }
 

@@ -59,7 +59,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
 
             if (!newValue) sessionModel.EventTypes = new List<EventTypeModel>();
             if (!newValue) sessionModel.NotificationLocations = new List<NotificationLocation>();
-
+            
             sessionModel.ReceiveNotifications = newValue;
             sessionService.Set(sessionModel);
 

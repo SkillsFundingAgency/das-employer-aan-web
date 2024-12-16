@@ -1,13 +1,11 @@
-﻿using FluentValidation;
-using FluentValidation.AspNetCore;
-using FluentValidation.Results;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
-using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
+using SFA.DAS.Employer.Aan.Web.Orchestrators.Shared;
+using SFA.DAS.Validation.Mvc.Filters;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 
@@ -17,73 +15,45 @@ public class NotificationLocationDisambiguationController : Controller
 {
     public const string ViewPath = "~/Views/Onboarding/NotificationLocationDisambiguation.cshtml";
     private readonly ISessionService _sessionService;
-    private readonly IOuterApiClient _outerApiClient;
-    private readonly IValidator<NotificationLocationDisambiguationSubmitModel> _validator;
+    private readonly INotificationLocationDisambiguationOrchestrator _orchestrator;
 
     public NotificationLocationDisambiguationController(
         ISessionService sessionService,
-        IOuterApiClient outerApiClient,
-        IValidator<NotificationLocationDisambiguationSubmitModel> validator)
+        INotificationLocationDisambiguationOrchestrator orchestrator)
     {
         _sessionService = sessionService;
-        _outerApiClient = outerApiClient;
-        _validator = validator;
+        _orchestrator = orchestrator;
     }
 
     [HttpGet]
+    [ValidateModelStateFilter]
     public async Task<IActionResult> Get([FromRoute] string employerAccountId, int radius, string location)
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
-        var model = await GetViewModel(sessionModel, radius, location, employerAccountId);
-        model.EmployerAccountId = employerAccountId;
+
+        var model = await _orchestrator.GetViewModel(sessionModel.EmployerDetails.AccountId, radius, location);
+
+        model.BackLink = Url.RouteUrl(@RouteNames.Onboarding.NotificationsLocations, new { employerAccountId });
+
         return View(ViewPath, model);
     }
 
     [HttpPost]
+    [ValidateModelStateFilter]
     public async Task<IActionResult> Post(NotificationLocationDisambiguationSubmitModel submitModel, CancellationToken cancellationToken)
     {
-        ValidationResult result = _validator.Validate(submitModel);
+        var result = await _orchestrator.ApplySubmitModel<OnboardingSessionModel>(submitModel, ModelState);
 
-        var sessionModel = _sessionService.Get<OnboardingSessionModel>();
+        var routeValues = new { submitModel.EmployerAccountId, submitModel.Radius, submitModel.Location };
 
-        if (!result.IsValid)
+        switch (result)
         {
-            var model = await GetViewModel(sessionModel, submitModel.Radius, submitModel.Location, submitModel.EmployerAccountId);
-            model.EmployerAccountId = submitModel.EmployerAccountId;
-            result.AddToModelState(ModelState);
-            return View(ViewPath, model);
+            case NotificationLocationDisambiguationOrchestrator.RedirectTarget.NextPage:
+                return new RedirectToRouteResult(RouteNames.Onboarding.NotificationsLocations, new { submitModel.EmployerAccountId });
+            case NotificationLocationDisambiguationOrchestrator.RedirectTarget.Self:
+                return new RedirectToRouteResult(RouteNames.Onboarding.NotificationLocationDisambiguation, routeValues);
+            default:
+                throw new InvalidOperationException("Unexpected redirect target from ApplySubmitModel");
         }
-
-        var apiResponse = await
-            _outerApiClient.GetOnboardingNotificationsLocations(sessionModel.EmployerDetails.AccountId, submitModel.SelectedLocation!);
-
-        sessionModel.NotificationLocations.Add(new NotificationLocation
-        {
-            LocationName = apiResponse.Locations.First().Name,
-            GeoPoint = apiResponse.Locations.First().GeoPoint,
-            Radius = submitModel.Radius
-        });
-
-        _sessionService.Set(sessionModel);
-
-        return RedirectToRoute(RouteNames.Onboarding.NotificationsLocations, new { submitModel.EmployerAccountId });
-    }
-
-    private async Task<NotificationLocationDisambiguationViewModel> GetViewModel(OnboardingSessionModel sessionModel, int radius, string location, string employerAccountId)
-    {
-        var apiResponse = await
-                  _outerApiClient.GetOnboardingNotificationsLocations(sessionModel.EmployerDetails.AccountId, location);
-
-        return new NotificationLocationDisambiguationViewModel
-        {
-            BackLink = Url.RouteUrl(@RouteNames.Onboarding.NotificationsLocations, new { employerAccountId })!,
-            Title = $"We found more than one location that matches '{location}'",
-            Radius = radius,
-            Location = location,
-            Locations = apiResponse.Locations
-                .Select(x => (LocationModel)x)
-                .Take(10)
-                .ToList()
-        };
     }
 }
