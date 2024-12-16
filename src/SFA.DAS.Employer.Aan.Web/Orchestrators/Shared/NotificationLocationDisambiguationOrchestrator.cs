@@ -54,7 +54,7 @@ namespace SFA.DAS.Employer.Aan.Web.Orchestrators.Shared
             onboardingSessionModel.NotificationLocations.Add(new NotificationLocation
             {
                 LocationName = apiResponse.Locations.First().Name,
-                GeoPoint = apiResponse.Locations.First().GeoPoint,
+                GeoPoint = apiResponse.Locations.First().Coordinates,
                 Radius = submitModel.Radius
             });
 
