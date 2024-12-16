@@ -39,6 +39,14 @@ public static class RouteNames
         public const string SelectNotificationEvents = nameof(SelectNotificationEvents);
     }
 
+    public static class NotificationSettings
+    {
+        public const string NotificationsLocations = nameof(NotificationsLocations);
+        public const string ReceiveNotifications = nameof(ReceiveNotifications);
+        public const string SelectNotificationEvents = nameof(SelectNotificationEvents);
+    }
+
+
     public static class AttendanceConfirmations
     {
         public const string SignUpConfirmation = nameof(SignUpConfirmation);

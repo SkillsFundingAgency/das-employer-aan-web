@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.Aan.SharedUi.Models.NetworkEvents;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Authentication;
@@ -25,7 +24,7 @@ public class EventNotificationSettingsController : Controller
     {
         var memberId = _sessionService.GetMemberId();
 
-        var apiResponse = await _apiClient.GetMemberNotificationEventSettings(memberId, cancellationToken);
+        var apiResponse = await _apiClient.GetMemberNotificationSettings(memberId, cancellationToken);
 
         var vm = InitialiseViewModel(employerAccountId, apiResponse);
 
@@ -37,63 +36,51 @@ public class EventNotificationSettingsController : Controller
         var eventFormats = new List<EventFormatViewModel>();
         var locations = new List<NotificationLocationsViewModel>();
 
-        foreach (var format in apiResponse.MemberNotificationEventFormats)
+        if (apiResponse.MemberNotificationEventFormats.Any())
         {
-            var eventFormatVm = new EventFormatViewModel
+            foreach (var format in apiResponse.MemberNotificationEventFormats)
             {
-                MemberId = format.MemberId,
-                EventFormat = format.EventFormat,
-                Ordering = format.Ordering,
-                ReceiveNotifications = format.ReceiveNotifications
-            };
+                var eventFormatVm = new EventFormatViewModel
+                {
+                    MemberId = format.MemberId,
+                    EventFormat = format.EventFormat,
+                    Ordering = format.Ordering,
+                    ReceiveNotifications = format.ReceiveNotifications
+                };
 
-            eventFormats.Add(eventFormatVm);
+                eventFormats.Add(eventFormatVm);
+            }
         }
 
-        foreach (var location in apiResponse.MemberNotificationLocations)
+        if (apiResponse.MemberNotificationLocations.Any()) 
         {
-            var locationVm = new NotificationLocationsViewModel
+            foreach (var location in apiResponse.MemberNotificationLocations)
             {
-                MemberId = location.MemberId,
-                Name = location.Name,
-                Radius = location.Radius,
-                Latitude = location.Latitude,
-                Longitude = location.Longitude
-            };
+                var locationVm = new NotificationLocationsViewModel
+                {
+                    MemberId = location.MemberId,
+                    DisplayName = $"{location.Name}, within {location.Radius} miles",
+                    Radius = location.Radius,
+                    Latitude = location.Latitude,
+                    Longitude = location.Longitude
+                };
 
-            locations.Add(locationVm);
+                locations.Add(locationVm);
+            }
         }
+       
 
         return new EventNotificationSettingsViewModel
         {
             EventFormats = eventFormats,
             EventNotificationLocations = locations,
             ReceiveMonthlyNotifications = apiResponse.ReceiveMonthlyNotifications,
-            ChangeEventTypeUrl = Url.RouteUrl(RouteNames.Onboarding.SelectNotificationEvents, new { employerAccountId })
-        };
-    }
-
-    private EventNotificationSettingsViewModel InitialiseViewModel2(string employerAccountId, GetMemberNotificationEventFormatsResponse apiResponse)
-    {
-        var eventFormats = new List<EventFormatViewModel>();
-
-        foreach (var format in apiResponse.MemberNotificationEventFormats)
-        {
-            var eventFormatVm = new EventFormatViewModel 
-            {
-                MemberId = format.MemberId,
-                EventFormat = format.EventFormat,
-                Ordering = format.Ordering,
-                ReceiveNotifications = format.ReceiveNotifications
-            };
-
-            eventFormats.Add(eventFormatVm);
-        }
-
-        return new EventNotificationSettingsViewModel 
-        {
-            EventFormats = eventFormats,
-            ChangeEventTypeUrl = Url.RouteUrl(RouteNames.Onboarding.SelectNotificationEvents, new { employerAccountId })
+            ReceiveMonthlyNotificationsText = apiResponse.ReceiveMonthlyNotifications ? "Yes" : "No",
+            UserWithNotificationSettings = apiResponse.UserWithNotificationSettings,
+            ChangeMonthlyEmailUrl = Url.RouteUrl(RouteNames.NotificationSettings.ReceiveNotifications, new { employerAccountId }),
+            ChangeEventTypeUrl = Url.RouteUrl(RouteNames.NotificationSettings.SelectNotificationEvents, new { employerAccountId }), 
+            ChangeLocationsUrl = Url.RouteUrl(RouteNames.NotificationSettings.NotificationsLocations, new { employerAccountId }),
+            BackLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId })
         };
     }
 }
