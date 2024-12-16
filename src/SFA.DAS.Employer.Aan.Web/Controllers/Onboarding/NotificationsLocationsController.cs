@@ -56,6 +56,12 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
             {
                 if (string.IsNullOrWhiteSpace(submitModel.Location) && sessionModel.NotificationLocations.Any())
                 {
+                    if (sessionModel.HasSeenPreview)
+                    {
+                        return new RedirectToRouteResult(RouteNames.Onboarding.CheckYourAnswers,
+                            new { submitModel.EmployerAccountId });
+                    }
+
                     return new RedirectToRouteResult(RouteNames.Onboarding.PreviousEngagement,
                         new { submitModel.EmployerAccountId });
                 }
