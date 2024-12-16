@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Onboarding;
+﻿namespace SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Onboarding;
 
 public class GetNotificationsLocationsApiResponse
 {
@@ -9,7 +7,6 @@ public class GetNotificationsLocationsApiResponse
     public class Location
     {
         public string Name { get; set; }
-        [JsonPropertyName("coordinates")]
-        public double[] GeoPoint { get; set; }
+        public double[] Coordinates { get; set; }
     }
 }
