@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
+using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
@@ -56,7 +57,9 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
             var originalValue = sessionModel.ReceiveNotifications;
             var newValue = submitModel.ReceiveNotifications!.Value;
 
-            if (!newValue) sessionModel.EventTypes = null;
+            if (!newValue) sessionModel.EventTypes = new List<EventTypeModel>();
+            if (!newValue) sessionModel.NotificationLocations = new List<NotificationLocation>();
+            
             sessionModel.ReceiveNotifications = newValue;
             sessionService.Set(sessionModel);
 

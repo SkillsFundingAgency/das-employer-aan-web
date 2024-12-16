@@ -80,12 +80,10 @@ public class PreviousEngagementController : Controller
 
     private PreviousEngagementViewModel GetViewModel(OnboardingSessionModel sessionModel, string employerAccountId)
     {
-        // TODO: Once EC-811 has been completed, update the RedirectToRoute
-
         string backLink = sessionModel switch
         {
             { HasSeenPreview: true } => RouteNames.Onboarding.CheckYourAnswers,
-            //{ Locations: { Count: > 0 } } => RouteNames.Onboarding.Locations,
+            { NotificationLocations: { Count: > 0 } } => RouteNames.Onboarding.NotificationsLocations,
             { EventTypes: { Count: > 0 } } => RouteNames.Onboarding.SelectNotificationEvents,
             _ => RouteNames.Onboarding.ReceiveNotifications
         };
