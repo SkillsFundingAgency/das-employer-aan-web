@@ -27,14 +27,14 @@ public class PreviousEngagementControllerPostTests
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] PreviousEngagementController sut,
         [Frozen] PreviousEngagementSubmitModel submitmodel,
-        string joinTheNetworkUrl,
+        string receiveNotifications,
         CancellationToken cancellationToken)
     {
         OnboardingSessionModel sessionModel = new();
         sessionModel.ProfileData.Add(new ProfileModel { Id = ProfileIds.EngagedWithAPreviousAmbassadorInTheNetworkEmployer, Value = null });
         sessionServiceMock.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
 
-        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.JoinTheNetwork, joinTheNetworkUrl);
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Onboarding.ReceiveNotifications, receiveNotifications);
 
         sut.ModelState.AddModelError("key", "message");
 
@@ -44,7 +44,7 @@ public class PreviousEngagementControllerPostTests
 
         result.As<ViewResult>().Should().NotBeNull();
         result.As<ViewResult>().ViewName.Should().Be(PreviousEngagementController.ViewPath);
-        result.As<ViewResult>().Model.As<PreviousEngagementViewModel>().BackLink.Should().Be(joinTheNetworkUrl);
+        result.As<ViewResult>().Model.As<PreviousEngagementViewModel>().BackLink.Should().Be(receiveNotifications);
     }
 
     [MoqInlineAutoData(true)]

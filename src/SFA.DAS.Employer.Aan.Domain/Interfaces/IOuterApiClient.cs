@@ -45,6 +45,10 @@ public interface IOuterApiClient
     [Get("/accounts/{employerAccountId}/onboarding/confirm-details")]
     Task<GetConfirmDetailsApiResponse> GetOnboardingConfirmDetails([Path] long employerAccountId);
 
+
+    [Get("/accounts/{employerAccountId}/onboarding/notifications-locations")]
+    Task<GetNotificationsLocationsApiResponse> GetOnboardingNotificationsLocations([Path] long employerAccountId, [Query] string searchTerm);
+
     [Post("/employers")]
     Task<CreateEmployerMemberResponse> PostEmployerMember([Body] CreateEmployerMemberRequest request, CancellationToken cancellationToken);
 
