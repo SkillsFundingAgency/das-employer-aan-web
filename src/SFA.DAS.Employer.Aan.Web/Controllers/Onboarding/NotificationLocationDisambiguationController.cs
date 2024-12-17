@@ -31,7 +31,7 @@ public class NotificationLocationDisambiguationController : Controller
     {
         var sessionModel = _sessionService.Get<OnboardingSessionModel>();
 
-        var model = await _orchestrator.GetViewModel(sessionModel.EmployerDetails.AccountId, radius, location);
+        var model = await _orchestrator.GetViewModel<NotificationLocationDisambiguationViewModel>(sessionModel.EmployerDetails.AccountId, radius, location);
 
         model.BackLink = Url.RouteUrl(@RouteNames.Onboarding.NotificationsLocations, new { employerAccountId });
 

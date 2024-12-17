@@ -12,7 +12,7 @@ using SFA.DAS.Encoding;
 using SFA.DAS.Validation.Mvc.Filters;
 using NotificationsLocationsViewModel = SFA.DAS.Employer.Aan.Web.Models.Settings.NotificationsLocationsViewModel;
 
-namespace SFA.DAS.Employer.Aan.Web.Controllers
+namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
 {
     [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
     public class EventNotificationSettingsLocationsController(
@@ -81,6 +81,12 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers
                 //todo: save to db
                 //redirect to settings page
                 return Ok("Save and redirect");
+            }
+
+            if (result == NotificationsLocationsOrchestrator.RedirectTarget.Disambiguation)
+            {
+                return RedirectToRoute(RouteNames.Settings.SettingsNotificationLocationDisambiguation,
+                    new { submitModel.EmployerAccountId, submitModel.Radius, submitModel.Location });
             }
 
             //return result switch

@@ -9,6 +9,7 @@ using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Onboarding;
 using AutoFixture.NUnit3;
+using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Shared;
 using SFA.DAS.Employer.Aan.Web.Models.Shared;
 using SFA.DAS.Employer.Aan.Web.Orchestrators.Shared;
 using SFA.DAS.Encoding;
@@ -89,7 +90,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
             mockSessionService.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
             mockValidator.Setup(v => v.ValidateAsync(submitModel, default)).ReturnsAsync(validationResult);
             mockApiClient.Setup(a => a.GetOnboardingNotificationsLocations(It.IsAny<long>(), It.IsAny<string>()))
-                .ReturnsAsync(new GetNotificationsLocationsApiResponse { Locations = new List<GetNotificationsLocationsApiResponse.Location>() });
+                .ReturnsAsync(new GetNotificationsLocationSearchApiResponse { Locations = new List<GetNotificationsLocationSearchApiResponse.Location>() });
 
             var orchestrator = new NotificationsLocationsOrchestrator(mockSessionService.Object, mockValidator.Object, mockApiClient.Object, Mock.Of<IEncodingService>());
             var controller = new NotificationsLocationsController(mockSessionService.Object, orchestrator, mockApiClient.Object);
@@ -117,9 +118,9 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
             submitModel.SubmitButton = NotificationsLocationsSubmitButtonOption.Add;
             submitModel.Location = "Valid Location";
             submitModel.Radius = 5;
-            var apiResponse = new GetNotificationsLocationsApiResponse
+            var apiResponse = new GetNotificationsLocationSearchApiResponse
             {
-                Locations = new List<GetNotificationsLocationsApiResponse.Location> { new GetNotificationsLocationsApiResponse.Location() { Name = "Valid Location" } }
+                Locations = new List<GetNotificationsLocationSearchApiResponse.Location> { new() { Name = "Valid Location" } }
             };
             mockSessionService.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
             mockValidator.Setup(v => v.ValidateAsync(submitModel, default)).ReturnsAsync(new ValidationResult());
@@ -158,9 +159,9 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
             submitModel.SubmitButton = NotificationsLocationsSubmitButtonOption.Continue;
             submitModel.Location = "Valid location";
             submitModel.Radius = 5;
-            var apiResponse = new GetNotificationsLocationsApiResponse
+            var apiResponse = new GetNotificationsLocationSearchApiResponse
             {
-                Locations = new List<GetNotificationsLocationsApiResponse.Location> { new GetNotificationsLocationsApiResponse.Location() { Name = "Valid Location" } }
+                Locations = new List<GetNotificationsLocationSearchApiResponse.Location> { new() { Name = "Valid Location" } }
             };
             mockSessionService.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
             mockValidator.Setup(v => v.ValidateAsync(submitModel, default)).ReturnsAsync(new ValidationResult());
@@ -199,9 +200,9 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
             submitModel.SubmitButton = NotificationsLocationsSubmitButtonOption.Continue;
             submitModel.Location = "Valid location";
             submitModel.Radius = 5;
-            var apiResponse = new GetNotificationsLocationsApiResponse
+            var apiResponse = new GetNotificationsLocationSearchApiResponse
             {
-                Locations = new List<GetNotificationsLocationsApiResponse.Location> { new GetNotificationsLocationsApiResponse.Location() { Name = "Valid Location" } }
+                Locations = new List<GetNotificationsLocationSearchApiResponse.Location> { new() { Name = "Valid Location" } }
             };
             mockSessionService.Setup(s => s.Get<OnboardingSessionModel>()).Returns(sessionModel);
             mockValidator.Setup(v => v.ValidateAsync(submitModel, default)).ReturnsAsync(new ValidationResult());
