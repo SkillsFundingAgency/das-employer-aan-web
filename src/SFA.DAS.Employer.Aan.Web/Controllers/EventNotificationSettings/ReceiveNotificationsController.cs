@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Authentication;
@@ -15,7 +14,7 @@ public class ReceiveNotificationsController(
     IOuterApiClient apiClient, 
     ISessionService sessionService) : Controller
 {
-    public const string ViewPath = "~/Views/EventNotificationSettings/MonthlyNotifications.cshtml";
+    public const string ViewPath = "~/Views/Onboarding/ReceiveNotifications.cshtml";
 
     [HttpGet]
     public async Task<IActionResult> Get([FromRoute] string employerAccountId, CancellationToken cancellationToken)

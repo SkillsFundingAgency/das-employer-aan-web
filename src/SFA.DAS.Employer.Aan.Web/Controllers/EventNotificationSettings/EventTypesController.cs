@@ -16,7 +16,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings;
 [Route("accounts/{employerAccountId}/event-notification-types/", Name = RouteNames.EventNotificationSettings.EventTypes)]
 public class EventTypesController : Controller
 {
-    public const string ViewPath = "~/Views/EventNotificationSettings/EventTypes.cshtml";
+    public const string ViewPath = "~/Views/Onboarding/SelectNotifications.cshtml";
     private readonly ISessionService _sessionService;
     private readonly IOuterApiClient _apiClient;
 
