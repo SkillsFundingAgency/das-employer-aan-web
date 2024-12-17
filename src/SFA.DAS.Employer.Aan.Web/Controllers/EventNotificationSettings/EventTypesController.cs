@@ -8,6 +8,7 @@ using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
+using System.Linq;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings;
 
@@ -29,7 +30,9 @@ public class EventTypesController : Controller
     public async Task<IActionResult> Get([FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
         var memberId = _sessionService.GetMemberId();
+
         var apiResponse = await _apiClient.GetMemberNotificationEventFormats(memberId, cancellationToken);
+
         var model = GetViewModel(apiResponse, employerAccountId);
 
         return View(ViewPath, model);
@@ -39,25 +42,21 @@ public class EventTypesController : Controller
     {
         var vm = new SelectNotificationsViewModel() { };
 
-        if (eventFormats.MemberNotificationEventFormats == null || !eventFormats.MemberNotificationEventFormats.Any())
-        {
-            vm.EventTypes = InitializeDefaultEventTypes();
-        }
-
+        vm.EventTypes = InitializeDefaultEventTypes();
         vm.BackLink = Url.RouteUrl(@RouteNames.Onboarding.ReceiveNotifications, new { employerAccountId })!;
         vm.EmployerAccountId = employerAccountId;
 
-        foreach(var e in eventFormats.MemberNotificationEventFormats) 
+        foreach (var e in vm.EventTypes)
         {
-            var eventFormat = new EventTypeModel
+            foreach (var ev in eventFormats.MemberNotificationEventFormats) 
             {
-                EventType = e.EventFormat,
-                IsSelected = e.ReceiveNotifications,
-                Ordering = e.Ordering
-            };
-            vm.EventTypes.Add(eventFormat);
+                if (ev.EventFormat.Equals(e.EventType))
+                {
+                    e.IsSelected = true;
+                }
+            }
         }
-
+        
         return vm;
     }
 
