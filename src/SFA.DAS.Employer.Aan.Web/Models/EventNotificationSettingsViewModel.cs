@@ -4,7 +4,7 @@ using SFA.DAS.Employer.Aan.Web.Models.Shared;
 
 namespace SFA.DAS.Employer.Aan.Web.Models
 {
-    public class EventNotificationSettingsViewModel
+    public class EventNotificationSettingsViewModel : IBackLink
     {
         public List<EventFormatViewModel> EventFormats { get; set; }
         public List<NotificationLocationsViewModel> EventNotificationLocations { get; set; }
@@ -14,7 +14,7 @@ namespace SFA.DAS.Employer.Aan.Web.Models
         public string? ChangeMonthlyEmailUrl { get; set; }
         public string? ChangeEventTypeUrl { get; set; }
         public string? ChangeLocationsUrl { get; set; }
-        public string? BackLink { get; set; }
+        public string BackLink { get; set; }
     }
 
     public class EventFormatViewModel
