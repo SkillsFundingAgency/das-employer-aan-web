@@ -7,26 +7,27 @@ using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Models.Shared;
 using SFA.DAS.Encoding;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Onboarding;
+using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Shared;
 
 namespace SFA.DAS.Employer.Aan.Web.Orchestrators.Shared
 {
     public interface INotificationsLocationsOrchestrator
     {
-        INotificationsLocationsPartialViewModel GetViewModel(INotificationLocationsSessionModel sessionModel, ModelStateDictionary modelState);
+        INotificationsLocationsPartialViewModel GetViewModel<T>(INotificationLocationsSessionModel sessionModel, ModelStateDictionary modelState) where T: INotificationsLocationsPartialViewModel, new();
 
         Task<NotificationsLocationsOrchestrator.RedirectTarget> ApplySubmitModel<T>(
             INotificationsLocationsPartialSubmitModel submitModel,
             ModelStateDictionary modelState,
-            Func<long, string, Task<GetNotificationsLocationsApiResponse>> getNotificationsLocations)
+            Func<long, string, Task<GetNotificationsLocationSearchApiResponse>> getNotificationsLocations)
             where T : INotificationLocationsSessionModel;
     }
 
     public class NotificationsLocationsOrchestrator(ISessionService sessionService, IValidator<INotificationsLocationsPartialSubmitModel> validator, IOuterApiClient apiClient, IEncodingService encodingService)
         : INotificationsLocationsOrchestrator
     {
-        public INotificationsLocationsPartialViewModel GetViewModel(INotificationLocationsSessionModel sessionModel, ModelStateDictionary modelState)
+        public INotificationsLocationsPartialViewModel GetViewModel<T>(INotificationLocationsSessionModel sessionModel, ModelStateDictionary modelState) where T: INotificationsLocationsPartialViewModel, new()
         {
-            var result = new NotificationsLocationsViewModel();
+            var result = new T();
             var eventTypeDescription = GetEventTypeDescription(sessionModel.EventTypes);
 
             result.Title = sessionModel.NotificationLocations.Any()
@@ -54,7 +55,7 @@ namespace SFA.DAS.Employer.Aan.Web.Orchestrators.Shared
         public async Task<RedirectTarget> ApplySubmitModel<T>(
     INotificationsLocationsPartialSubmitModel submitModel,
     ModelStateDictionary modelState,
-    Func<long, string, Task<GetNotificationsLocationsApiResponse>> getNotificationsLocations) where T : INotificationLocationsSessionModel
+    Func<long, string, Task<GetNotificationsLocationSearchApiResponse>> getNotificationsLocations) where T : INotificationLocationsSessionModel
         {
             var sessionModel = sessionService.Get<T>();
 

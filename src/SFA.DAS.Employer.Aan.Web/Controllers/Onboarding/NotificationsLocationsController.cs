@@ -25,7 +25,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
         {
             var sessionModel = sessionService.Get<OnboardingSessionModel>();
 
-            var viewModel = orchestrator.GetViewModel(sessionModel, ModelState);
+            var viewModel = orchestrator.GetViewModel<NotificationsLocationsViewModel>(sessionModel, ModelState);
 
             viewModel.BackLink = sessionModel.HasSeenPreview
                 ? Url.RouteUrl(RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId })
