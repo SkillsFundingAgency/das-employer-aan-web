@@ -3,6 +3,7 @@ using SFA.DAS.Aan.SharedUi.Constants;
 using SFA.DAS.Aan.SharedUi.Models.LeaveTheNetwork;
 using SFA.DAS.Aan.SharedUi.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
+using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests.Settings;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Onboarding;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Settings;
@@ -94,4 +95,7 @@ public interface IOuterApiClient
 
     [Get("/accounts/{employerAccountId}/event-notifications-settings/locations")]
     Task<GetNotificationsLocationSearchApiResponse> GetSettingsNotificationsLocationSearch([Path] long employerAccountId, [Query] string searchTerm);
+
+    [Post("/accounts/{employerAccountId}/event-notifications-settings/locations")]
+    Task<NotificationsSettingsApiRequest> PostNotificationsSettingsApiRequest([Path] long employerAccountId, [Body] NotificationsSettingsApiRequest request);
 }

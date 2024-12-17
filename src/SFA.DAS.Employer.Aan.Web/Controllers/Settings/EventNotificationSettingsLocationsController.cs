@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
+using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests.Settings;
 using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
@@ -96,8 +97,20 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
         {
             var sessionModel = sessionService.Get<SettingsNotificationLocationsSessionModel>();
 
-            //todo: call outer api to save this data
+            var accountId = encodingService.Decode(submitModel.EmployerAccountId, EncodingType.AccountId);
 
+            var apiRequest = new NotificationsSettingsApiRequest
+            {
+                Locations = sessionModel.NotificationLocations.Select(x => new NotificationsSettingsApiRequest.Location
+                {
+                    Name = x.LocationName,
+                    Radius = x.Radius,
+                    Latitude = x.GeoPoint[0],
+                    Longitude = x.GeoPoint[1]
+                }).ToList()
+            };
+
+            await apiClient.PostNotificationsSettingsApiRequest(accountId, apiRequest);
         }
     }
 }
