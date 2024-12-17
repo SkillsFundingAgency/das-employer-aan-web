@@ -34,7 +34,7 @@
                     <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href=@Model.ChangeMonthlyEmailUrl>Change</a></td>
                 </tr>
 
-                @if (Model.ReceiveMonthlyNotifications)
+                @if (Model.UserNewToNotifications || (Model.ReceiveMonthlyNotifications.Equals(true)))
                 {
                     <!-- Event Types -->
                     <tr class="govuk-table__row">

@@ -8,9 +8,9 @@ namespace SFA.DAS.Employer.Aan.Web.Models
     {
         public List<EventFormatViewModel> EventFormats { get; set; }
         public List<NotificationLocationsViewModel> EventNotificationLocations { get; set; }
-        public bool ReceiveMonthlyNotifications { get; set; }
+        public bool? ReceiveMonthlyNotifications { get; set; }
         public string ReceiveMonthlyNotificationsText { get; set; }
-        public bool UserWithNotificationSettings { get; set; }
+        public bool UserNewToNotifications { get; set; }
         public string? ChangeMonthlyEmailUrl { get; set; }
         public string? ChangeEventTypeUrl { get; set; }
         public string? ChangeLocationsUrl { get; set; }
