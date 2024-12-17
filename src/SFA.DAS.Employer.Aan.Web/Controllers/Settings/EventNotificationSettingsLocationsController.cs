@@ -10,6 +10,7 @@ using SFA.DAS.Employer.Aan.Web.Models.Settings;
 using SFA.DAS.Employer.Aan.Web.Orchestrators.Shared;
 using SFA.DAS.Encoding;
 using SFA.DAS.Validation.Mvc.Filters;
+using NotificationsLocationsSubmitModel = SFA.DAS.Employer.Aan.Web.Models.Onboarding.NotificationsLocationsSubmitModel;
 using NotificationsLocationsViewModel = SFA.DAS.Employer.Aan.Web.Models.Settings.NotificationsLocationsViewModel;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
@@ -74,32 +75,29 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
                 async (accountId, location) => await apiClient.GetSettingsNotificationsLocationSearch(accountId, location)
             );
 
-            var sessionModel = sessionService.Get<SettingsNotificationLocationsSessionModel>();
-
             if (result == NotificationsLocationsOrchestrator.RedirectTarget.NextPage)
             {
-                //todo: save to db
-                //redirect to settings page
+                await SaveSettings(submitModel);
                 return Ok("Save and redirect");
             }
 
-            if (result == NotificationsLocationsOrchestrator.RedirectTarget.Disambiguation)
+            return result switch
             {
-                return RedirectToRoute(RouteNames.Settings.SettingsNotificationLocationDisambiguation,
-                    new { submitModel.EmployerAccountId, submitModel.Radius, submitModel.Location });
-            }
+                NotificationsLocationsOrchestrator.RedirectTarget.Disambiguation
+                    => new RedirectToRouteResult(RouteNames.Settings.SettingsNotificationLocationDisambiguation,
+                        new { submitModel.EmployerAccountId, submitModel.Radius, submitModel.Location }),
+                NotificationsLocationsOrchestrator.RedirectTarget.Self => new RedirectToRouteResult(RouteNames.NotificationSettingsLocations,
+                    new { submitModel.EmployerAccountId }),
+                _ => throw new InvalidOperationException("Unexpected redirect target from ApplySubmitModel"),
+            };
+        }
 
-            //return result switch
-            //{
-            //    NotificationsLocationsOrchestrator.RedirectTarget.Disambiguation
-            //        => new RedirectToRouteResult(RouteNames.Onboarding.NotificationLocationDisambiguation,
-            //            new { submitModel.EmployerAccountId, submitModel.Radius, submitModel.Location }),
-            //    NotificationsLocationsOrchestrator.RedirectTarget.Self => new RedirectToRouteResult(RouteNames.Onboarding.NotificationsLocations,
-            //        new { submitModel.EmployerAccountId }),
-            //    _ => throw new InvalidOperationException("Unexpected redirect target from ApplySubmitModel"),
-            //};
+        private async Task SaveSettings(Models.Settings.NotificationsLocationsSubmitModel submitModel)
+        {
+            var sessionModel = sessionService.Get<SettingsNotificationLocationsSessionModel>();
 
-            return RedirectToRoute(RouteNames.NotificationSettingsLocations, new { submitModel.EmployerAccountId });
+            //todo: call outer api to save this data
+
         }
     }
 }
