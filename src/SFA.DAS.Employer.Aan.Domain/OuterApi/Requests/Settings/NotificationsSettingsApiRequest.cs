@@ -2,6 +2,7 @@
 {
     public class NotificationsSettingsApiRequest
     {
+        public Guid MemberId { get; set; }
         public List<Location> Locations { get; set; } = [];
 
         public class Location

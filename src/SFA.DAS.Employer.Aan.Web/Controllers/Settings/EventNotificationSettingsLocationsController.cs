@@ -5,14 +5,12 @@ using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests.Settings;
 using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
-using SFA.DAS.Employer.Aan.Web.Infrastructure.Services;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Models.Settings;
 using SFA.DAS.Employer.Aan.Web.Orchestrators.Shared;
 using SFA.DAS.Encoding;
 using SFA.DAS.Validation.Mvc.Filters;
-using NotificationsLocationsSubmitModel = SFA.DAS.Employer.Aan.Web.Models.Onboarding.NotificationsLocationsSubmitModel;
 using NotificationsLocationsViewModel = SFA.DAS.Employer.Aan.Web.Models.Settings.NotificationsLocationsViewModel;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
@@ -44,7 +42,6 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
 
                 sessionModel = new SettingsNotificationLocationsSessionModel
                 {
-                    //todo: wrong type here
                     NotificationLocations = apiResponse.SavedLocations.Select(x => new NotificationLocation
                     {
                         LocationName = x.Name,
@@ -105,6 +102,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
 
             var apiRequest = new NotificationsSettingsApiRequest
             {
+                MemberId = sessionService.GetMemberId(),
                 Locations = sessionModel.NotificationLocations.Select(x => new NotificationsSettingsApiRequest.Location
                 {
                     Name = x.LocationName,
