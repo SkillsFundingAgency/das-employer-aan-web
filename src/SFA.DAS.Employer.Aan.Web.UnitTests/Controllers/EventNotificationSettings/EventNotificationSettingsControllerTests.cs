@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
-using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Testing.AutoFixture;
 using FluentAssertions;
 using SFA.DAS.Employer.Aan.Web.Orchestrators;
+using SFA.DAS.Employer.Aan.Web.Models.EventNotificationSettings;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.EventNotificationSettings;
 
