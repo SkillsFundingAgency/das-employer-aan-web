@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using SFA.DAS.Employer.Aan.Web.Models.Shared;
 
-namespace SFA.DAS.Employer.Aan.Web.Models.Onboarding;
+namespace SFA.DAS.Employer.Aan.Web.Models.Settings;
 
 public class NotificationsLocationsViewModel : NotificationsLocationsSubmitModel, INotificationsLocationsPartialViewModel, IBackLink
 {
