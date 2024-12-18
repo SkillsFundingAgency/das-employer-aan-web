@@ -5,6 +5,7 @@ using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests.Settings;
 using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
+using SFA.DAS.Employer.Aan.Web.Infrastructure.Services;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Models.Settings;
@@ -27,7 +28,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
 
         [HttpGet]
         [ValidateModelStateFilter]
-        [Route("accounts/{employerAccountId}/event-notification-settings/locations", Name = RouteNames.NotificationSettingsLocations)]
+        [Route("accounts/{employerAccountId}/event-notification-settings/locations", Name = RouteNames.EventNotificationSettings.NotificationLocations)]
         public async Task<IActionResult> Get(string employerAccountId)
         {
             var sessionModel = sessionService.Get<SettingsNotificationLocationsSessionModel?>();
@@ -36,8 +37,10 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
             {
                 var accountId = encodingService.Decode(employerAccountId, EncodingType.AccountId);
 
+                var memberId = sessionService.GetMemberId();
+
                 var apiResponse =
-                    await apiClient.GetSettingsNotificationsSavedLocations(accountId, User.GetUserId());
+                    await apiClient.GetSettingsNotificationsSavedLocations(accountId, memberId);
 
                 sessionModel = new SettingsNotificationLocationsSessionModel
                 {
@@ -67,7 +70,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
 
         [HttpPost]
         [ValidateModelStateFilter]
-        [Route("accounts/{employerAccountId}/event-notification-settings/locations", Name = RouteNames.NotificationSettingsLocations)]
+        [Route("accounts/{employerAccountId}/event-notification-settings/locations", Name = RouteNames.EventNotificationSettings.NotificationLocations)]
         public async Task<IActionResult> Post(Models.Settings.NotificationsLocationsSubmitModel submitModel)
         {
             var result = await orchestrator.ApplySubmitModel<SettingsNotificationLocationsSessionModel>(
@@ -79,15 +82,16 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
             if (result == NotificationsLocationsOrchestrator.RedirectTarget.NextPage)
             {
                 await SaveSettings(submitModel);
-                return Ok("Save and redirect");
+                return new RedirectToRouteResult(RouteNames.EventNotificationSettings.EmailNotificationSettings,
+                    new { submitModel.EmployerAccountId });
             }
 
             return result switch
             {
                 NotificationsLocationsOrchestrator.RedirectTarget.Disambiguation
-                    => new RedirectToRouteResult(RouteNames.Settings.SettingsNotificationLocationDisambiguation,
+                    => new RedirectToRouteResult(RouteNames.EventNotificationSettings.SettingsNotificationLocationDisambiguation,
                         new { submitModel.EmployerAccountId, submitModel.Radius, submitModel.Location }),
-                NotificationsLocationsOrchestrator.RedirectTarget.Self => new RedirectToRouteResult(RouteNames.NotificationSettingsLocations,
+                NotificationsLocationsOrchestrator.RedirectTarget.Self => new RedirectToRouteResult(RouteNames.EventNotificationSettings.NotificationLocations,
                     new { submitModel.EmployerAccountId }),
                 _ => throw new InvalidOperationException("Unexpected redirect target from ApplySubmitModel"),
             };

@@ -16,8 +16,6 @@ public static class RouteNames
 
     public const string Home = nameof(Home);
     public const string NetworkHub = nameof(NetworkHub);
-    public const string UpcomingEventsNotifications = nameof(UpcomingEventsNotifications);
-    public const string NotificationSettingsLocations = nameof(NotificationSettingsLocations);
     public const string EventsHub = nameof(EventsHub);
     public const string NetworkEvents = nameof(NetworkEvents);
     public const string NetworkEventDetails = nameof(NetworkEventDetails);
@@ -40,10 +38,15 @@ public static class RouteNames
         public const string SelectNotificationEvents = nameof(SelectNotificationEvents);
     }
 
-    public static class Settings
+    public static class EventNotificationSettings
     {
         public const string SettingsNotificationLocationDisambiguation = nameof(SettingsNotificationLocationDisambiguation);
+        public const string EmailNotificationSettings = nameof(EmailNotificationSettings);
+        public const string NotificationLocations = nameof(NotificationLocations);
+        public const string MonthlyNotifications = nameof(MonthlyNotifications);
+        public const string EventTypes = nameof(EventTypes);
     }
+
 
     public static class AttendanceConfirmations
     {

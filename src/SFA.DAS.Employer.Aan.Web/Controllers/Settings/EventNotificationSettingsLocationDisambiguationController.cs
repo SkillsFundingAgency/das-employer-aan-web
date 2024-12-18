@@ -11,7 +11,7 @@ using SFA.DAS.Validation.Mvc.Filters;
 namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
 {
     [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
-    [Route("accounts/{employerAccountId}/event-notification-settings/notification-disambiguation", Name = RouteNames.Settings.SettingsNotificationLocationDisambiguation)]
+    [Route("accounts/{employerAccountId}/event-notification-settings/notification-disambiguation", Name = RouteNames.EventNotificationSettings.SettingsNotificationLocationDisambiguation)]
     public class EventNotificationSettingsLocationDisambiguationController(
         ISessionService sessionService,
         INotificationLocationDisambiguationOrchestrator orchestrator,
@@ -31,7 +31,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
 
             var model = await orchestrator.GetViewModel<NotificationLocationDisambiguationViewModel>(accountId, radius, location);
 
-            model.BackLink = Url.RouteUrl(@RouteNames.NotificationSettingsLocations, new { employerAccountId });
+            model.BackLink = Url.RouteUrl(@RouteNames.EventNotificationSettings.NotificationLocations, new { employerAccountId });
 
             return View(ViewPath, model);
         }
@@ -48,9 +48,9 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
             switch (result)
             {
                 case NotificationLocationDisambiguationOrchestrator.RedirectTarget.NextPage:
-                    return new RedirectToRouteResult(RouteNames.NotificationSettingsLocations, new { submitModel.EmployerAccountId });
+                    return new RedirectToRouteResult(RouteNames.EventNotificationSettings.NotificationLocations, new { submitModel.EmployerAccountId });
                 case NotificationLocationDisambiguationOrchestrator.RedirectTarget.Self:
-                    return new RedirectToRouteResult(RouteNames.Settings.SettingsNotificationLocationDisambiguation, routeValues);
+                    return new RedirectToRouteResult(RouteNames.EventNotificationSettings.SettingsNotificationLocationDisambiguation, routeValues);
                 default:
                     throw new InvalidOperationException("Unexpected redirect target from ApplySubmitModel");
             }

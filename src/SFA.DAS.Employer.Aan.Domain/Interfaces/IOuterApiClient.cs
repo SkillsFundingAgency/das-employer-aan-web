@@ -90,7 +90,14 @@ public interface IOuterApiClient
     [AllowAnyStatusCode]
     Task PostMemberReinstate([Path] Guid memberId, CancellationToken cancellationToken);
 
-    [Get("/accounts/{employerAccountId}/event-notifications-settings/locations")]
+    [Get("MemberNotificationEventFormats/{memberId}")]
+    Task<GetMemberNotificationEventFormatsResponse> GetMemberNotificationEventFormats([Path] Guid memberId, CancellationToken cancellationToken);
+
+
+    [Get("MemberNotificationSettings/{memberId}")]
+    Task<GetMemberNotificationSettingsResponse> GetMemberNotificationSettings([Path] Guid memberId, CancellationToken cancellationToken);
+	
+	[Get("/accounts/{employerAccountId}/event-notifications-settings/locations")]
     Task<GetSettingsLocationsNotificationsApiResponse> GetSettingsNotificationsSavedLocations([Path] long employerAccountId, [Query] Guid memberId);
 
     [Get("/accounts/{employerAccountId}/event-notifications-settings/locations")]
@@ -99,3 +106,4 @@ public interface IOuterApiClient
     [Post("/accounts/{employerAccountId}/event-notifications-settings/locations")]
     Task<NotificationsSettingsApiRequest> PostNotificationsSettingsApiRequest([Path] long employerAccountId, [Body] NotificationsSettingsApiRequest request);
 }
+
