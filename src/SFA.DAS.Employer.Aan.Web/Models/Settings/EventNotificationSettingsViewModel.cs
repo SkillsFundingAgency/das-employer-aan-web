@@ -2,7 +2,7 @@
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Models.Shared;
 
-namespace SFA.DAS.Employer.Aan.Web.Models.EventNotificationSettings
+namespace SFA.DAS.Employer.Aan.Web.Models.Settings
 {
     public class EventNotificationSettingsViewModel : IBackLink
     {

@@ -2,7 +2,7 @@
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.Employer.Aan.Web.Models.EventNotificationSettings;
+using SFA.DAS.Employer.Aan.Web.Models.Settings;
 
 namespace SFA.DAS.Employer.Aan.Web.Orchestrators;
 

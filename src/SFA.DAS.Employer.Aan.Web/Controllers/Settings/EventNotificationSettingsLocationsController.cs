@@ -29,7 +29,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
         [Route("accounts/{employerAccountId}/event-notification-settings/locations", Name = RouteNames.EventNotificationSettings.NotificationLocations)]
         public async Task<IActionResult> Get(string employerAccountId)
         {
-            var sessionModel = sessionService.Get<SettingsNotificationLocationsSessionModel?>();
+            var sessionModel = sessionService.Get<NotificationSettingsSessionModel?>();
 
             if (sessionModel == null)
             {
@@ -40,7 +40,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
                 var apiResponse =
                     await apiClient.GetSettingsNotificationsSavedLocations(accountId, memberId);
 
-                sessionModel = new SettingsNotificationLocationsSessionModel
+                sessionModel = new NotificationSettingsSessionModel
                 {
                     NotificationLocations = apiResponse.SavedLocations.Select(x => new NotificationLocation
                     {
@@ -70,7 +70,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
         [Route("accounts/{employerAccountId}/event-notification-settings/locations", Name = RouteNames.EventNotificationSettings.NotificationLocations)]
         public async Task<IActionResult> Post(Models.Settings.NotificationsLocationsSubmitModel submitModel)
         {
-            var result = await orchestrator.ApplySubmitModel<SettingsNotificationLocationsSessionModel>(
+            var result = await orchestrator.ApplySubmitModel<NotificationSettingsSessionModel>(
                 submitModel,
                 ModelState,
                 async (accountId, location) => await apiClient.GetSettingsNotificationsLocationSearch(accountId, location)
@@ -96,7 +96,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
 
         private async Task SaveSettings(Models.Settings.NotificationsLocationsSubmitModel submitModel)
         {
-            var sessionModel = sessionService.Get<SettingsNotificationLocationsSessionModel>();
+            var sessionModel = sessionService.Get<NotificationSettingsSessionModel>();
 
             var accountId = encodingService.Decode(submitModel.EmployerAccountId, EncodingType.AccountId);
 

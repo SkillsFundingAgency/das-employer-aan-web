@@ -6,8 +6,8 @@ using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models;
-using SFA.DAS.Employer.Aan.Web.Models.EventNotificationSettings;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
+using SFA.DAS.Employer.Aan.Web.Models.Settings;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings;
 
@@ -22,7 +22,7 @@ public class ReceiveNotificationsController(
     [HttpGet]
     public async Task<IActionResult> Get([FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
-        var sessionModel = sessionService.Get<EventNotificationSettingsSessionModel>();
+        var sessionModel = sessionService.Get<NotificationSettingsSessionModel>();
 
         var viewModel = new ReceiveNotificationsViewModel
         {
@@ -51,7 +51,7 @@ public class ReceiveNotificationsController(
             return View(ViewPath, model);
         }
 
-        var sessionModel = sessionService.Get<EventNotificationSettingsSessionModel>();
+        var sessionModel = sessionService.Get<NotificationSettingsSessionModel>();
 
         var originalValue = sessionModel.ReceiveNotifications;
         var newValue = submitModel.ReceiveNotifications!.Value;

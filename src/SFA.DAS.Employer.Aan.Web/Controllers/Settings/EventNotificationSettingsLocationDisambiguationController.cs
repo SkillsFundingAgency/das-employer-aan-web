@@ -25,7 +25,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
         [ValidateModelStateFilter]
         public async Task<IActionResult> Get([FromRoute] string employerAccountId, int radius, string location)
         {
-            var sessionModel = sessionService.Get<SettingsNotificationLocationsSessionModel>();
+            var sessionModel = sessionService.Get<NotificationSettingsSessionModel>();
 
             var accountId = encodingService.Decode(employerAccountId, EncodingType.AccountId);
 
@@ -41,7 +41,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
         [ValidateModelStateFilter]
         public async Task<IActionResult> Post(NotificationLocationDisambiguationSubmitModel submitModel, CancellationToken cancellationToken)
         {
-            var result = await orchestrator.ApplySubmitModel<SettingsNotificationLocationsSessionModel>(submitModel, ModelState);
+            var result = await orchestrator.ApplySubmitModel<NotificationSettingsSessionModel>(submitModel, ModelState);
 
             var routeValues = new { submitModel.EmployerAccountId, submitModel.Radius, submitModel.Location };
 

@@ -5,7 +5,7 @@ using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Orchestrators;
-using SFA.DAS.Employer.Aan.Web.Models.EventNotificationSettings;
+using SFA.DAS.Employer.Aan.Web.Models.Settings;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
 [Route("accounts/{employerAccountId}/event-notification-settings", Name = RouteNames.EventNotificationSettings.EmailNotificationSettings)]
@@ -26,7 +26,7 @@ public class EventNotificationSettingsController : Controller
 
         var vm = await _orchestrator.GetViewModelAsync(memberId, employerAccountId, Url, cancellationToken);
 
-        EventNotificationSettingsSessionModel sessionModel = new()
+        NotificationSettingsSessionModel sessionModel = new()
         {
             ReceiveNotifications = vm.ReceiveMonthlyNotifications,
             UserNewToNotifications = vm.UserNewToNotifications,
