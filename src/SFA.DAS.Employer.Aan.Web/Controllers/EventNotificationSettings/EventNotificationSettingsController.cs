@@ -40,15 +40,18 @@ public class EventNotificationSettingsController : Controller
         {
             foreach (var format in apiResponse.MemberNotificationEventFormats)
             {
-                var eventFormatVm = new EventFormatViewModel
+                if (!format.EventFormat.Equals("All")) 
                 {
-                    MemberId = format.MemberId,
-                    EventFormat = format.EventFormat,
-                    Ordering = format.Ordering,
-                    ReceiveNotifications = format.ReceiveNotifications
-                };
+                    var eventFormatVm = new EventFormatViewModel
+                    {
+                        MemberId = format.MemberId,
+                        EventFormat = GetEventTypeText(format.EventFormat),
+                        Ordering = format.Ordering,
+                        ReceiveNotifications = format.ReceiveNotifications
+                    };
 
-                eventFormats.Add(eventFormatVm);
+                    eventFormats.Add(eventFormatVm);
+                }
             }
         }
 
@@ -59,7 +62,7 @@ public class EventNotificationSettingsController : Controller
                 var locationVm = new NotificationLocationsViewModel
                 {
                     MemberId = location.MemberId,
-                    DisplayName = $"{location.Name}, within {location.Radius} miles",
+                    DisplayName = GetRadiusText(location.Radius, location.Name),
                     Radius = location.Radius,
                     Latitude = location.Latitude,
                     Longitude = location.Longitude
@@ -82,5 +85,17 @@ public class EventNotificationSettingsController : Controller
             ChangeLocationsUrl = Url.RouteUrl(RouteNames.EventNotificationSettings.NotificationLocations, new { employerAccountId }),
             BackLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId })
         };
+    }
+
+    private string GetRadiusText(int radius, string location) 
+    {
+        return radius == 0 ?
+        "Across England"
+        : $"{location}, within {radius} miles";
+    }
+
+    private string GetEventTypeText(string eventFormat)
+    {
+        return (eventFormat.Equals("InPerson")) ? "In-person events" : $"{eventFormat} events";
     }
 }
