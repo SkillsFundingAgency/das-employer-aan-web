@@ -4,11 +4,11 @@ namespace SFA.DAS.Employer.Aan.Web.Models.Shared
 {
     public interface INotificationsLocationsPartialViewModel : INotificationsLocationsPartialSubmitModel, IBackLink
     {
-        string Title { get; }
-        string IntroText { get; }
+        string Title { get; set; }
+        string IntroText { get;set; }
 
-        List<string> SubmittedLocations { get; }
-        string UnrecognisedLocation { get; }
+        List<string> SubmittedLocations { get; set; }
+        string UnrecognisedLocation { get; set; }
         List<SelectListItem> RadiusOptions { get; }
         int MaxLocations { get; }
         string MaxLocationsString { get; }

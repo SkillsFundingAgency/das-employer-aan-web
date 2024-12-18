@@ -1,0 +1,69 @@
+﻿@using SFA.DAS.Employer.Aan.Web.Models.Onboarding
+@model ReceiveNotificationsViewModel
+@{
+    ViewData["Title"] = "Do you want to receive a monthly email about upcoming events?";
+}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <partial name="_validationSummary" />
+        <form method="post">
+            @Html.HiddenFor(m => m.EmployerAccountId)
+            <fieldset class="govuk-fieldset">
+                <div esfa-validation-marker-for="ReceiveNotifications" class="govuk-form-group">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                        <h1 class="govuk-heading-l">
+                            Do you want to receive a monthly email about upcoming events?
+                        </h1>
+
+                        <details class="govuk-details">
+                            <summary class="govuk-details__summary">
+                                <span class="govuk-details__summary-text">
+                                    About Apprenticeship Ambassador Network events
+                                </span>
+                            </summary>
+                            <div class="govuk-details__text">
+                                <p class="govuk-body">
+                                    Ambassadors can join us at events that promote apprenticeships.
+                                </p>
+                                <p class="govuk-body">
+                                    Here, you can share your own experience. This will help people who are taking the next step in their careers.
+                                </p>
+                                <p class="govuk-body">
+                                    We also run training and networking events for our ambassador community.
+                                </p>
+
+                            </div>
+                        </details>
+                    </legend>
+
+                    <p class="govuk-hint">
+                        You can choose which events are included in this email at the next step
+                    </p>
+
+                    <span asp-validation-for="ReceiveNotifications" class="govuk-error-message"></span>
+                    <div id="ReceiveNotifications-options" class="govuk-radios" data-module="govuk-radios">
+                        <div class="govuk-radios__item">
+                            <input asp-for="ReceiveNotifications" class="govuk-radios__input" type="radio" value="true"
+                                   sfa-validationerror-class="form-control-error">
+                            <label class="govuk-label govuk-radios__label" for="ReceiveNotifications">
+                                Yes
+                            </label>
+                        </div>
+                        <div class="govuk-radios__item">
+                            <input asp-for="ReceiveNotifications" id="No" class="govuk-radios__input" type="radio" value="false"
+                                   sfa-validationerror-class="form-control-error">
+                            <label class="govuk-label govuk-radios__label" for="No">
+                                No
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <div class="govuk-button-group">
+                <button id="continue" type="submit" class="govuk-button" data-module="govuk-button" data-disable-on-submit="true">
+                    Continue
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

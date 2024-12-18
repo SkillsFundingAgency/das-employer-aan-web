@@ -16,9 +16,9 @@ public class ProfileSettingsController : Controller
         var model = new ProfileSettingsViewModel()
         {
             YourAmbassadorProfileUrl = Url.RouteUrl(SharedRouteNames.YourAmbassadorProfile, new { employerAccountId })!,
-            NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId = employerAccountId }),
-            UpcomingEventsNotificationsUrl = Url.RouteUrl(RouteNames.UpcomingEventsNotifications, new { employerAccountId = employerAccountId }),
-            LeaveTheNetworkUrl = Url.RouteUrl(SharedRouteNames.LeaveTheNetwork, new { employerAccountId = employerAccountId })!
+            NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId }),
+            UpcomingEventsNotificationsUrl = Url.RouteUrl(RouteNames.EventNotificationSettings.EmailNotificationSettings, new { employerAccountId })!,
+            LeaveTheNetworkUrl = Url.RouteUrl(SharedRouteNames.LeaveTheNetwork, new { employerAccountId })!
         };
 
         return View(model);
