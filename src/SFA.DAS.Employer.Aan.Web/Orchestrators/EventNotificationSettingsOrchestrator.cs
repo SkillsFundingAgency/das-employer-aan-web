@@ -58,7 +58,7 @@ public class EventNotificationSettingsOrchestrator : IEventNotificationSettingsO
                 var locationVm = new NotificationLocationsViewModel
                 {
                     MemberId = location.MemberId,
-                    DisplayName = GetRadiusText(location.Radius, location.Name),
+                    LocationDisplayName = GetRadiusText(location.Radius, location.Name),
                     Radius = location.Radius,
                     Latitude = location.Latitude,
                     Longitude = location.Longitude

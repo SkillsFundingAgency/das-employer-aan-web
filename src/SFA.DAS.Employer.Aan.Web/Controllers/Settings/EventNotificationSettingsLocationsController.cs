@@ -96,13 +96,14 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
 
         private async Task SaveSettings(Models.Settings.NotificationsLocationsSubmitModel submitModel)
         {
+            var memberId = sessionService.GetMemberId();
+
             var sessionModel = sessionService.Get<NotificationSettingsSessionModel>();
 
             var accountId = encodingService.Decode(submitModel.EmployerAccountId, EncodingType.AccountId);
 
             var apiRequest = new NotificationsSettingsApiRequest
             {
-                MemberId = sessionService.GetMemberId(),
                 Locations = sessionModel.NotificationLocations.Select(x => new NotificationsSettingsApiRequest.Location
                 {
                     Name = x.LocationName,
@@ -112,7 +113,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
                 }).ToList()
             };
 
-            await apiClient.PostNotificationsSettingsApiRequest(accountId, apiRequest);
+            await apiClient.PostMemberNotificationSettings(memberId, apiRequest);
         }
     }
 }

@@ -1,8 +1,4 @@
-﻿using SFA.DAS.Aan.SharedUi.Models;
-using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
-using SFA.DAS.Employer.Aan.Web.Models.Shared;
-
-namespace SFA.DAS.Employer.Aan.Web.Models.Settings
+﻿namespace SFA.DAS.Employer.Aan.Web.Models.Settings
 {
     public class EventNotificationSettingsViewModel : IBackLink
     {
@@ -28,7 +24,7 @@ namespace SFA.DAS.Employer.Aan.Web.Models.Settings
     public class NotificationLocationsViewModel
     {
         public Guid MemberId { get; set; }
-        public string DisplayName { get; set; } = string.Empty;
+        public string LocationDisplayName { get; set; } = string.Empty;
         public int Radius { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }

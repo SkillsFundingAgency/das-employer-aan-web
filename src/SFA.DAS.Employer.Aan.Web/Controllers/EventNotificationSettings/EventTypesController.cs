@@ -76,7 +76,9 @@ public class EventTypesController : Controller
         _sessionService.Set(sessionModel);
 
         // if selections changed, call outer api
-        if (newValue != originalValue) 
+        var selectionsChanged = AreEventTypesMatching(originalValue, newValue);
+
+        if (!selectionsChanged) 
         {
             var locations = new List<Location>(); // If selection changed, empty locations
             var notificationSettings = new NotificationsSettingsApiRequest
@@ -137,6 +139,23 @@ public class EventTypesController : Controller
             return RedirectToRoute(RouteNames.EventNotificationSettings.EmailNotificationSettings, new { employerAccountId });
         }
 
-        return RedirectToRoute(RouteNames.Onboarding.NotificationsLocations, new { employerAccountId });
+        return RedirectToRoute(RouteNames.EventNotificationSettings.NotificationLocations, new { employerAccountId });
+    }
+
+    private bool AreEventTypesMatching(List<EventTypeModel>? originalValue, List<EventTypeModel>? newValue)
+    {
+        if (originalValue == null && newValue == null)
+            return true;
+
+        if (originalValue == null || newValue == null)
+            return false;
+
+        if (originalValue.Count != newValue.Count)
+            return false;
+
+        return originalValue.OrderBy(e => e.Ordering).SequenceEqual(
+            newValue.OrderBy(e => e.Ordering),
+            new EventTypeModelComparer()
+        );
     }
 }
