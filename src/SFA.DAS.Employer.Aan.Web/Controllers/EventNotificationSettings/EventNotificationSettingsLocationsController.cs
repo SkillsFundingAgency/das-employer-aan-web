@@ -13,7 +13,7 @@ using SFA.DAS.Encoding;
 using SFA.DAS.Validation.Mvc.Filters;
 using NotificationsLocationsViewModel = SFA.DAS.Employer.Aan.Web.Models.Settings.NotificationsLocationsViewModel;
 
-namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
+namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
 {
     [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
     public class EventNotificationSettingsLocationsController(

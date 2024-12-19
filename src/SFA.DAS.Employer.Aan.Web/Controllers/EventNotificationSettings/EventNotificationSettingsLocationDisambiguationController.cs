@@ -8,7 +8,7 @@ using SFA.DAS.Employer.Aan.Web.Orchestrators.Shared;
 using SFA.DAS.Encoding;
 using SFA.DAS.Validation.Mvc.Filters;
 
-namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
+namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
 {
     [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
     [Route("accounts/{employerAccountId}/event-notification-settings/notification-disambiguation", Name = RouteNames.EventNotificationSettings.SettingsNotificationLocationDisambiguation)]
