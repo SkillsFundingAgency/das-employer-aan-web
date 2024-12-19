@@ -3,11 +3,14 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
+using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests.Settings;
 using SFA.DAS.Employer.Aan.Web.Authentication;
+using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Models.Settings;
+using static SFA.DAS.Employer.Aan.Domain.OuterApi.Requests.Settings.NotificationsSettingsApiRequest;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings;
 
@@ -15,6 +18,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings;
 [Route("accounts/{employerAccountId}/monthly-notifications", Name = RouteNames.EventNotificationSettings.MonthlyNotifications)]
 public class ReceiveNotificationsController(
     IValidator<ReceiveNotificationsSubmitModel> validator,
+    IOuterApiClient apiClient,
     ISessionService sessionService) : Controller
 {
     public const string ViewPath = "~/Views/Onboarding/ReceiveNotifications.cshtml";
@@ -34,7 +38,7 @@ public class ReceiveNotificationsController(
     }
 
     [HttpPost]
-    public IActionResult Post(ReceiveNotificationsSubmitModel submitModel, CancellationToken cancellationToken)
+    public async Task<IActionResult> Post(ReceiveNotificationsSubmitModel submitModel, CancellationToken cancellationToken)
     {
         var result = validator.Validate(submitModel);
 
@@ -44,13 +48,14 @@ public class ReceiveNotificationsController(
             {
                 EmployerAccountId = submitModel.EmployerAccountId,
                 ReceiveNotifications = submitModel.ReceiveNotifications,
-                BackLink = Url.RouteUrl(RouteNames.Onboarding.JoinTheNetwork, new { submitModel.EmployerAccountId }),
+                BackLink = Url.RouteUrl(RouteNames.EventNotificationSettings.EmailNotificationSettings, new { submitModel.EmployerAccountId })!,
 
             };
             result.AddToModelState(ModelState);
             return View(ViewPath, model);
         }
 
+        var memberId = sessionService.GetMemberId();
         var sessionModel = sessionService.Get<NotificationSettingsSessionModel>();
 
         var originalValue = sessionModel.ReceiveNotifications;
@@ -61,6 +66,34 @@ public class ReceiveNotificationsController(
 
         sessionModel.ReceiveNotifications = newValue;
         sessionService.Set(sessionModel);
+
+        // if selections changed, call outer api
+        if (newValue != originalValue)
+        {
+            var eventTypesToSave = sessionModel.EventTypes!.Select(ev => new NotificationEventType
+            {
+                EventType = ev.EventType,
+                Ordering = ev.Ordering,
+                ReceiveNotifications = ev.IsSelected
+            }).ToList();
+
+            var locationsToSave = sessionModel.NotificationLocations!.Select(loc => new Location
+            {
+                Name= loc.LocationName,
+                Radius = loc.Radius,
+                Latitude = loc.GeoPoint[0],
+                Longitude = loc.GeoPoint[1]
+            }).ToList();
+
+            var notificationSettings = new NotificationsSettingsApiRequest
+            {
+                ReceiveNotifications = newValue,
+                Locations = newValue ? locationsToSave : new List<Location>(), // clear when new selection is NO
+                EventTypes = newValue ? eventTypesToSave : new List<NotificationEventType>() // clear when new selection is NO
+            };
+
+            await apiClient.PostMemberNotificationSettings(memberId, notificationSettings);
+        }
 
         var route = sessionModel.UserNewToNotifications || newValue != originalValue
             ? RouteNames.EventNotificationSettings.EventTypes

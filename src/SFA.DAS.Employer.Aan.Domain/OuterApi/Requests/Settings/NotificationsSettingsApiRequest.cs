@@ -1,9 +1,18 @@
-﻿namespace SFA.DAS.Employer.Aan.Domain.OuterApi.Requests.Settings
+﻿
+namespace SFA.DAS.Employer.Aan.Domain.OuterApi.Requests.Settings
 {
     public class NotificationsSettingsApiRequest
     {
-        public Guid MemberId { get; set; }
+        public bool ReceiveNotifications { get; set; }
+        public List<NotificationEventType> EventTypes { get; set; } = [];
         public List<Location> Locations { get; set; } = [];
+
+        public class NotificationEventType
+        {
+            public string EventType { get; set; }
+            public int Ordering { get; set; }
+            public bool ReceiveNotifications { get; set; }
+        }
 
         public class Location
         {
