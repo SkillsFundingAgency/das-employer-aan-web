@@ -8,17 +8,20 @@ using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Models.Settings;
+using SFA.DAS.Employer.Aan.Web.Orchestrators;
 using SFA.DAS.Employer.Aan.Web.Orchestrators.Shared;
 using SFA.DAS.Encoding;
 using SFA.DAS.Validation.Mvc.Filters;
+using static SFA.DAS.Employer.Aan.Domain.OuterApi.Requests.Settings.NotificationsSettingsApiRequest;
 using NotificationsLocationsViewModel = SFA.DAS.Employer.Aan.Web.Models.Settings.NotificationsLocationsViewModel;
 
-namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
+namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
 {
     [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
     public class EventNotificationSettingsLocationsController(
         ISessionService sessionService,
         INotificationsLocationsOrchestrator orchestrator,
+        IEventNotificationSettingsOrchestrator settingsOrchestrator,
         IOuterApiClient apiClient,
         IEncodingService encodingService) : Controller
     {
@@ -29,34 +32,12 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
         [Route("accounts/{employerAccountId}/event-notification-settings/locations", Name = RouteNames.EventNotificationSettings.NotificationLocations)]
         public async Task<IActionResult> Get(string employerAccountId)
         {
-            var sessionModel = sessionService.Get<SettingsNotificationLocationsSessionModel?>();
+            var sessionModel = sessionService.Get<NotificationSettingsSessionModel?>();
 
             if (sessionModel == null)
             {
-                var accountId = encodingService.Decode(employerAccountId, EncodingType.AccountId);
-
-                var memberId = sessionService.GetMemberId();
-
-                var apiResponse =
-                    await apiClient.GetSettingsNotificationsSavedLocations(accountId, memberId);
-
-                sessionModel = new SettingsNotificationLocationsSessionModel
-                {
-                    NotificationLocations = apiResponse.SavedLocations.Select(x => new NotificationLocation
-                    {
-                        LocationName = x.Name,
-                        GeoPoint = x.Coordinates,
-                        Radius = x.Radius
-                    }).ToList(),
-                    EventTypes = apiResponse.NotificationEventTypes.Select(x => new EventTypeModel
-                    {
-                        EventType = x.EventFormat,
-                        IsSelected = x.ReceiveNotifications,
-                        Ordering = x.Ordering
-                    }).ToList()
-                };
-
-                sessionService.Set(sessionModel);
+                return RedirectToRoute(RouteNames.EventNotificationSettings.EmailNotificationSettings,
+                    new { employerAccountId });
             }
 
             var viewModel = orchestrator.GetViewModel<NotificationsLocationsViewModel>(sessionModel, ModelState);
@@ -70,7 +51,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
         [Route("accounts/{employerAccountId}/event-notification-settings/locations", Name = RouteNames.EventNotificationSettings.NotificationLocations)]
         public async Task<IActionResult> Post(Models.Settings.NotificationsLocationsSubmitModel submitModel)
         {
-            var result = await orchestrator.ApplySubmitModel<SettingsNotificationLocationsSessionModel>(
+            var result = await orchestrator.ApplySubmitModel<NotificationSettingsSessionModel>(
                 submitModel,
                 ModelState,
                 async (accountId, location) => await apiClient.GetSettingsNotificationsLocationSearch(accountId, location)
@@ -96,23 +77,9 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
 
         private async Task SaveSettings(Models.Settings.NotificationsLocationsSubmitModel submitModel)
         {
-            var sessionModel = sessionService.Get<SettingsNotificationLocationsSessionModel>();
-
-            var accountId = encodingService.Decode(submitModel.EmployerAccountId, EncodingType.AccountId);
-
-            var apiRequest = new NotificationsSettingsApiRequest
-            {
-                MemberId = sessionService.GetMemberId(),
-                Locations = sessionModel.NotificationLocations.Select(x => new NotificationsSettingsApiRequest.Location
-                {
-                    Name = x.LocationName,
-                    Radius = x.Radius,
-                    Latitude = x.GeoPoint[0],
-                    Longitude = x.GeoPoint[1]
-                }).ToList()
-            };
-
-            await apiClient.PostNotificationsSettingsApiRequest(accountId, apiRequest);
+            var memberId = sessionService.GetMemberId();
+            var sessionModel = sessionService.Get<NotificationSettingsSessionModel>();
+            await settingsOrchestrator.SaveSettings(memberId, sessionModel);
         }
     }
 }

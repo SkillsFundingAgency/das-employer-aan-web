@@ -5,6 +5,7 @@ using SFA.DAS.Employer.Aan.Application.Services;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Infrastructure.Configuration;
 using SFA.DAS.Employer.Aan.Web.Infrastructure.Services;
+using SFA.DAS.Employer.Aan.Web.Orchestrators;
 using SFA.DAS.Employer.Aan.Web.Orchestrators.Shared;
 using SFA.DAS.Encoding;
 using SFA.DAS.Http.Configuration;
@@ -31,6 +32,7 @@ public static class AddServiceRegistrationsExtension
         services.AddTransient<IEncodingService, EncodingService>();
         services.AddTransient<IEmployerAccountsService, EmployerAccountsService>();
         services.AddTransient<INotificationsLocationsOrchestrator, NotificationsLocationsOrchestrator>();
+        services.AddTransient<IEventNotificationSettingsOrchestrator, EventNotificationSettingsOrchestrator>();
         services.AddTransient<INotificationLocationDisambiguationOrchestrator, NotificationLocationDisambiguationOrchestrator>();
         return services;
     }

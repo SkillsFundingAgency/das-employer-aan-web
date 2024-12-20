@@ -9,7 +9,7 @@
         <div class="govuk-checkboxes__item">
             <input class="govuk-checkboxes__input other-checkbox" type="checkbox" asp-for="@Model[i].IsSelected" id="eventType-@i">
             <label class="govuk-label govuk-checkboxes__label" for="EventType-@i">
-                @(Model[i].EventType == EventType.InPerson ? "In-Person events" : $"{Model[i].EventType} events")
+                @(Model[i].EventType == EventType.InPerson ? "In-person events" : $"{Model[i].EventType} events")
             </label>
             <input type="hidden" asp-for="@Model[i].EventType" />
             <input type="hidden" asp-for="@Model[i].Ordering" />

@@ -1,86 +1,111 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
-using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
+using SFA.DAS.Employer.Aan.Web.Orchestrators;
+using SFA.DAS.Employer.Aan.Web.Models.Settings;
 using SFA.DAS.Employer.Aan.Web.Models;
+using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
 [Route("accounts/{employerAccountId}/event-notification-settings", Name = RouteNames.EventNotificationSettings.EmailNotificationSettings)]
 public class EventNotificationSettingsController : Controller
 {
-    private readonly IOuterApiClient _apiClient;
+    private readonly IEventNotificationSettingsOrchestrator _orchestrator;
     private readonly ISessionService _sessionService;
+    private readonly IOuterApiClient _outerApiClient;
 
-    public EventNotificationSettingsController(IOuterApiClient apiClient, ISessionService sessionService)
+    public EventNotificationSettingsController(IEventNotificationSettingsOrchestrator orchestrator, ISessionService sessionService, IOuterApiClient outerApiClient)
     {
-        _apiClient = apiClient;
+        _orchestrator = orchestrator;
         _sessionService = sessionService;
+        _outerApiClient = outerApiClient;
     }
 
+    [HttpGet]
     public async Task<IActionResult> Index([FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
         var memberId = _sessionService.GetMemberId();
 
-        var apiResponse = await _apiClient.GetMemberNotificationSettings(memberId, cancellationToken);
+        var sessionModel = _sessionService.Get<NotificationSettingsSessionModel?>();
 
-        var vm = InitialiseViewModel(employerAccountId, apiResponse);
+        if (sessionModel == null)
+        {
+            sessionModel = await _orchestrator.GetSettingsAsSessionModel(memberId, cancellationToken);
+            _sessionService.Set(sessionModel);
+        }
+
+        var vm = await GetViewModelAsync(memberId, sessionModel, employerAccountId, Url, cancellationToken);
 
         return View(vm);
     }
-    
-    private EventNotificationSettingsViewModel InitialiseViewModel(string employerAccountId, GetMemberNotificationSettingsResponse apiResponse)
+
+    private async Task<EventNotificationSettingsViewModel> GetViewModelAsync(Guid memberId, NotificationSettingsSessionModel sessionModel, string employerAccountId, IUrlHelper urlHelper, CancellationToken cancellationToken)
     {
         var eventFormats = new List<EventFormatViewModel>();
         var locations = new List<NotificationLocationsViewModel>();
 
-        if (apiResponse.MemberNotificationEventFormats.Any())
+        if (sessionModel.EventTypes.Any())
         {
-            foreach (var format in apiResponse.MemberNotificationEventFormats)
+            foreach (var format in sessionModel.EventTypes)
             {
-                var eventFormatVm = new EventFormatViewModel
+                if (!format.EventType.Equals("All"))
                 {
-                    MemberId = format.MemberId,
-                    EventFormat = format.EventFormat,
-                    Ordering = format.Ordering,
-                    ReceiveNotifications = format.ReceiveNotifications
-                };
+                    var eventFormatVm = new EventFormatViewModel
+                    {
+                        EventFormat = format.EventType,
+                        DisplayName = GetEventTypeText(format.EventType),
+                        Ordering = format.Ordering,
+                        ReceiveNotifications = format.IsSelected
+                    };
 
-                eventFormats.Add(eventFormatVm);
+                    eventFormats.Add(eventFormatVm);
+                }
             }
         }
 
-        if (apiResponse.MemberNotificationLocations.Any()) 
+        if (sessionModel.NotificationLocations.Any())
         {
-            foreach (var location in apiResponse.MemberNotificationLocations)
+            foreach (var location in sessionModel.NotificationLocations)
             {
                 var locationVm = new NotificationLocationsViewModel
                 {
-                    MemberId = location.MemberId,
-                    DisplayName = $"{location.Name}, within {location.Radius} miles",
+                    LocationDisplayName = GetRadiusText(location.Radius, location.LocationName),
                     Radius = location.Radius,
-                    Latitude = location.Latitude,
-                    Longitude = location.Longitude
+                    Latitude = location.GeoPoint[0],
+                    Longitude = location.GeoPoint[1]
                 };
 
                 locations.Add(locationVm);
             }
         }
-       
+
 
         return new EventNotificationSettingsViewModel
         {
             EventFormats = eventFormats,
             EventNotificationLocations = locations,
-            ReceiveMonthlyNotifications = apiResponse.ReceiveMonthlyNotifications,
-            ReceiveMonthlyNotificationsText = apiResponse.ReceiveMonthlyNotifications == true ? "Yes" : "No",
-            UserNewToNotifications = apiResponse.UserNewToNotifications,
-            ChangeMonthlyEmailUrl = Url.RouteUrl(RouteNames.EventNotificationSettings.MonthlyNotifications, new { employerAccountId }),
-            ChangeEventTypeUrl = Url.RouteUrl(RouteNames.EventNotificationSettings.EventTypes, new { employerAccountId }), 
-            ChangeLocationsUrl = Url.RouteUrl(RouteNames.EventNotificationSettings.NotificationLocations, new { employerAccountId }),
-            BackLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId })
+            ReceiveMonthlyNotifications = sessionModel.ReceiveNotifications,
+            ReceiveMonthlyNotificationsText = sessionModel.ReceiveNotifications == true ? "Yes" : "No",
+            UserNewToNotifications = sessionModel.UserNewToNotifications,
+            ChangeMonthlyEmailUrl = urlHelper.RouteUrl(RouteNames.EventNotificationSettings.MonthlyNotifications, new { employerAccountId }),
+            ChangeEventTypeUrl = urlHelper.RouteUrl(RouteNames.EventNotificationSettings.EventTypes, new { employerAccountId }),
+            ChangeLocationsUrl = urlHelper.RouteUrl(RouteNames.EventNotificationSettings.NotificationLocations, new { employerAccountId }),
+            BackLink = urlHelper.RouteUrl(RouteNames.NetworkHub, new { employerAccountId })
         };
+    }
+
+    private string GetRadiusText(int radius, string location)
+    {
+        return radius == 0 ?
+        "Across England"
+        : $"{location}, within {radius} miles";
+    }
+
+    private string GetEventTypeText(string eventFormat)
+    {
+        return (eventFormat.Equals("InPerson")) ? "In-person events" : $"{eventFormat} events";
     }
 }

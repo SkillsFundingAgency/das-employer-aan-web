@@ -8,7 +8,7 @@ using SFA.DAS.Employer.Aan.Web.Orchestrators.Shared;
 using SFA.DAS.Encoding;
 using SFA.DAS.Validation.Mvc.Filters;
 
-namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
+namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
 {
     [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
     [Route("accounts/{employerAccountId}/event-notification-settings/notification-disambiguation", Name = RouteNames.EventNotificationSettings.SettingsNotificationLocationDisambiguation)]
@@ -25,7 +25,13 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
         [ValidateModelStateFilter]
         public async Task<IActionResult> Get([FromRoute] string employerAccountId, int radius, string location)
         {
-            var sessionModel = sessionService.Get<SettingsNotificationLocationsSessionModel>();
+            var sessionModel = sessionService.Get<NotificationSettingsSessionModel?>();
+
+            if (sessionModel == null)
+            {
+                return RedirectToRoute(RouteNames.EventNotificationSettings.EmailNotificationSettings,
+                    new { employerAccountId });
+            }
 
             var accountId = encodingService.Decode(employerAccountId, EncodingType.AccountId);
 
@@ -41,7 +47,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
         [ValidateModelStateFilter]
         public async Task<IActionResult> Post(NotificationLocationDisambiguationSubmitModel submitModel, CancellationToken cancellationToken)
         {
-            var result = await orchestrator.ApplySubmitModel<SettingsNotificationLocationsSessionModel>(submitModel, ModelState);
+            var result = await orchestrator.ApplySubmitModel<NotificationSettingsSessionModel>(submitModel, ModelState);
 
             var routeValues = new { submitModel.EmployerAccountId, submitModel.Radius, submitModel.Location };
 

@@ -1,4 +1,4 @@
-﻿@using SFA.DAS.Employer.Aan.Web.Models
+﻿@using SFA.DAS.Employer.Aan.Web.Models.Settings
 @model EventNotificationSettingsViewModel
 @{
     ViewData["Title"] = "Emails about upcoming events";
@@ -38,7 +38,7 @@
                                 @{
                                     foreach (var eventFormat in Model.EventFormats!)
                                     {
-                                        <li>@eventFormat.EventFormat</li>
+                                        <li>@eventFormat.DisplayName</li>
                                     }
                                 }
                             </ul>
@@ -54,7 +54,7 @@
                                 @{
                                     foreach (var location in Model.EventNotificationLocations!)
                                     {
-                                        <li>@location.DisplayName</li>
+                                        <li>@location.LocationDisplayName</li>
                                     }
                                 }
                             </ul>
