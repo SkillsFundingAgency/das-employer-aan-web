@@ -15,7 +15,6 @@
 
     public class EventFormatViewModel
     {
-        public Guid MemberId { get; set; }
         public string EventFormat { get; set; } = string.Empty;
         public string DisplayName { get; set; } = string.Empty;
         public int Ordering { get; set; }
@@ -24,7 +23,6 @@
 
     public class NotificationLocationsViewModel
     {
-        public Guid MemberId { get; set; }
         public string LocationDisplayName { get; set; } = string.Empty;
         public int Radius { get; set; }
         public double Latitude { get; set; }

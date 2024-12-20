@@ -20,9 +20,11 @@ public class EventNotificationSettingsControllerTests
         [Frozen] Guid memberId,
         CancellationToken cancellationToken,
         EventNotificationSettingsViewModel vm,
+        NotificationSettingsSessionModel sessionModel,
         [Greedy] EventNotificationSettingsController controller)
     {
-        mockOrchesrator.Setup(s => s.GetViewModelAsync(It.Is<Guid>(m => m == memberId), employerAccountId, controller.Url, cancellationToken)).ReturnsAsync(vm);
+        mockSessionService.Setup(x => x.Get<NotificationSettingsSessionModel>()).Returns(sessionModel);
+        mockOrchesrator.Setup(s => s.GetViewModelAsync(It.Is<Guid>(m => m == memberId), sessionModel, employerAccountId, controller.Url, cancellationToken)).ReturnsAsync(vm);
 
         var result = await controller.Index(employerAccountId, cancellationToken) as ViewResult;
 

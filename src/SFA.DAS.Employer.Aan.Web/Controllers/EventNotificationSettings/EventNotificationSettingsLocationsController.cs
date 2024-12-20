@@ -34,30 +34,8 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
 
             if (sessionModel == null)
             {
-                var accountId = encodingService.Decode(employerAccountId, EncodingType.AccountId);
-
-                var memberId = sessionService.GetMemberId();
-
-                var apiResponse =
-                    await apiClient.GetSettingsNotificationsSavedLocations(accountId, memberId);
-
-                sessionModel = new NotificationSettingsSessionModel
-                {
-                    NotificationLocations = apiResponse.SavedLocations.Select(x => new NotificationLocation
-                    {
-                        LocationName = x.Name,
-                        GeoPoint = x.Coordinates,
-                        Radius = x.Radius
-                    }).ToList(),
-                    EventTypes = apiResponse.NotificationEventTypes.Select(x => new EventTypeModel
-                    {
-                        EventType = x.EventFormat,
-                        IsSelected = x.ReceiveNotifications,
-                        Ordering = x.Ordering
-                    }).ToList()
-                };
-
-                sessionService.Set(sessionModel);
+                return RedirectToRoute(RouteNames.EventNotificationSettings.EmailNotificationSettings,
+                    new { employerAccountId });
             }
 
             var viewModel = orchestrator.GetViewModel<NotificationsLocationsViewModel>(sessionModel, ModelState);

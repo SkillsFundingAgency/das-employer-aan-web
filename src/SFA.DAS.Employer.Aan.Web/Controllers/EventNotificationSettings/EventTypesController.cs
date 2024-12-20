@@ -67,7 +67,7 @@ public class EventTypesController : Controller
         if (submitModel.EventTypes.Count(x => x.IsSelected) == 1 &&
             submitModel.EventTypes.Any(x => x.IsSelected && x.EventType == EventType.Online))
         {
-            sessionModel.NotificationLocations = new List<NotificationLocation>();
+            sessionModel.NotificationLocations = [];
             isEndOfJourney = true;
         }
 
@@ -75,7 +75,6 @@ public class EventTypesController : Controller
         sessionModel.EventTypes.Clear();
         sessionModel.EventTypes.AddRange(selectedEventTypes);
 
-        sessionModel.EventTypes = submitModel.EventTypes;
         _sessionService.Set(sessionModel);
 
         if(isEndOfJourney)
@@ -109,7 +108,7 @@ public class EventTypesController : Controller
         var vm = new SelectNotificationsViewModel() { };
 
         vm.EventTypes = InitializeDefaultEventTypes();
-        vm.BackLink = Url.RouteUrl(@RouteNames.Onboarding.ReceiveNotifications, new { employerAccountId })!; // todo conditional navigation
+        vm.BackLink = Url.RouteUrl(@RouteNames.EventNotificationSettings.MonthlyNotifications, new { employerAccountId })!; // todo conditional navigation
         vm.EmployerAccountId = employerAccountId;
 
         foreach (var e in vm.EventTypes)
