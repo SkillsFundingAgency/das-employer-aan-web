@@ -41,6 +41,9 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
             }
 
             var viewModel = orchestrator.GetViewModel<NotificationsLocationsViewModel>(sessionModel, ModelState);
+            viewModel.BackLink = sessionModel.LastPageVisited == RouteNames.EventNotificationSettings.EventTypes ?
+                Url.RouteUrl(@RouteNames.EventNotificationSettings.EventTypes, new { employerAccountId })!
+                : Url.RouteUrl(@RouteNames.EventNotificationSettings.EmailNotificationSettings, new { employerAccountId })!;
 
             return View(ViewPath, viewModel);
         }

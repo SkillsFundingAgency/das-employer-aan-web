@@ -8,6 +8,7 @@ using SFA.DAS.Employer.Aan.Web.Orchestrators;
 using SFA.DAS.Employer.Aan.Web.Models.Settings;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
+using SFA.DAS.Employer.Aan.Web.Infrastructure.Services;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
 [Route("accounts/{employerAccountId}/event-notification-settings", Name = RouteNames.EventNotificationSettings.EmailNotificationSettings)]
@@ -38,6 +39,9 @@ public class EventNotificationSettingsController : Controller
         }
 
         var vm = await GetViewModelAsync(memberId, sessionModel, employerAccountId, Url, cancellationToken);
+
+        sessionModel.LastPageVisited = RouteNames.EventNotificationSettings.EmailNotificationSettings;
+        _sessionService.Set(sessionModel);
 
         return View(vm);
     }

@@ -84,6 +84,7 @@ public class EventTypesController : Controller
 
         var selectedEventTypes = submitModel.EventTypes.Where(x => x.EventType != "All" && x.IsSelected);
         sessionModel.EventTypes.Clear();
+        sessionModel.LastPageVisited = RouteNames.EventNotificationSettings.EventTypes;
         sessionModel.EventTypes.AddRange(selectedEventTypes);
 
         _sessionService.Set(sessionModel);
@@ -101,7 +102,9 @@ public class EventTypesController : Controller
         var vm = new SelectNotificationsViewModel() { };
 
         vm.EventTypes = InitializeDefaultEventTypes();
-        vm.BackLink = Url.RouteUrl(@RouteNames.EventNotificationSettings.MonthlyNotifications, new { employerAccountId })!; // todo conditional navigation
+        vm.BackLink = sessionModel.LastPageVisited == RouteNames.EventNotificationSettings.MonthlyNotifications ?
+            Url.RouteUrl(@RouteNames.EventNotificationSettings.MonthlyNotifications, new { employerAccountId })! :
+            Url.RouteUrl(@RouteNames.EventNotificationSettings.EmailNotificationSettings, new { employerAccountId })!;
         vm.EmployerAccountId = employerAccountId;
 
         foreach (var e in vm.EventTypes)
