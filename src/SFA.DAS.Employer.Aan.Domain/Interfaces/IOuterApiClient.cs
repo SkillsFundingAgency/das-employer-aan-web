@@ -96,14 +96,15 @@ public interface IOuterApiClient
 
     [Get("MemberNotificationSettings/{memberId}")]
     Task<GetMemberNotificationSettingsResponse> GetMemberNotificationSettings([Path] Guid memberId, CancellationToken cancellationToken);
-	
-	[Get("/accounts/{employerAccountId}/event-notifications-settings/locations")]
+
+    [Post("MemberNotificationSettings/{memberId}")]
+    Task<NotificationsSettingsApiRequest> PostMemberNotificationSettings([Path] Guid memberId, [Body] NotificationsSettingsApiRequest request);
+
+
+    [Get("/accounts/{employerAccountId}/event-notifications-settings/locations")]
     Task<GetSettingsLocationsNotificationsApiResponse> GetSettingsNotificationsSavedLocations([Path] long employerAccountId, [Query] Guid memberId);
 
     [Get("/accounts/{employerAccountId}/event-notifications-settings/locations")]
     Task<GetNotificationsLocationSearchApiResponse> GetSettingsNotificationsLocationSearch([Path] long employerAccountId, [Query] string searchTerm);
-
-    [Post("/accounts/{employerAccountId}/event-notifications-settings/locations")]
-    Task<NotificationsSettingsApiRequest> PostNotificationsSettingsApiRequest([Path] long employerAccountId, [Body] NotificationsSettingsApiRequest request);
 }
 

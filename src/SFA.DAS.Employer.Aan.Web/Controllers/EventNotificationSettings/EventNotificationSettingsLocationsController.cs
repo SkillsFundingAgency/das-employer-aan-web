@@ -11,9 +11,10 @@ using SFA.DAS.Employer.Aan.Web.Models.Settings;
 using SFA.DAS.Employer.Aan.Web.Orchestrators.Shared;
 using SFA.DAS.Encoding;
 using SFA.DAS.Validation.Mvc.Filters;
+using static SFA.DAS.Employer.Aan.Domain.OuterApi.Requests.Settings.NotificationsSettingsApiRequest;
 using NotificationsLocationsViewModel = SFA.DAS.Employer.Aan.Web.Models.Settings.NotificationsLocationsViewModel;
 
-namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
+namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
 {
     [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
     public class EventNotificationSettingsLocationsController(
@@ -29,7 +30,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
         [Route("accounts/{employerAccountId}/event-notification-settings/locations", Name = RouteNames.EventNotificationSettings.NotificationLocations)]
         public async Task<IActionResult> Get(string employerAccountId)
         {
-            var sessionModel = sessionService.Get<SettingsNotificationLocationsSessionModel?>();
+            var sessionModel = sessionService.Get<NotificationSettingsSessionModel?>();
 
             if (sessionModel == null)
             {
@@ -40,7 +41,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
                 var apiResponse =
                     await apiClient.GetSettingsNotificationsSavedLocations(accountId, memberId);
 
-                sessionModel = new SettingsNotificationLocationsSessionModel
+                sessionModel = new NotificationSettingsSessionModel
                 {
                     NotificationLocations = apiResponse.SavedLocations.Select(x => new NotificationLocation
                     {
@@ -70,7 +71,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
         [Route("accounts/{employerAccountId}/event-notification-settings/locations", Name = RouteNames.EventNotificationSettings.NotificationLocations)]
         public async Task<IActionResult> Post(Models.Settings.NotificationsLocationsSubmitModel submitModel)
         {
-            var result = await orchestrator.ApplySubmitModel<SettingsNotificationLocationsSessionModel>(
+            var result = await orchestrator.ApplySubmitModel<NotificationSettingsSessionModel>(
                 submitModel,
                 ModelState,
                 async (accountId, location) => await apiClient.GetSettingsNotificationsLocationSearch(accountId, location)
@@ -96,13 +97,21 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
 
         private async Task SaveSettings(Models.Settings.NotificationsLocationsSubmitModel submitModel)
         {
-            var sessionModel = sessionService.Get<SettingsNotificationLocationsSessionModel>();
+            var memberId = sessionService.GetMemberId();
+
+            var sessionModel = sessionService.Get<NotificationSettingsSessionModel>();
 
             var accountId = encodingService.Decode(submitModel.EmployerAccountId, EncodingType.AccountId);
 
             var apiRequest = new NotificationsSettingsApiRequest
             {
-                MemberId = sessionService.GetMemberId(),
+                ReceiveNotifications = (bool)sessionModel.ReceiveNotifications,
+                EventTypes = sessionModel.EventTypes!.Select(ev => new NotificationEventType
+                {
+                    EventType = ev.EventType,
+                    Ordering = ev.Ordering,
+                    ReceiveNotifications = ev.IsSelected
+                }).ToList(),
                 Locations = sessionModel.NotificationLocations.Select(x => new NotificationsSettingsApiRequest.Location
                 {
                     Name = x.LocationName,
@@ -112,7 +121,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Settings
                 }).ToList()
             };
 
-            await apiClient.PostNotificationsSettingsApiRequest(accountId, apiRequest);
+            await apiClient.PostMemberNotificationSettings(memberId, apiRequest);
         }
     }
 }
