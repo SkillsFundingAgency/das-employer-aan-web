@@ -11,6 +11,7 @@ using SFA.DAS.Employer.Aan.Web.Models.Settings;
 using SFA.DAS.Employer.Aan.Web.Orchestrators.Shared;
 using SFA.DAS.Encoding;
 using SFA.DAS.Validation.Mvc.Filters;
+using static SFA.DAS.Employer.Aan.Domain.OuterApi.Requests.Settings.NotificationsSettingsApiRequest;
 using NotificationsLocationsViewModel = SFA.DAS.Employer.Aan.Web.Models.Settings.NotificationsLocationsViewModel;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
@@ -104,6 +105,13 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
 
             var apiRequest = new NotificationsSettingsApiRequest
             {
+                ReceiveNotifications = (bool)sessionModel.ReceiveNotifications,
+                EventTypes = sessionModel.EventTypes!.Select(ev => new NotificationEventType
+                {
+                    EventType = ev.EventType,
+                    Ordering = ev.Ordering,
+                    ReceiveNotifications = ev.IsSelected
+                }).ToList(),
                 Locations = sessionModel.NotificationLocations.Select(x => new NotificationsSettingsApiRequest.Location
                 {
                     Name = x.LocationName,

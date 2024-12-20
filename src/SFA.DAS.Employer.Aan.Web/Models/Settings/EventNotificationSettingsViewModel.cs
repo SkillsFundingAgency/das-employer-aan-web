@@ -17,6 +17,7 @@
     {
         public Guid MemberId { get; set; }
         public string EventFormat { get; set; } = string.Empty;
+        public string DisplayName { get; set; } = string.Empty;
         public int Ordering { get; set; }
         public bool ReceiveNotifications { get; set; }
     }

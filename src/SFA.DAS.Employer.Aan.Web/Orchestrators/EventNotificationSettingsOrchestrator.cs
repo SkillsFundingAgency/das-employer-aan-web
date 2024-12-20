@@ -41,7 +41,8 @@ public class EventNotificationSettingsOrchestrator : IEventNotificationSettingsO
                     var eventFormatVm = new EventFormatViewModel
                     {
                         MemberId = format.MemberId,
-                        EventFormat = GetEventTypeText(format.EventFormat),
+                        EventFormat = format.EventFormat,
+                        DisplayName = GetEventTypeText(format.EventFormat),
                         Ordering = format.Ordering,
                         ReceiveNotifications = format.ReceiveNotifications
                     };
