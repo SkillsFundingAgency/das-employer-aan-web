@@ -41,7 +41,7 @@ namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.Onboarding.Notification
                 .ToList();
 
             mockOrchestrator
-                .Setup(o => o.GetViewModel(sessionModel.EmployerDetails.AccountId, radius, location))
+                .Setup(o => o.GetViewModel<NotificationLocationDisambiguationViewModel>(sessionModel.EmployerDetails.AccountId, radius, location))
                 .ReturnsAsync(orchestratorViewModel);
 
             controller.AddUrlHelperMock()

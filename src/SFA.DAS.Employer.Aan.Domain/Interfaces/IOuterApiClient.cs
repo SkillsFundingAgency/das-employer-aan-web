@@ -3,8 +3,11 @@ using SFA.DAS.Aan.SharedUi.Constants;
 using SFA.DAS.Aan.SharedUi.Models.LeaveTheNetwork;
 using SFA.DAS.Aan.SharedUi.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests;
+using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests.Settings;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Onboarding;
+using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Settings;
+using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Shared;
 
 namespace SFA.DAS.Employer.Aan.Domain.Interfaces;
 
@@ -47,7 +50,7 @@ public interface IOuterApiClient
 
 
     [Get("/accounts/{employerAccountId}/onboarding/notifications-locations")]
-    Task<GetNotificationsLocationsApiResponse> GetOnboardingNotificationsLocations([Path] long employerAccountId, [Query] string searchTerm);
+    Task<GetNotificationsLocationSearchApiResponse> GetOnboardingNotificationsLocations([Path] long employerAccountId, [Query] string searchTerm);
 
     [Post("/employers")]
     Task<CreateEmployerMemberResponse> PostEmployerMember([Body] CreateEmployerMemberRequest request, CancellationToken cancellationToken);
@@ -86,4 +89,21 @@ public interface IOuterApiClient
     [Post("/members/{memberId}/reinstate")]
     [AllowAnyStatusCode]
     Task PostMemberReinstate([Path] Guid memberId, CancellationToken cancellationToken);
+
+    [Get("MemberNotificationEventFormats/{memberId}")]
+    Task<GetMemberNotificationEventFormatsResponse> GetMemberNotificationEventFormats([Path] Guid memberId, CancellationToken cancellationToken);
+
+
+    [Get("MemberNotificationSettings/{memberId}")]
+    Task<GetMemberNotificationSettingsResponse> GetMemberNotificationSettings([Path] Guid memberId, CancellationToken cancellationToken);
+	
+	[Get("/accounts/{employerAccountId}/event-notifications-settings/locations")]
+    Task<GetSettingsLocationsNotificationsApiResponse> GetSettingsNotificationsSavedLocations([Path] long employerAccountId, [Query] Guid memberId);
+
+    [Get("/accounts/{employerAccountId}/event-notifications-settings/locations")]
+    Task<GetNotificationsLocationSearchApiResponse> GetSettingsNotificationsLocationSearch([Path] long employerAccountId, [Query] string searchTerm);
+
+    [Post("/accounts/{employerAccountId}/event-notifications-settings/locations")]
+    Task<NotificationsSettingsApiRequest> PostNotificationsSettingsApiRequest([Path] long employerAccountId, [Body] NotificationsSettingsApiRequest request);
 }
+

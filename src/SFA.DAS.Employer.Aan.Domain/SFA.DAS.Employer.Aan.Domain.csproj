@@ -11,4 +11,8 @@
     <PackageReference Include="SFA.DAS.Aan.SharedUi" Version="0.1.111" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="OuterApi\Responses\NewFolder\" />
+  </ItemGroup>
+
 </Project>
