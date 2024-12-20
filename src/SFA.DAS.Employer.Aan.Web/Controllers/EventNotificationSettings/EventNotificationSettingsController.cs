@@ -8,6 +8,7 @@ using SFA.DAS.Employer.Aan.Web.Orchestrators;
 using SFA.DAS.Employer.Aan.Web.Models.Settings;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
+using SFA.DAS.Employer.Aan.Web.Constant;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
 [Route("accounts/{employerAccountId}/event-notification-settings", Name = RouteNames.EventNotificationSettings.EmailNotificationSettings)]
@@ -51,7 +52,14 @@ public class EventNotificationSettingsController : Controller
         {
             foreach (var format in sessionModel.EventTypes)
             {
-                if (!format.EventType.Equals("All"))
+                if (format.EventType.Equals("All") && format.IsSelected)
+                {
+                    eventFormats.Clear();
+                    eventFormats = InitializeAllEventTypes();
+                    break;
+                }
+
+                if (!format.Equals("All") && format.IsSelected)
                 {
                     var eventFormatVm = new EventFormatViewModel
                     {
@@ -108,4 +116,12 @@ public class EventNotificationSettingsController : Controller
     {
         return (eventFormat.Equals("InPerson")) ? "In-person events" : $"{eventFormat} events";
     }
+
+    private List<EventFormatViewModel> InitializeAllEventTypes() => new()
+    {
+        new EventFormatViewModel { EventFormat = EventType.Hybrid, DisplayName = "Hybrid", ReceiveNotifications = false, Ordering = 3 },
+        new EventFormatViewModel { EventFormat = EventType.InPerson, DisplayName = "In-person", ReceiveNotifications = false, Ordering = 1 },
+        new EventFormatViewModel { EventFormat = EventType.Online, DisplayName = "Online", ReceiveNotifications = false, Ordering = 2 },
+        new EventFormatViewModel { EventFormat = EventType.All, DisplayName = "All", ReceiveNotifications = true, Ordering = 4 }
+    };
 }

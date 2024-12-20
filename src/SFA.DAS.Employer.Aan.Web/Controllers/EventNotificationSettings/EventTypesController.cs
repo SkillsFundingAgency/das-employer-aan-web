@@ -82,7 +82,7 @@ public class EventTypesController : Controller
             isEndOfJourney = true;
         }
 
-        var selectedEventTypes = submitModel.EventTypes.Where(x => x.EventType != "All" && x.IsSelected);
+        var selectedEventTypes = submitModel.EventTypes;
         sessionModel.EventTypes.Clear();
         sessionModel.EventTypes.AddRange(selectedEventTypes);
 
