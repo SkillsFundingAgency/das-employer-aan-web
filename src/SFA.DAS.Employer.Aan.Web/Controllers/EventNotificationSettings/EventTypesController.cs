@@ -56,36 +56,41 @@ public class EventTypesController : Controller
             return View(ViewPath, model);
         }
 
-        //For Javascript disabled browser.Deselect other event types if 'All' is selected
+
+        var isEndOfJourney = false;
 
         if (submitModel.EventTypes.Any(e => e.EventType == EventType.All && e.IsSelected))
         {
-            submitModel.EventTypes.ForEach(e => e.IsSelected = e.EventType == EventType.All);
+            submitModel.EventTypes.ForEach(e => e.IsSelected = true);
         }
 
         if (submitModel.EventTypes.Count(x => x.IsSelected) == 1 &&
             submitModel.EventTypes.Any(x => x.IsSelected && x.EventType == EventType.Online))
         {
             sessionModel.NotificationLocations = new List<NotificationLocation>();
+            isEndOfJourney = true;
         }
 
-        var originalValue = sessionModel.EventTypes;
-        var newValue = submitModel.EventTypes;
+        var selectedEventTypes = submitModel.EventTypes.Where(x => x.EventType != "All" && x.IsSelected);
+        sessionModel.EventTypes.Clear();
+        sessionModel.EventTypes.AddRange(selectedEventTypes);
 
         sessionModel.EventTypes = submitModel.EventTypes;
         _sessionService.Set(sessionModel);
 
-        // if selections changed, call outer api
-        var selectionsChanged = AreEventTypesMatching(originalValue, newValue);
-
-        if (!selectionsChanged) 
+        if(isEndOfJourney)
         {
-            var locations = new List<Location>(); // If selection changed, empty locations
             var notificationSettings = new NotificationsSettingsApiRequest
             {
-                ReceiveNotifications = (bool)sessionModel.ReceiveNotifications,
-                Locations = locations,
-                EventTypes = newValue.Select(ev => new NotificationEventType
+                ReceiveNotifications = sessionModel.ReceiveNotifications ?? true,
+                Locations = sessionModel.NotificationLocations.Select(x => new Location
+                {
+                    Name = x.LocationName,
+                    Radius = x.Radius,
+                    Latitude = x.GeoPoint[0],
+                    Longitude = x.GeoPoint[1]
+                }).ToList(),
+                EventTypes = sessionModel.EventTypes.Select(ev => new NotificationEventType
                 {
                     EventType = ev.EventType,
                     Ordering = ev.Ordering,
@@ -96,7 +101,7 @@ public class EventTypesController : Controller
             await _apiClient.PostMemberNotificationSettings(memberId, notificationSettings);
         }
 
-        return RedirectAccordingly(newValue, submitModel.EmployerAccountId);
+        return RedirectAccordingly(sessionModel.EventTypes, submitModel.EmployerAccountId);
     }
 
     private SelectNotificationsViewModel GetViewModel(NotificationSettingsSessionModel sessionModel, string employerAccountId)
@@ -106,29 +111,23 @@ public class EventTypesController : Controller
         vm.EventTypes = InitializeDefaultEventTypes();
         vm.BackLink = Url.RouteUrl(@RouteNames.Onboarding.ReceiveNotifications, new { employerAccountId })!; // todo conditional navigation
         vm.EmployerAccountId = employerAccountId;
-        
-        if (sessionModel.EventTypes == null) 
+
+        foreach (var e in vm.EventTypes)
         {
-            foreach (var e in vm.EventTypes)
+            foreach (var ev in sessionModel.EventTypes!.Where(ev => ev.EventType.Equals(e.EventType)))
             {
-                foreach (var ev in sessionModel.EventTypes!)
-                {
-                    if (ev.EventType.Equals(e.EventType))
-                    {
-                        e.IsSelected = true;
-                    }
-                }
+                e.IsSelected = true;
             }
         }
-        
+
         return vm;
     }
 
     private List<EventTypeModel> InitializeDefaultEventTypes() => new()
     {
-        new EventTypeModel { EventType = EventType.Hybrid, IsSelected = false, Ordering = 3 },
         new EventTypeModel { EventType = EventType.InPerson, IsSelected = false, Ordering = 1 },
         new EventTypeModel { EventType = EventType.Online, IsSelected = false, Ordering = 2 },
+        new EventTypeModel { EventType = EventType.Hybrid, IsSelected = false, Ordering = 3 },
         new EventTypeModel { EventType = EventType.All, IsSelected = false, Ordering = 4 }
     };
 
@@ -140,22 +139,5 @@ public class EventTypesController : Controller
         }
 
         return RedirectToRoute(RouteNames.EventNotificationSettings.NotificationLocations, new { employerAccountId });
-    }
-
-    private bool AreEventTypesMatching(List<EventTypeModel>? originalValue, List<EventTypeModel>? newValue)
-    {
-        if (originalValue == null && newValue == null)
-            return true;
-
-        if (originalValue == null || newValue == null)
-            return false;
-
-        if (originalValue.Count != newValue.Count)
-            return false;
-
-        return originalValue.OrderBy(e => e.Ordering).SequenceEqual(
-            newValue.OrderBy(e => e.Ordering),
-            new EventTypeModelComparer()
-        );
     }
 }

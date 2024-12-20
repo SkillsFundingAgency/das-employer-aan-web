@@ -1,6 +1,4 @@
-﻿using SFA.DAS.Employer.Aan.Domain.Interfaces;
-using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
-using SFA.DAS.Employer.Aan.Web.Infrastructure;
+﻿using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Web.Models.Settings;
 
@@ -8,43 +6,28 @@ namespace SFA.DAS.Employer.Aan.Web.Orchestrators;
 
 public interface IEventNotificationSettingsOrchestrator
 {
-    Task<EventNotificationSettingsViewModel> GetViewModelAsync(Guid memberId, string employerAccountId, IUrlHelper Url, CancellationToken cancellationToken);
+    Task<EventNotificationSettingsViewModel> GetViewModelAsync(Guid memberId, NotificationSettingsSessionModel sessionModel, string employerAccountId, IUrlHelper Url, CancellationToken cancellationToken);
 }
 
 public class EventNotificationSettingsOrchestrator : IEventNotificationSettingsOrchestrator
 {
-    private readonly IOuterApiClient _outerApiClient;
-
-    public EventNotificationSettingsOrchestrator(IOuterApiClient outerApiClient)
-    {
-        _outerApiClient = outerApiClient;
-    }
-
-    public async Task<EventNotificationSettingsViewModel> GetViewModelAsync(Guid memberId, string employerAccountId, IUrlHelper url, CancellationToken cancellationToken)
-    {
-        var apiResponse = await _outerApiClient.GetMemberNotificationSettings(memberId, cancellationToken);
-
-        return InitialiseViewModel(employerAccountId, url, apiResponse);
-    }
-
-    private EventNotificationSettingsViewModel InitialiseViewModel(string employerAccountId, IUrlHelper urlHelper, GetMemberNotificationSettingsResponse apiResponse)
+    public async Task<EventNotificationSettingsViewModel> GetViewModelAsync(Guid memberId, NotificationSettingsSessionModel sessionModel, string employerAccountId, IUrlHelper urlHelper, CancellationToken cancellationToken)
     {
         var eventFormats = new List<EventFormatViewModel>();
         var locations = new List<NotificationLocationsViewModel>();
 
-        if (apiResponse.MemberNotificationEventFormats.Any())
+        if (sessionModel.EventTypes.Any())
         {
-            foreach (var format in apiResponse.MemberNotificationEventFormats)
+            foreach (var format in sessionModel.EventTypes)
             {
-                if (!format.EventFormat.Equals("All"))
+                if (!format.EventType.Equals("All"))
                 {
                     var eventFormatVm = new EventFormatViewModel
                     {
-                        MemberId = format.MemberId,
-                        EventFormat = format.EventFormat,
-                        DisplayName = GetEventTypeText(format.EventFormat),
+                        EventFormat = format.EventType,
+                        DisplayName = GetEventTypeText(format.EventType),
                         Ordering = format.Ordering,
-                        ReceiveNotifications = format.ReceiveNotifications
+                        ReceiveNotifications = format.IsSelected
                     };
 
                     eventFormats.Add(eventFormatVm);
@@ -52,17 +35,16 @@ public class EventNotificationSettingsOrchestrator : IEventNotificationSettingsO
             }
         }
 
-        if (apiResponse.MemberNotificationLocations.Any())
+        if (sessionModel.NotificationLocations.Any())
         {
-            foreach (var location in apiResponse.MemberNotificationLocations)
+            foreach (var location in sessionModel.NotificationLocations)
             {
                 var locationVm = new NotificationLocationsViewModel
                 {
-                    MemberId = location.MemberId,
-                    LocationDisplayName = GetRadiusText(location.Radius, location.Name),
+                    LocationDisplayName = GetRadiusText(location.Radius, location.LocationName),
                     Radius = location.Radius,
-                    Latitude = location.Latitude,
-                    Longitude = location.Longitude
+                    Latitude = location.GeoPoint[0],
+                    Longitude = location.GeoPoint[1]
                 };
 
                 locations.Add(locationVm);
@@ -74,9 +56,9 @@ public class EventNotificationSettingsOrchestrator : IEventNotificationSettingsO
         {
             EventFormats = eventFormats,
             EventNotificationLocations = locations,
-            ReceiveMonthlyNotifications = apiResponse.ReceiveMonthlyNotifications,
-            ReceiveMonthlyNotificationsText = apiResponse.ReceiveMonthlyNotifications == true ? "Yes" : "No",
-            UserNewToNotifications = apiResponse.UserNewToNotifications,
+            ReceiveMonthlyNotifications = sessionModel.ReceiveNotifications,
+            ReceiveMonthlyNotificationsText = sessionModel.ReceiveNotifications == true ? "Yes" : "No",
+            UserNewToNotifications = sessionModel.UserNewToNotifications,
             ChangeMonthlyEmailUrl = urlHelper.RouteUrl(RouteNames.EventNotificationSettings.MonthlyNotifications, new { employerAccountId }),
             ChangeEventTypeUrl = urlHelper.RouteUrl(RouteNames.EventNotificationSettings.EventTypes, new { employerAccountId }),
             ChangeLocationsUrl = urlHelper.RouteUrl(RouteNames.EventNotificationSettings.NotificationLocations, new { employerAccountId }),
