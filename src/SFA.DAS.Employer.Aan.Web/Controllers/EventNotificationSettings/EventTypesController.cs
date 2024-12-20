@@ -73,6 +73,7 @@ public class EventTypesController : Controller
         var newValue = submitModel.EventTypes;
 
         sessionModel.EventTypes = submitModel.EventTypes;
+        sessionModel.LastPageVisited = RouteNames.EventNotificationSettings.EventTypes;
         _sessionService.Set(sessionModel);
 
         // if selections changed, call outer api
@@ -104,23 +105,23 @@ public class EventTypesController : Controller
         var vm = new SelectNotificationsViewModel() { };
 
         vm.EventTypes = InitializeDefaultEventTypes();
-        vm.BackLink = Url.RouteUrl(@RouteNames.EventNotificationSettings.MonthlyNotifications, new { employerAccountId })!; // todo conditional navigation
+        vm.BackLink = sessionModel.LastPageVisited == RouteNames.EventNotificationSettings.MonthlyNotifications ? 
+            Url.RouteUrl(@RouteNames.EventNotificationSettings.MonthlyNotifications, new { employerAccountId })! :
+            Url.RouteUrl(@RouteNames.EventNotificationSettings.EmailNotificationSettings, new { employerAccountId })!;
         vm.EmployerAccountId = employerAccountId;
-        
-        if (sessionModel.EventTypes == null) 
+
+        if (sessionModel.EventTypes.Count() != 0)
         {
-            foreach (var e in vm.EventTypes)
+            foreach (var sessionEvent in sessionModel.EventTypes!)
             {
-                foreach (var ev in sessionModel.EventTypes!)
+                if (sessionEvent.IsSelected)
                 {
-                    if (ev.EventType.Equals(e.EventType))
-                    {
-                        e.IsSelected = true;
-                    }
+                    var selectedType = vm.EventTypes.First(x => x.EventType == sessionEvent.EventType);
+                    selectedType.IsSelected = true;
                 }
             }
         }
-        
+
         return vm;
     }
 

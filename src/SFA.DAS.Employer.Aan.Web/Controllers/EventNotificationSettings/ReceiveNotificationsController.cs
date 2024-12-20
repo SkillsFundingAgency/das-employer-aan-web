@@ -65,6 +65,7 @@ public class ReceiveNotificationsController(
         if (!newValue) sessionModel.NotificationLocations = new List<NotificationLocation>();
 
         sessionModel.ReceiveNotifications = newValue;
+        sessionModel.LastPageVisited = RouteNames.EventNotificationSettings.MonthlyNotifications;
         sessionService.Set(sessionModel);
 
         // if selections changed, call outer api

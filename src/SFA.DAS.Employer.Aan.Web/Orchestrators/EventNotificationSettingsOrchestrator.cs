@@ -105,6 +105,7 @@ public class EventNotificationSettingsOrchestrator : IEventNotificationSettingsO
     {
         new EventFormatViewModel { EventFormat = EventType.Hybrid, DisplayName = "Hybrid", ReceiveNotifications = false, Ordering = 3 },
         new EventFormatViewModel { EventFormat = EventType.InPerson, DisplayName = "In-person", ReceiveNotifications = false, Ordering = 1 },
-        new EventFormatViewModel { EventFormat = EventType.Online, DisplayName = "Online", ReceiveNotifications = false, Ordering = 2 }
+        new EventFormatViewModel { EventFormat = EventType.Online, DisplayName = "Online", ReceiveNotifications = false, Ordering = 2 },
+        new EventFormatViewModel { EventFormat = EventType.All, DisplayName = "All", ReceiveNotifications = true, Ordering = 4 }
     };
 }

@@ -38,7 +38,10 @@
                                 @{
                                     foreach (var eventFormat in Model.EventFormats!)
                                     {
-                                        <li>@eventFormat.DisplayName</li>
+                                        if (!eventFormat.DisplayName.Equals("All")) 
+                                        {
+                                            <li>@eventFormat.DisplayName</li>
+                                        }
                                     }
                                 }
                             </ul>
