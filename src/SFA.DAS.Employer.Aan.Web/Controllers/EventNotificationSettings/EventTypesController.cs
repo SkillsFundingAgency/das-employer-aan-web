@@ -13,6 +13,8 @@ using SFA.DAS.Employer.Aan.Web.Models.Settings;
 using FluentValidation.AspNetCore;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests.Settings;
 using static SFA.DAS.Employer.Aan.Domain.OuterApi.Requests.Settings.NotificationsSettingsApiRequest;
+using SFA.DAS.Employer.Aan.Web.Infrastructure.Services;
+using SFA.DAS.Employer.Aan.Web.Orchestrators;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings;
 
@@ -23,19 +25,28 @@ public class EventTypesController : Controller
     public const string ViewPath = "~/Views/Onboarding/SelectNotifications.cshtml";
     private readonly ISessionService _sessionService;
     private readonly IOuterApiClient _apiClient;
+    private readonly IEventNotificationSettingsOrchestrator _settingsOrchestrator;
     private readonly IValidator<SelectNotificationsSubmitModel> _validator;
 
-    public EventTypesController(ISessionService sessionService, IOuterApiClient apiClient, IValidator<SelectNotificationsSubmitModel> validator)
+    public EventTypesController(ISessionService sessionService, IOuterApiClient apiClient, IValidator<SelectNotificationsSubmitModel> validator, IEventNotificationSettingsOrchestrator settingsOrchestrator)
     {
         _sessionService = sessionService;
         _apiClient = apiClient;
         _validator = validator;
+        _settingsOrchestrator = settingsOrchestrator;
     }
 
     [HttpGet]
     public async Task<IActionResult> Get([FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
-        var sessionModel = _sessionService.Get<NotificationSettingsSessionModel>();
+        var sessionModel = _sessionService.Get<NotificationSettingsSessionModel?>();
+
+        if (sessionModel == null)
+        {
+            return RedirectToRoute(RouteNames.EventNotificationSettings.EmailNotificationSettings,
+                new { employerAccountId });
+        }
+
         var model = GetViewModel(sessionModel, employerAccountId);
         model.EmployerAccountId = employerAccountId;
         return View(ViewPath, model);
@@ -79,25 +90,7 @@ public class EventTypesController : Controller
 
         if(isEndOfJourney)
         {
-            var notificationSettings = new NotificationsSettingsApiRequest
-            {
-                ReceiveNotifications = sessionModel.ReceiveNotifications ?? true,
-                Locations = sessionModel.NotificationLocations.Select(x => new Location
-                {
-                    Name = x.LocationName,
-                    Radius = x.Radius,
-                    Latitude = x.GeoPoint[0],
-                    Longitude = x.GeoPoint[1]
-                }).ToList(),
-                EventTypes = sessionModel.EventTypes.Select(ev => new NotificationEventType
-                {
-                    EventType = ev.EventType,
-                    Ordering = ev.Ordering,
-                    ReceiveNotifications = ev.IsSelected
-                }).ToList()
-            };
-
-            await _apiClient.PostMemberNotificationSettings(memberId, notificationSettings);
+            await _settingsOrchestrator.SaveSettings(memberId, sessionModel);
         }
 
         return RedirectAccordingly(sessionModel.EventTypes, submitModel.EmployerAccountId);

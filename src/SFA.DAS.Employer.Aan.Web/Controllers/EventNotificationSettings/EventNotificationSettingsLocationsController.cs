@@ -8,6 +8,7 @@ using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Models.Settings;
+using SFA.DAS.Employer.Aan.Web.Orchestrators;
 using SFA.DAS.Employer.Aan.Web.Orchestrators.Shared;
 using SFA.DAS.Encoding;
 using SFA.DAS.Validation.Mvc.Filters;
@@ -20,6 +21,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
     public class EventNotificationSettingsLocationsController(
         ISessionService sessionService,
         INotificationsLocationsOrchestrator orchestrator,
+        IEventNotificationSettingsOrchestrator settingsOrchestrator,
         IOuterApiClient apiClient,
         IEncodingService encodingService) : Controller
     {
@@ -76,30 +78,8 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
         private async Task SaveSettings(Models.Settings.NotificationsLocationsSubmitModel submitModel)
         {
             var memberId = sessionService.GetMemberId();
-
             var sessionModel = sessionService.Get<NotificationSettingsSessionModel>();
-
-            var accountId = encodingService.Decode(submitModel.EmployerAccountId, EncodingType.AccountId);
-
-            var apiRequest = new NotificationsSettingsApiRequest
-            {
-                ReceiveNotifications = (bool)sessionModel.ReceiveNotifications,
-                EventTypes = sessionModel.EventTypes!.Select(ev => new NotificationEventType
-                {
-                    EventType = ev.EventType,
-                    Ordering = ev.Ordering,
-                    ReceiveNotifications = ev.IsSelected
-                }).ToList(),
-                Locations = sessionModel.NotificationLocations.Select(x => new NotificationsSettingsApiRequest.Location
-                {
-                    Name = x.LocationName,
-                    Radius = x.Radius,
-                    Latitude = x.GeoPoint[0],
-                    Longitude = x.GeoPoint[1]
-                }).ToList()
-            };
-
-            await apiClient.PostMemberNotificationSettings(memberId, apiRequest);
+            await settingsOrchestrator.SaveSettings(memberId, sessionModel);
         }
     }
 }

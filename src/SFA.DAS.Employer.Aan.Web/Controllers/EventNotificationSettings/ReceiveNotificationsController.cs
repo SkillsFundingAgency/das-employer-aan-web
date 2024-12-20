@@ -10,15 +10,18 @@ using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Models.Settings;
+using SFA.DAS.Employer.Aan.Web.Orchestrators;
 using static SFA.DAS.Employer.Aan.Domain.OuterApi.Requests.Settings.NotificationsSettingsApiRequest;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
-[Route("accounts/{employerAccountId}/monthly-notifications", Name = RouteNames.EventNotificationSettings.MonthlyNotifications)]
+[Route("accounts/{employerAccountId}/monthly-notifications",
+    Name = RouteNames.EventNotificationSettings.MonthlyNotifications)]
 public class ReceiveNotificationsController(
     IValidator<ReceiveNotificationsSubmitModel> validator,
     IOuterApiClient apiClient,
+    IEventNotificationSettingsOrchestrator settingsOrchestrator,
     ISessionService sessionService) : Controller
 {
     public const string ViewPath = "~/Views/Onboarding/ReceiveNotifications.cshtml";
@@ -26,7 +29,13 @@ public class ReceiveNotificationsController(
     [HttpGet]
     public async Task<IActionResult> Get([FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
-        var sessionModel = sessionService.Get<NotificationSettingsSessionModel>();
+        var sessionModel = sessionService.Get<NotificationSettingsSessionModel?>();
+
+        if (sessionModel == null)
+        {
+            return RedirectToRoute(RouteNames.EventNotificationSettings.EmailNotificationSettings,
+                new { employerAccountId });
+        }
 
         var viewModel = new ReceiveNotificationsViewModel
         {
@@ -68,31 +77,9 @@ public class ReceiveNotificationsController(
         sessionService.Set(sessionModel);
 
         // if selections changed, call outer api
-        if (newValue != originalValue)
+        if (newValue != originalValue && newValue)
         {
-            var eventTypesToSave = sessionModel.EventTypes!.Select(ev => new NotificationEventType
-            {
-                EventType = ev.EventType,
-                Ordering = ev.Ordering,
-                ReceiveNotifications = ev.IsSelected
-            }).ToList();
-
-            var locationsToSave = sessionModel.NotificationLocations!.Select(loc => new Location
-            {
-                Name= loc.LocationName,
-                Radius = loc.Radius,
-                Latitude = loc.GeoPoint[0],
-                Longitude = loc.GeoPoint[1]
-            }).ToList();
-
-            var notificationSettings = new NotificationsSettingsApiRequest
-            {
-                ReceiveNotifications = newValue,
-                Locations = newValue ? locationsToSave : new List<Location>(), // clear when new selection is NO
-                EventTypes = newValue ? eventTypesToSave : new List<NotificationEventType>() // clear when new selection is NO
-            };
-
-            await apiClient.PostMemberNotificationSettings(memberId, notificationSettings);
+            await settingsOrchestrator.SaveSettings(memberId, sessionModel);
         }
 
         var route = (newValue != originalValue) && newValue

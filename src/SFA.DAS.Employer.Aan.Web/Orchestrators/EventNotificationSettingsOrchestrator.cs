@@ -1,80 +1,68 @@
 ﻿using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Web.Models.Settings;
+using SFA.DAS.Employer.Aan.Domain.Interfaces;
+using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
+using SFA.DAS.Employer.Aan.Web.Models;
+using System.Threading;
+using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests.Settings;
 
 namespace SFA.DAS.Employer.Aan.Web.Orchestrators;
 
 public interface IEventNotificationSettingsOrchestrator
 {
-    Task<EventNotificationSettingsViewModel> GetViewModelAsync(Guid memberId, NotificationSettingsSessionModel sessionModel, string employerAccountId, IUrlHelper Url, CancellationToken cancellationToken);
+    Task<NotificationSettingsSessionModel> GetSettingsAsSessionModel(Guid memberId, CancellationToken cancellationToken);
+    Task SaveSettings(Guid memberId, NotificationSettingsSessionModel settings);
 }
 
-public class EventNotificationSettingsOrchestrator : IEventNotificationSettingsOrchestrator
+public class EventNotificationSettingsOrchestrator(IOuterApiClient outerApiClient)
+    : IEventNotificationSettingsOrchestrator
 {
-    public async Task<EventNotificationSettingsViewModel> GetViewModelAsync(Guid memberId, NotificationSettingsSessionModel sessionModel, string employerAccountId, IUrlHelper urlHelper, CancellationToken cancellationToken)
+    public async Task<NotificationSettingsSessionModel> GetSettingsAsSessionModel(Guid memberId, CancellationToken cancellationToken)
     {
-        var eventFormats = new List<EventFormatViewModel>();
-        var locations = new List<NotificationLocationsViewModel>();
+        var apiResponse = await outerApiClient.GetMemberNotificationSettings(memberId, cancellationToken);
 
-        if (sessionModel.EventTypes.Any())
+        var sessionModel = new NotificationSettingsSessionModel
         {
-            foreach (var format in sessionModel.EventTypes)
+            ReceiveNotifications = apiResponse.ReceiveMonthlyNotifications,
+            NotificationLocations = apiResponse.MemberNotificationLocations.Select(x => new NotificationLocation
             {
-                if (!format.EventType.Equals("All"))
+                LocationName = x.Name,
+                GeoPoint = [x.Latitude, x.Longitude],
+                Radius = x.Radius
+            }).ToList(),
+            EventTypes = apiResponse.MemberNotificationEventFormats.Where(x => x.ReceiveNotifications)
+                .Select(x => new EventTypeModel
                 {
-                    var eventFormatVm = new EventFormatViewModel
-                    {
-                        EventFormat = format.EventType,
-                        DisplayName = GetEventTypeText(format.EventType),
-                        Ordering = format.Ordering,
-                        ReceiveNotifications = format.IsSelected
-                    };
-
-                    eventFormats.Add(eventFormatVm);
-                }
-            }
-        }
-
-        if (sessionModel.NotificationLocations.Any())
-        {
-            foreach (var location in sessionModel.NotificationLocations)
-            {
-                var locationVm = new NotificationLocationsViewModel
-                {
-                    LocationDisplayName = GetRadiusText(location.Radius, location.LocationName),
-                    Radius = location.Radius,
-                    Latitude = location.GeoPoint[0],
-                    Longitude = location.GeoPoint[1]
-                };
-
-                locations.Add(locationVm);
-            }
-        }
-
-
-        return new EventNotificationSettingsViewModel
-        {
-            EventFormats = eventFormats,
-            EventNotificationLocations = locations,
-            ReceiveMonthlyNotifications = sessionModel.ReceiveNotifications,
-            ReceiveMonthlyNotificationsText = sessionModel.ReceiveNotifications == true ? "Yes" : "No",
-            UserNewToNotifications = sessionModel.UserNewToNotifications,
-            ChangeMonthlyEmailUrl = urlHelper.RouteUrl(RouteNames.EventNotificationSettings.MonthlyNotifications, new { employerAccountId }),
-            ChangeEventTypeUrl = urlHelper.RouteUrl(RouteNames.EventNotificationSettings.EventTypes, new { employerAccountId }),
-            ChangeLocationsUrl = urlHelper.RouteUrl(RouteNames.EventNotificationSettings.NotificationLocations, new { employerAccountId }),
-            BackLink = urlHelper.RouteUrl(RouteNames.NetworkHub, new { employerAccountId })
+                    EventType = x.EventFormat,
+                    IsSelected = x.ReceiveNotifications,
+                    Ordering = x.Ordering
+                }).ToList()
         };
+
+        return sessionModel;
     }
 
-    private string GetRadiusText(int radius, string location)
+    public async Task SaveSettings(Guid memberId, NotificationSettingsSessionModel sessionModel)
     {
-        return radius == 0 ?
-        "Across England"
-        : $"{location}, within {radius} miles";
-    }
+        var apiRequest = new NotificationsSettingsApiRequest
+        {
+            ReceiveNotifications = sessionModel.ReceiveNotifications ?? false,
+            EventTypes = sessionModel.EventTypes!.Select(ev => new NotificationsSettingsApiRequest.NotificationEventType
+            {
+                EventType = ev.EventType,
+                Ordering = ev.Ordering,
+                ReceiveNotifications = ev.IsSelected
+            }).ToList(),
+            Locations = sessionModel.NotificationLocations.Select(x => new NotificationsSettingsApiRequest.Location
+            {
+                Name = x.LocationName,
+                Radius = x.Radius,
+                Latitude = x.GeoPoint[0],
+                Longitude = x.GeoPoint[1]
+            }).ToList()
+        };
 
-    private string GetEventTypeText(string eventFormat)
-    {
-        return (eventFormat.Equals("InPerson")) ? "In-person events" : $"{eventFormat} events";
+        await outerApiClient.PostMemberNotificationSettings(memberId, apiRequest);
     }
 }

@@ -6,6 +6,7 @@ using SFA.DAS.Testing.AutoFixture;
 using FluentAssertions;
 using SFA.DAS.Employer.Aan.Web.Orchestrators;
 using SFA.DAS.Employer.Aan.Web.Models.Settings;
+using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.EventNotificationSettings;
 
@@ -23,9 +24,9 @@ public class EventNotificationSettingsControllerTests
         NotificationSettingsSessionModel sessionModel,
         [Greedy] EventNotificationSettingsController controller)
     {
-        mockSessionService.Setup(x => x.Get<NotificationSettingsSessionModel>()).Returns(sessionModel);
-        mockOrchesrator.Setup(s => s.GetViewModelAsync(It.Is<Guid>(m => m == memberId), sessionModel, employerAccountId, controller.Url, cancellationToken)).ReturnsAsync(vm);
+        controller.AddUrlHelperMock();
 
+        mockSessionService.Setup(x => x.Get<NotificationSettingsSessionModel>()).Returns(sessionModel);
         var result = await controller.Index(employerAccountId, cancellationToken) as ViewResult;
 
         result.Should().NotBeNull();

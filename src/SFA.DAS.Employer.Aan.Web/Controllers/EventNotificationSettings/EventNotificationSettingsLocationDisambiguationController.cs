@@ -25,7 +25,13 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
         [ValidateModelStateFilter]
         public async Task<IActionResult> Get([FromRoute] string employerAccountId, int radius, string location)
         {
-            var sessionModel = sessionService.Get<NotificationSettingsSessionModel>();
+            var sessionModel = sessionService.Get<NotificationSettingsSessionModel?>();
+
+            if (sessionModel == null)
+            {
+                return RedirectToRoute(RouteNames.EventNotificationSettings.EmailNotificationSettings,
+                    new { employerAccountId });
+            }
 
             var accountId = encodingService.Decode(employerAccountId, EncodingType.AccountId);
 
