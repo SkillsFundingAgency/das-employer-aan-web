@@ -95,7 +95,7 @@ public class ReceiveNotificationsController(
             await apiClient.PostMemberNotificationSettings(memberId, notificationSettings);
         }
 
-        var route = sessionModel.UserNewToNotifications || newValue != originalValue
+        var route = (newValue != originalValue) && newValue
             ? RouteNames.EventNotificationSettings.EventTypes
                     : RouteNames.EventNotificationSettings.EmailNotificationSettings;
 

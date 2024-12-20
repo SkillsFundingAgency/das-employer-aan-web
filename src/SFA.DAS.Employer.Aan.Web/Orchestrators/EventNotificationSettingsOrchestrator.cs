@@ -3,6 +3,8 @@ using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Web.Models.Settings;
+using SFA.DAS.Employer.Aan.Web.Constant;
+using SFA.DAS.Employer.Aan.Web.Models;
 
 namespace SFA.DAS.Employer.Aan.Web.Orchestrators;
 
@@ -36,11 +38,15 @@ public class EventNotificationSettingsOrchestrator : IEventNotificationSettingsO
         {
             foreach (var format in apiResponse.MemberNotificationEventFormats)
             {
-                if (!format.EventFormat.Equals("All"))
+                if (format.EventFormat.Equals("All") && format.ReceiveNotifications) 
+                {
+                    eventFormats = InitializeAllEventTypes();
+                }
+
+                if (!format.EventFormat.Equals("All") && format.ReceiveNotifications)
                 {
                     var eventFormatVm = new EventFormatViewModel
                     {
-                        MemberId = format.MemberId,
                         EventFormat = format.EventFormat,
                         DisplayName = GetEventTypeText(format.EventFormat),
                         Ordering = format.Ordering,
@@ -58,7 +64,6 @@ public class EventNotificationSettingsOrchestrator : IEventNotificationSettingsO
             {
                 var locationVm = new NotificationLocationsViewModel
                 {
-                    MemberId = location.MemberId,
                     LocationDisplayName = GetRadiusText(location.Radius, location.Name),
                     Radius = location.Radius,
                     Latitude = location.Latitude,
@@ -95,4 +100,11 @@ public class EventNotificationSettingsOrchestrator : IEventNotificationSettingsO
     {
         return (eventFormat.Equals("InPerson")) ? "In-person events" : $"{eventFormat} events";
     }
+
+    private List<EventFormatViewModel> InitializeAllEventTypes() => new()
+    {
+        new EventFormatViewModel { EventFormat = EventType.Hybrid, DisplayName = "Hybrid", ReceiveNotifications = false, Ordering = 3 },
+        new EventFormatViewModel { EventFormat = EventType.InPerson, DisplayName = "In-person", ReceiveNotifications = false, Ordering = 1 },
+        new EventFormatViewModel { EventFormat = EventType.Online, DisplayName = "Online", ReceiveNotifications = false, Ordering = 2 }
+    };
 }
