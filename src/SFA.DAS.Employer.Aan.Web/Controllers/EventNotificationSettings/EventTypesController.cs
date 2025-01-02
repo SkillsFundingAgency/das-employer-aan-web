@@ -107,11 +107,19 @@ public class EventTypesController : Controller
             Url.RouteUrl(@RouteNames.EventNotificationSettings.EmailNotificationSettings, new { employerAccountId })!;
         vm.EmployerAccountId = employerAccountId;
 
-        foreach (var e in vm.EventTypes)
+        if (sessionModel.EventTypes.Count == 3)
         {
-            foreach (var ev in sessionModel.EventTypes!.Where(ev => ev.EventType.Equals(e.EventType)))
+            var allOption = vm.EventTypes.Single(x => x.EventType == EventType.All);
+            allOption.IsSelected = true;
+        }
+        else
+        {
+            foreach (var e in vm.EventTypes)
             {
-                e.IsSelected = true;
+                foreach (var ev in sessionModel.EventTypes!.Where(ev => ev.EventType.Equals(e.EventType)))
+                {
+                    e.IsSelected = true;
+                }
             }
         }
 
