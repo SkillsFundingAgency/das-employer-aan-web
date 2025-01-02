@@ -6,42 +6,26 @@ using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Orchestrators;
 using SFA.DAS.Employer.Aan.Web.Models.Settings;
-using SFA.DAS.Employer.Aan.Web.Models;
-using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
-using SFA.DAS.Employer.Aan.Web.Infrastructure.Services;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
 [Route("accounts/{employerAccountId}/event-notification-settings", Name = RouteNames.EventNotificationSettings.EmailNotificationSettings)]
-public class EventNotificationSettingsController : Controller
+public class EventNotificationSettingsController(
+    IEventNotificationSettingsOrchestrator orchestrator,
+    ISessionService sessionService)
+    : Controller
 {
-    private readonly IEventNotificationSettingsOrchestrator _orchestrator;
-    private readonly ISessionService _sessionService;
-    private readonly IOuterApiClient _outerApiClient;
-
-    public EventNotificationSettingsController(IEventNotificationSettingsOrchestrator orchestrator, ISessionService sessionService, IOuterApiClient outerApiClient)
-    {
-        _orchestrator = orchestrator;
-        _sessionService = sessionService;
-        _outerApiClient = outerApiClient;
-    }
-
     [HttpGet]
     public async Task<IActionResult> Index([FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
-        var memberId = _sessionService.GetMemberId();
+        var memberId = sessionService.GetMemberId();
 
-        var sessionModel = _sessionService.Get<NotificationSettingsSessionModel?>();
-
-        if (sessionModel == null)
-        {
-            sessionModel = await _orchestrator.GetSettingsAsSessionModel(memberId, cancellationToken);
-            _sessionService.Set(sessionModel);
-        }
+        var sessionModel = await orchestrator.GetSettingsAsSessionModel(memberId, cancellationToken);
+        sessionService.Set(sessionModel);
 
         var vm = await GetViewModelAsync(memberId, sessionModel, employerAccountId, Url, cancellationToken);
 
         sessionModel.LastPageVisited = RouteNames.EventNotificationSettings.EmailNotificationSettings;
-        _sessionService.Set(sessionModel);
+        sessionService.Set(sessionModel);
 
         return View(vm);
     }
