@@ -11,6 +11,7 @@
         public string? ChangeEventTypeUrl { get; set; }
         public string? ChangeLocationsUrl { get; set; }
         public string BackLink { get; set; }
+        public bool ShowLocationsSection { get; set; }
     }
 
     public class EventFormatViewModel

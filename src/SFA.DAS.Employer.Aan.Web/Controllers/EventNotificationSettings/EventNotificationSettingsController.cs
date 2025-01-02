@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Aan.SharedUi.Constants;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Extensions;
@@ -81,7 +82,8 @@ public class EventNotificationSettingsController(
             ChangeMonthlyEmailUrl = urlHelper.RouteUrl(RouteNames.EventNotificationSettings.MonthlyNotifications, new { employerAccountId }),
             ChangeEventTypeUrl = urlHelper.RouteUrl(RouteNames.EventNotificationSettings.EventTypes, new { employerAccountId }),
             ChangeLocationsUrl = urlHelper.RouteUrl(RouteNames.EventNotificationSettings.NotificationLocations, new { employerAccountId }),
-            BackLink = urlHelper.RouteUrl(RouteNames.NetworkHub, new { employerAccountId })
+            BackLink = urlHelper.RouteUrl(RouteNames.NetworkHub, new { employerAccountId }),
+            ShowLocationsSection = !(sessionModel.SelectedEventTypes.Count == 1 && sessionModel.SelectedEventTypes.First().EventType == "Online")
         };
     }
 

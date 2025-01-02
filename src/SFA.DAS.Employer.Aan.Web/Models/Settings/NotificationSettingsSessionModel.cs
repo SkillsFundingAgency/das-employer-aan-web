@@ -11,5 +11,6 @@ namespace SFA.DAS.Employer.Aan.Web.Models.Settings
         public bool UserNewToNotifications { get; set; }
         public bool? ReceiveNotifications { get; set; }
         public string LastPageVisited { get; set; } = RouteNames.EventNotificationSettings.EmailNotificationSettings;
+        public List<EventTypeModel> SelectedEventTypes => EventTypes.Where(x => x.IsSelected).ToList();
     }
 }

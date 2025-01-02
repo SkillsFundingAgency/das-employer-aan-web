@@ -46,21 +46,24 @@
                         <td class="govuk-table__cell"><a class="govuk-link" href=@Model.ChangeEventTypeUrl>Change</a></td>
                     </tr>
 
-                    <!-- Locations -->
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__cell"><strong>Locations</strong></td>
-                        <td class="govuk-table__cell">
-                            <ul id="LocationSettings" class="govuk-list govuk-list--bullet">
-                                @{
-                                    foreach (var location in Model.EventNotificationLocations!)
-                                    {
-                                        <li>@location.LocationDisplayName</li>
+                    @if (Model.ShowLocationsSection)
+                    {
+                        <!-- Locations -->
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell"><strong>Locations</strong></td>
+                            <td class="govuk-table__cell">
+                                <ul id="LocationSettings" class="govuk-list govuk-list--bullet">
+                                    @{
+                                        foreach (var location in Model.EventNotificationLocations!)
+                                        {
+                                            <li>@location.LocationDisplayName</li>
+                                        }
                                     }
-                                }
-                            </ul>
-                        </td>
-                        <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href=@Model.ChangeLocationsUrl>Change</a></td>
-                    </tr>
+                                </ul>
+                            </td>
+                            <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href=@Model.ChangeLocationsUrl>Change</a></td>
+                        </tr>
+                    }
                 }
 
             </tbody>
