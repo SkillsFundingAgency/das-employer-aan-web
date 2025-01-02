@@ -78,7 +78,7 @@ public class ReceiveNotificationsController(
         sessionService.Set(sessionModel);
 
         // if selections changed, call outer api
-        if (newValue != originalValue && newValue)
+        if (newValue != originalValue && !newValue)
         {
             await settingsOrchestrator.SaveSettings(memberId, sessionModel);
         }
