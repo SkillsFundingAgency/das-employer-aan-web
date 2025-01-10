@@ -24,7 +24,7 @@ public class ReceiveNotificationsController(
     IEventNotificationSettingsOrchestrator settingsOrchestrator,
     ISessionService sessionService) : Controller
 {
-    public const string ViewPath = "~/Views/Onboarding/ReceiveNotifications.cshtml";
+    public const string ViewPath = "~/Views/Settings/ReceiveNotifications.cshtml";
 
     [HttpGet]
     public async Task<IActionResult> Get([FromRoute] string employerAccountId, CancellationToken cancellationToken)
