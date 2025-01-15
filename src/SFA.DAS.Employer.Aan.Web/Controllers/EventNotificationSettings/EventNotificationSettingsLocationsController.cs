@@ -54,6 +54,14 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
         [Route("accounts/{employerAccountId}/event-notification-settings/locations", Name = RouteNames.EventNotificationSettings.NotificationLocations)]
         public async Task<IActionResult> Post(Models.Settings.NotificationsLocationsSubmitModel submitModel)
         {
+            var sessionModel = sessionService.Get<NotificationSettingsSessionModel>();
+
+            if (sessionModel.NotificationLocations.Any(n => n.LocationName.Equals(submitModel.Location, StringComparison.OrdinalIgnoreCase)))
+            {
+                ModelState.AddModelError(nameof(submitModel.Location), "TBC - Cannot add multiple locations.");
+                return new RedirectToRouteResult(RouteNames.EventNotificationSettings.NotificationLocations, new { submitModel.EmployerAccountId });
+            }
+
             var result = await orchestrator.ApplySubmitModel<NotificationSettingsSessionModel>(
                 submitModel,
                 ModelState,

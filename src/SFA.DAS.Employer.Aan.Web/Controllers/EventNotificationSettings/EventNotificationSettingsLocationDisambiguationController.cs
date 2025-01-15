@@ -47,9 +47,18 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
         [ValidateModelStateFilter]
         public async Task<IActionResult> Post(NotificationLocationDisambiguationSubmitModel submitModel, CancellationToken cancellationToken)
         {
-            var result = await orchestrator.ApplySubmitModel<NotificationSettingsSessionModel>(submitModel, ModelState);
+            var sessionModel = sessionService.Get<NotificationSettingsSessionModel>();
 
             var routeValues = new { submitModel.EmployerAccountId, submitModel.Radius, submitModel.Location };
+
+            if (sessionModel.NotificationLocations.Any(n => n.LocationName.Equals(submitModel.SelectedLocation, StringComparison.OrdinalIgnoreCase)))
+            {
+                ModelState.Clear();
+                ModelState.AddModelError(nameof(submitModel.Location), "TBC - Cannot add multiple locations.");
+                return new RedirectToRouteResult(RouteNames.EventNotificationSettings.SettingsNotificationLocationDisambiguation, routeValues);
+            }
+
+            var result = await orchestrator.ApplySubmitModel<NotificationSettingsSessionModel>(submitModel, ModelState);
 
             switch (result)
             {

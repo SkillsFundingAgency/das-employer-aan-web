@@ -42,9 +42,18 @@ public class NotificationLocationDisambiguationController : Controller
     [ValidateModelStateFilter]
     public async Task<IActionResult> Post(NotificationLocationDisambiguationSubmitModel submitModel, CancellationToken cancellationToken)
     {
-        var result = await _orchestrator.ApplySubmitModel<OnboardingSessionModel>(submitModel, ModelState);
+        var sessionModel = _sessionService.Get<OnboardingSessionModel>();
 
         var routeValues = new { submitModel.EmployerAccountId, submitModel.Radius, submitModel.Location };
+
+        if (sessionModel.NotificationLocations.Any(n => n.LocationName.Equals(submitModel.SelectedLocation, StringComparison.OrdinalIgnoreCase)))
+        {
+            ModelState.Clear();
+            ModelState.AddModelError(nameof(submitModel.Location), "TBC - Cannot add multiple locations.");
+            return new RedirectToRouteResult(RouteNames.Onboarding.NotificationLocationDisambiguation, routeValues);
+        }
+
+        var result = await _orchestrator.ApplySubmitModel<OnboardingSessionModel>(submitModel, ModelState);
 
         switch (result)
         {

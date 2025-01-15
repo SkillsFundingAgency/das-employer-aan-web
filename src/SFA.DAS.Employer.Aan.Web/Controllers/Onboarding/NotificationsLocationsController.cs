@@ -38,13 +38,20 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
         [ValidateModelStateFilter]
         public async Task<IActionResult> Post(NotificationsLocationsSubmitModel submitModel)
         {
+            var sessionModel = sessionService.Get<OnboardingSessionModel>();
+
+            if (sessionModel.NotificationLocations.Any(n => n.LocationName.Equals(submitModel.Location, StringComparison.OrdinalIgnoreCase)))
+            {
+                ModelState.Clear();
+                ModelState.AddModelError(nameof(submitModel.Location), "TBC - Cannot add multiple locations.");
+                return new RedirectToRouteResult(RouteNames.Onboarding.NotificationsLocations, new { submitModel.EmployerAccountId });
+            }
+
             var result = await orchestrator.ApplySubmitModel<OnboardingSessionModel>(
                 submitModel,
                 ModelState,
                 async (accountId, location) => await apiClient.GetOnboardingNotificationsLocations(accountId, location)
             );
-
-            var sessionModel = sessionService.Get<OnboardingSessionModel>();
 
             if (result == NotificationsLocationsOrchestrator.RedirectTarget.NextPage)
             {

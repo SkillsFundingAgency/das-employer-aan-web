@@ -8,6 +8,8 @@ using SFA.DAS.Employer.Aan.Web.Models.Shared;
 using SFA.DAS.Encoding;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Onboarding;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Shared;
+using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Employer.Aan.Web.Infrastructure;
 
 namespace SFA.DAS.Employer.Aan.Web.Orchestrators.Shared
 {
@@ -37,13 +39,13 @@ namespace SFA.DAS.Employer.Aan.Web.Orchestrators.Shared
 
             result.SubmittedLocations = sessionModel.NotificationLocations
                 .Select(l => l.Radius == 0 ?
-                    "Across England"
+                    $"{l.LocationName}, Across England"
                     : $"{l.LocationName}, within {l.Radius} miles").ToList();
 
             result.HasSubmittedLocations = sessionModel.NotificationLocations.Any();
 
             if (modelState.ContainsKey(nameof(NotificationsLocationsViewModel.Location)) &&
-                modelState[nameof(NotificationsLocationsViewModel.Location)].Errors.Any())
+                modelState[nameof(NotificationsLocationsViewModel.Location)].Errors.Any(e => e.ErrorMessage == "TBC - Cannot add multiple locations."))
             {
                 result.UnrecognisedLocation =
                     modelState[nameof(NotificationsLocationsViewModel.Location)].AttemptedValue;
@@ -98,6 +100,13 @@ namespace SFA.DAS.Employer.Aan.Web.Orchestrators.Shared
             if (apiResponse.Locations.Count == 0)
             {
                 modelState.AddModelError("Location", "We cannot find the location you entered");
+                return RedirectTarget.Self;
+            }
+
+            if (sessionModel.NotificationLocations.Any(n => n.LocationName.Equals(apiResponse.Locations.First().Name, StringComparison.OrdinalIgnoreCase)))
+            {
+                modelState.Clear();
+                modelState.AddModelError("Location", "TBC - Cannot add multiple locations.");
                 return RedirectTarget.Self;
             }
 
