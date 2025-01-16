@@ -53,6 +53,13 @@ namespace SFA.DAS.Employer.Aan.Web.Orchestrators.Shared
                     modelState[nameof(NotificationsLocationsViewModel.Location)].AttemptedValue;
             }
 
+            if (modelState.ContainsKey(nameof(NotificationsLocationsViewModel.Location)) &&
+                modelState[nameof(NotificationsLocationsViewModel.Location)].Errors.Any(e => e.ErrorMessage == SameLocationErrorMessage))
+            {
+                result.DuplicateLocation =
+                    modelState[nameof(NotificationsLocationsViewModel.Location)].AttemptedValue;
+            }
+
             return result;
         }
 

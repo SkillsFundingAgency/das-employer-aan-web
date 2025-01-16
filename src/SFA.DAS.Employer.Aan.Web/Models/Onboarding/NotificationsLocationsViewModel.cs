@@ -13,6 +13,7 @@ public class NotificationsLocationsViewModel : NotificationsLocationsSubmitModel
     public string UnrecognisedLocation { get; set; } = "";
     public int MaxLocations => 5;
     public string MaxLocationsString => "five";
+    public string DuplicateLocation { get; set; } = "";
 }
 
 public class NotificationsLocationsSubmitModel : ViewModelBase, INotificationsLocationsPartialSubmitModel
