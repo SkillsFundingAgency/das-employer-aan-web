@@ -18,12 +18,22 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
         : Controller
     {
         public const string ViewPath = "~/Views/Onboarding/NotificationsLocations.cshtml";
+        public const string SameLocationErrorMessage = "Enter a location that has not been added, or delete an existing location";
 
         [HttpGet]
         [ValidateModelStateFilter]
         public IActionResult Get(string employerAccountId)
         {
             var sessionModel = sessionService.Get<OnboardingSessionModel>();
+
+            if (TempData.ContainsKey("SameLocationError"))
+            {
+                var errorMessage = TempData["SameLocationError"] as string;
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    ModelState.AddModelError(nameof(NotificationsLocationsViewModel.Location), errorMessage);
+                }
+            }
 
             var viewModel = orchestrator.GetViewModel<NotificationsLocationsViewModel>(sessionModel, ModelState);
 
@@ -42,8 +52,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
 
             if (sessionModel.NotificationLocations.Any(n => n.LocationName.Equals(submitModel.Location, StringComparison.OrdinalIgnoreCase)))
             {
-                ModelState.Clear();
-                ModelState.AddModelError(nameof(submitModel.Location), "TBC - Cannot add multiple locations.");
+                ModelState.AddModelError(nameof(submitModel.Location), SameLocationErrorMessage);
                 return new RedirectToRouteResult(RouteNames.Onboarding.NotificationsLocations, new { submitModel.EmployerAccountId });
             }
 

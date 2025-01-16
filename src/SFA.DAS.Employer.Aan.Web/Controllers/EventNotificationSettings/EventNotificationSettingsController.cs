@@ -90,7 +90,7 @@ public class EventNotificationSettingsController(
     private string GetRadiusText(int radius, string location)
     {
         return radius == 0 ?
-        "Across England"
+        $"{location}, Across England"
         : $"{location}, within {radius} miles";
     }
 

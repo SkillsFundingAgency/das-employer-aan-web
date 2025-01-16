@@ -14,6 +14,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 public class NotificationLocationDisambiguationController : Controller
 {
     public const string ViewPath = "~/Views/Onboarding/NotificationLocationDisambiguation.cshtml";
+    public const string SameLocationErrorMessage = "Enter a location that has not been added, or delete an existing location";
     private readonly ISessionService _sessionService;
     private readonly INotificationLocationDisambiguationOrchestrator _orchestrator;
 
@@ -46,11 +47,10 @@ public class NotificationLocationDisambiguationController : Controller
 
         var routeValues = new { submitModel.EmployerAccountId, submitModel.Radius, submitModel.Location };
 
-        if (sessionModel.NotificationLocations.Any(n => n.LocationName.Equals(submitModel.SelectedLocation, StringComparison.OrdinalIgnoreCase)))
+        if ((submitModel.SelectedLocation != null) && sessionModel.NotificationLocations.Any(n => n.LocationName.Equals(submitModel.SelectedLocation, StringComparison.OrdinalIgnoreCase)))
         {
-            ModelState.Clear();
-            ModelState.AddModelError(nameof(submitModel.Location), "TBC - Cannot add multiple locations.");
-            return new RedirectToRouteResult(RouteNames.Onboarding.NotificationLocationDisambiguation, routeValues);
+            TempData["SameLocationError"] = SameLocationErrorMessage;
+            return new RedirectToRouteResult(RouteNames.Onboarding.NotificationsLocations, new { submitModel.EmployerAccountId });
         }
 
         var result = await _orchestrator.ApplySubmitModel<OnboardingSessionModel>(submitModel, ModelState);

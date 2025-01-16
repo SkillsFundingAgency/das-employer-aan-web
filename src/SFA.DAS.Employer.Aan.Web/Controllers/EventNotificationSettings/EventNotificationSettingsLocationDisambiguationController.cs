@@ -19,7 +19,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
         : Controller
     {
         public const string ViewPath = "~/Views/Settings/NotificationLocationDisambiguation.cshtml";
-
+        public const string SameLocationErrorMessage = "Enter a location that has not been added, or delete an existing location";
 
         [HttpGet]
         [ValidateModelStateFilter]
@@ -53,9 +53,8 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
 
             if (sessionModel.NotificationLocations.Any(n => n.LocationName.Equals(submitModel.SelectedLocation, StringComparison.OrdinalIgnoreCase)))
             {
-                ModelState.Clear();
-                ModelState.AddModelError(nameof(submitModel.Location), "TBC - Cannot add multiple locations.");
-                return new RedirectToRouteResult(RouteNames.EventNotificationSettings.SettingsNotificationLocationDisambiguation, routeValues);
+                TempData["SameLocationError"] = SameLocationErrorMessage;
+                return new RedirectToRouteResult(RouteNames.EventNotificationSettings.NotificationLocations, new { submitModel.EmployerAccountId });
             }
 
             var result = await orchestrator.ApplySubmitModel<NotificationSettingsSessionModel>(submitModel, ModelState);

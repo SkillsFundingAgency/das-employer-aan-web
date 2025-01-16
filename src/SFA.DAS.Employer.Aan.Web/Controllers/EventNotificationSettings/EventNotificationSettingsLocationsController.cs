@@ -26,6 +26,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
         IEncodingService encodingService) : Controller
     {
         public const string ViewPath = "~/Views/Settings/NotificationsLocations.cshtml";
+        public const string SameLocationErrorMessage = "Enter a location that has not been added, or delete an existing location";
 
         [HttpGet]
         [ValidateModelStateFilter]
@@ -38,6 +39,15 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
             {
                 return RedirectToRoute(RouteNames.EventNotificationSettings.EmailNotificationSettings,
                     new { employerAccountId });
+            }
+
+            if (TempData.ContainsKey("SameLocationError"))
+            {
+                var errorMessage = TempData["SameLocationError"] as string;
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    ModelState.AddModelError(nameof(NotificationsLocationsViewModel.Location), errorMessage);
+                }
             }
 
             var viewModel = orchestrator.GetViewModel<NotificationsLocationsViewModel>(sessionModel, ModelState);
@@ -58,7 +68,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
 
             if (sessionModel.NotificationLocations.Any(n => n.LocationName.Equals(submitModel.Location, StringComparison.OrdinalIgnoreCase)))
             {
-                ModelState.AddModelError(nameof(submitModel.Location), "TBC - Cannot add multiple locations.");
+                ModelState.AddModelError(nameof(submitModel.Location), SameLocationErrorMessage);
                 return new RedirectToRouteResult(RouteNames.EventNotificationSettings.NotificationLocations, new { submitModel.EmployerAccountId });
             }
 
