@@ -64,7 +64,6 @@ public class RequiresExistingMemberAttribute : ApplicationFilterAttribute
 
             var employer = response.GetContent();
             sessionValue = response.ResponseMessage.IsSuccessStatusCode ? employer.MemberId.ToString() : Guid.Empty.ToString();
-            //sessionValue = Guid.Empty.ToString();
             _sessionService.Set(Constants.SessionKeys.MemberId, sessionValue.ToUpper());
             var memberStatus = employer.Status;
             _sessionService.Set(Constants.SessionKeys.MemberStatus, memberStatus);
