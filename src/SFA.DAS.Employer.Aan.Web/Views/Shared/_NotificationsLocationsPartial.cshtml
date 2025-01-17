@@ -85,6 +85,10 @@
                                         <br />
                                         <select class="govuk-select" asp-for="Radius" asp-items="Model.RadiusOptions"></select>
                                     </div>
+
+                                    <div class="govuk-form-group">
+                                        <button id="add" type="submit" name="SubmitButton" value="@NotificationsLocationsSubmitButtonOption.Add" class="govuk-button govuk-button--secondary" style="margin-bottom: 0;">Add location</button>
+                                    </div>
                                 </div>
                             }
                             else
@@ -141,6 +145,10 @@
                                     <br />
                                     <select class="govuk-select" asp-for="Radius" asp-items="Model.RadiusOptions"></select>
                                 </div>
+
+                                <div class="govuk-form-group">
+                                    <button id="add" type="submit" name="SubmitButton" value="@NotificationsLocationsSubmitButtonOption.Add" class="govuk-button govuk-button--secondary" style="margin-bottom: 0;">Add location</button>
+                                </div>
                             </div>
                         }
                         else
@@ -181,6 +189,9 @@
                                 <br />
                                 <select class="govuk-select" asp-for="Radius" asp-items="Model.RadiusOptions"></select>
                             </div>
+                            <div class="govuk-form-group">
+                                <button id="add" type="submit" name="SubmitButton" value="@NotificationsLocationsSubmitButtonOption.Add" class="govuk-button govuk-button--secondary" style="margin-bottom: 0;">Add location</button>
+                            </div>
                         </div>
                     }
                     else
@@ -190,8 +201,6 @@
                 }
 
                 <div class="govuk-button-group">
-
-
                     <button id="continue" type="submit" name="SubmitButton" value="@NotificationsLocationsSubmitButtonOption.Continue" class="govuk-button">Continue</button>
                 </div>
 
