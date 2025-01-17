@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Authentication;
+using SFA.DAS.Employer.Aan.Web.Constant;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Orchestrators.Shared;
@@ -14,7 +15,6 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding;
 public class NotificationLocationDisambiguationController : Controller
 {
     public const string ViewPath = "~/Views/Onboarding/NotificationLocationDisambiguation.cshtml";
-    public const string SameLocationErrorMessage = "Enter a location that has not been added, or delete an existing location";
     private readonly ISessionService _sessionService;
     private readonly INotificationLocationDisambiguationOrchestrator _orchestrator;
 
@@ -49,7 +49,7 @@ public class NotificationLocationDisambiguationController : Controller
 
         if ((submitModel.SelectedLocation != null) && sessionModel.NotificationLocations.Any(n => n.LocationName.Equals(submitModel.SelectedLocation, StringComparison.OrdinalIgnoreCase)))
         {
-            TempData["SameLocationError"] = SameLocationErrorMessage;
+            TempData["SameLocationError"] = ErrorMessages.SameLocationErrorMessage;
             return new RedirectToRouteResult(RouteNames.Onboarding.NotificationsLocations, new { submitModel.EmployerAccountId });
         }
 

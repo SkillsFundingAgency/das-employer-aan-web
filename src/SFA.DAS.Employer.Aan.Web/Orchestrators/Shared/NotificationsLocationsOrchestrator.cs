@@ -27,8 +27,6 @@ namespace SFA.DAS.Employer.Aan.Web.Orchestrators.Shared
     public class NotificationsLocationsOrchestrator(ISessionService sessionService, IValidator<INotificationsLocationsPartialSubmitModel> validator, IOuterApiClient apiClient, IEncodingService encodingService)
         : INotificationsLocationsOrchestrator
     {
-        public const string SameLocationErrorMessage = "Enter a location that has not been added, or delete an existing location";
-
         public INotificationsLocationsPartialViewModel GetViewModel<T>(INotificationLocationsSessionModel sessionModel, ModelStateDictionary modelState) where T: INotificationsLocationsPartialViewModel, new()
         {
             var result = new T();
@@ -47,14 +45,14 @@ namespace SFA.DAS.Employer.Aan.Web.Orchestrators.Shared
             result.HasSubmittedLocations = sessionModel.NotificationLocations.Any();
 
             if (modelState.ContainsKey(nameof(NotificationsLocationsViewModel.Location)) &&
-                !modelState[nameof(NotificationsLocationsViewModel.Location)].Errors.Any(e => e.ErrorMessage == SameLocationErrorMessage))
+                !modelState[nameof(NotificationsLocationsViewModel.Location)].Errors.Any(e => e.ErrorMessage == ErrorMessages.SameLocationErrorMessage))
             {
                 result.UnrecognisedLocation =
                     modelState[nameof(NotificationsLocationsViewModel.Location)].AttemptedValue;
             }
 
             if (modelState.ContainsKey(nameof(NotificationsLocationsViewModel.Location)) &&
-                modelState[nameof(NotificationsLocationsViewModel.Location)].Errors.Any(e => e.ErrorMessage == SameLocationErrorMessage))
+                modelState[nameof(NotificationsLocationsViewModel.Location)].Errors.Any(e => e.ErrorMessage == ErrorMessages.SameLocationErrorMessage))
             {
                 result.DuplicateLocation =
                     modelState[nameof(NotificationsLocationsViewModel.Location)].AttemptedValue;
@@ -114,7 +112,7 @@ namespace SFA.DAS.Employer.Aan.Web.Orchestrators.Shared
 
             if (sessionModel.NotificationLocations.Any(n => n.LocationName.Equals(apiResponse.Locations.First().Name, StringComparison.OrdinalIgnoreCase)))
             {
-                modelState.AddModelError("Location", SameLocationErrorMessage);
+                modelState.AddModelError("Location", ErrorMessages.SameLocationErrorMessage);
                 return RedirectTarget.Self;
             }
 

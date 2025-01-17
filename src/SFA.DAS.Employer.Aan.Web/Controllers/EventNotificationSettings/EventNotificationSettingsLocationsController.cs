@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests.Settings;
 using SFA.DAS.Employer.Aan.Web.Authentication;
+using SFA.DAS.Employer.Aan.Web.Constant;
 using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models;
@@ -26,7 +27,6 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
         IEncodingService encodingService) : Controller
     {
         public const string ViewPath = "~/Views/Settings/NotificationsLocations.cshtml";
-        public const string SameLocationErrorMessage = "Enter a location that has not been added, or delete an existing location";
 
         [HttpGet]
         [ValidateModelStateFilter]
@@ -68,7 +68,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
 
             if (sessionModel.NotificationLocations.Any(n => n.LocationName.Equals(submitModel.Location, StringComparison.OrdinalIgnoreCase)))
             {
-                ModelState.AddModelError(nameof(submitModel.Location), SameLocationErrorMessage);
+                ModelState.AddModelError(nameof(submitModel.Location), ErrorMessages.SameLocationErrorMessage);
                 return new RedirectToRouteResult(RouteNames.EventNotificationSettings.NotificationLocations, new { submitModel.EmployerAccountId });
             }
 

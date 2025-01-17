@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Authentication;
+using SFA.DAS.Employer.Aan.Web.Constant;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models.Settings;
 using SFA.DAS.Employer.Aan.Web.Orchestrators.Shared;
@@ -19,7 +20,6 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
         : Controller
     {
         public const string ViewPath = "~/Views/Settings/NotificationLocationDisambiguation.cshtml";
-        public const string SameLocationErrorMessage = "Enter a location that has not been added, or delete an existing location";
 
         [HttpGet]
         [ValidateModelStateFilter]
@@ -53,7 +53,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
 
             if (sessionModel.NotificationLocations.Any(n => n.LocationName.Equals(submitModel.SelectedLocation, StringComparison.OrdinalIgnoreCase)))
             {
-                TempData["SameLocationError"] = SameLocationErrorMessage;
+                TempData["SameLocationError"] = ErrorMessages.SameLocationErrorMessage;
                 return new RedirectToRouteResult(RouteNames.EventNotificationSettings.NotificationLocations, new { submitModel.EmployerAccountId });
             }
 
