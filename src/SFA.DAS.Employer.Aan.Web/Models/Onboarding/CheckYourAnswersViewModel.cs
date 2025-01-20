@@ -105,7 +105,7 @@ public class CheckYourAnswersViewModel : CheckYourAnswersSubmitModel
 
         if (selectedTypes.Contains(EventType.All) ||
             (selectedTypes.Contains(EventType.Hybrid) && selectedTypes.Contains(EventType.InPerson)))
-            return "inPerson and hybrid";
+            return "in-person and hybrid";
 
         if (selectedTypes.Contains(EventType.Hybrid))
             return "hybrid";
