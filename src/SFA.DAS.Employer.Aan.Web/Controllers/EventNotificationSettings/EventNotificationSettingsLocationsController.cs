@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests.Settings;
 using SFA.DAS.Employer.Aan.Web.Authentication;
+using SFA.DAS.Employer.Aan.Web.Constant;
 using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models;
@@ -40,6 +41,15 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
                     new { employerAccountId });
             }
 
+            if (TempData.ContainsKey("SameLocationError"))
+            {
+                var errorMessage = TempData["SameLocationError"] as string;
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    ModelState.AddModelError(nameof(NotificationsLocationsViewModel.Location), errorMessage);
+                }
+            }
+
             var viewModel = orchestrator.GetViewModel<NotificationsLocationsViewModel>(sessionModel, ModelState);
             viewModel.BackLink = sessionModel.LastPageVisited == RouteNames.EventNotificationSettings.EventTypes ?
                 Url.RouteUrl(@RouteNames.EventNotificationSettings.EventTypes, new { employerAccountId })!
@@ -54,6 +64,14 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
         [Route("accounts/{employerAccountId}/event-notification-settings/locations", Name = RouteNames.EventNotificationSettings.NotificationLocations)]
         public async Task<IActionResult> Post(Models.Settings.NotificationsLocationsSubmitModel submitModel)
         {
+            var sessionModel = sessionService.Get<NotificationSettingsSessionModel>();
+
+            if (sessionModel.NotificationLocations.Any(n => n.LocationName.Equals(submitModel.Location, StringComparison.OrdinalIgnoreCase)))
+            {
+                ModelState.AddModelError(nameof(submitModel.Location), ErrorMessages.SameLocationErrorMessage);
+                return new RedirectToRouteResult(RouteNames.EventNotificationSettings.NotificationLocations, new { submitModel.EmployerAccountId });
+            }
+
             var result = await orchestrator.ApplySubmitModel<NotificationSettingsSessionModel>(
                 submitModel,
                 ModelState,

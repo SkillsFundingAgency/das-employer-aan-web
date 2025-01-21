@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Authentication;
+using SFA.DAS.Employer.Aan.Web.Constant;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Orchestrators.Shared;
@@ -25,6 +26,15 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
         {
             var sessionModel = sessionService.Get<OnboardingSessionModel>();
 
+            if (TempData.ContainsKey("SameLocationError"))
+            {
+                var errorMessage = TempData["SameLocationError"] as string;
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    ModelState.AddModelError(nameof(NotificationsLocationsViewModel.Location), errorMessage);
+                }
+            }
+
             var viewModel = orchestrator.GetViewModel<NotificationsLocationsViewModel>(sessionModel, ModelState);
 
             viewModel.BackLink = sessionModel.HasSeenPreview
@@ -38,13 +48,19 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
         [ValidateModelStateFilter]
         public async Task<IActionResult> Post(NotificationsLocationsSubmitModel submitModel)
         {
+            var sessionModel = sessionService.Get<OnboardingSessionModel>();
+
+            if (sessionModel.NotificationLocations.Any(n => n.LocationName.Equals(submitModel.Location, StringComparison.OrdinalIgnoreCase)))
+            {
+                ModelState.AddModelError(nameof(submitModel.Location), ErrorMessages.SameLocationErrorMessage);
+                return new RedirectToRouteResult(RouteNames.Onboarding.NotificationsLocations, new { submitModel.EmployerAccountId });
+            }
+
             var result = await orchestrator.ApplySubmitModel<OnboardingSessionModel>(
                 submitModel,
                 ModelState,
                 async (accountId, location) => await apiClient.GetOnboardingNotificationsLocations(accountId, location)
             );
-
-            var sessionModel = sessionService.Get<OnboardingSessionModel>();
 
             if (result == NotificationsLocationsOrchestrator.RedirectTarget.NextPage)
             {

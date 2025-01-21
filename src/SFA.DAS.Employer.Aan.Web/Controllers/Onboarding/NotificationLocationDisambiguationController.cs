@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Authentication;
+using SFA.DAS.Employer.Aan.Web.Constant;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Orchestrators.Shared;
@@ -42,9 +43,17 @@ public class NotificationLocationDisambiguationController : Controller
     [ValidateModelStateFilter]
     public async Task<IActionResult> Post(NotificationLocationDisambiguationSubmitModel submitModel, CancellationToken cancellationToken)
     {
-        var result = await _orchestrator.ApplySubmitModel<OnboardingSessionModel>(submitModel, ModelState);
+        var sessionModel = _sessionService.Get<OnboardingSessionModel>();
 
         var routeValues = new { submitModel.EmployerAccountId, submitModel.Radius, submitModel.Location };
+
+        if ((submitModel.SelectedLocation != null) && sessionModel.NotificationLocations.Any(n => n.LocationName.Equals(submitModel.SelectedLocation, StringComparison.OrdinalIgnoreCase)))
+        {
+            TempData["SameLocationError"] = ErrorMessages.SameLocationErrorMessage;
+            return new RedirectToRouteResult(RouteNames.Onboarding.NotificationsLocations, new { submitModel.EmployerAccountId });
+        }
+
+        var result = await _orchestrator.ApplySubmitModel<OnboardingSessionModel>(submitModel, ModelState);
 
         switch (result)
         {

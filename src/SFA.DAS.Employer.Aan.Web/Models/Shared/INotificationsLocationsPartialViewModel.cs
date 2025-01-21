@@ -9,6 +9,7 @@ namespace SFA.DAS.Employer.Aan.Web.Models.Shared
 
         List<string> SubmittedLocations { get; set; }
         string UnrecognisedLocation { get; set; }
+        string DuplicateLocation { get; set; }
         List<SelectListItem> RadiusOptions { get; }
         int MaxLocations { get; }
         string MaxLocationsString { get; }

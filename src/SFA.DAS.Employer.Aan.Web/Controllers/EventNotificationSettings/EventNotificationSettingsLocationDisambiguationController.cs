@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Authentication;
+using SFA.DAS.Employer.Aan.Web.Constant;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Models.Settings;
 using SFA.DAS.Employer.Aan.Web.Orchestrators.Shared;
@@ -19,7 +20,6 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
         : Controller
     {
         public const string ViewPath = "~/Views/Settings/NotificationLocationDisambiguation.cshtml";
-
 
         [HttpGet]
         [ValidateModelStateFilter]
@@ -47,9 +47,17 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
         [ValidateModelStateFilter]
         public async Task<IActionResult> Post(NotificationLocationDisambiguationSubmitModel submitModel, CancellationToken cancellationToken)
         {
-            var result = await orchestrator.ApplySubmitModel<NotificationSettingsSessionModel>(submitModel, ModelState);
+            var sessionModel = sessionService.Get<NotificationSettingsSessionModel>();
 
             var routeValues = new { submitModel.EmployerAccountId, submitModel.Radius, submitModel.Location };
+
+            if (sessionModel.NotificationLocations.Any(n => n.LocationName.Equals(submitModel.SelectedLocation, StringComparison.OrdinalIgnoreCase)))
+            {
+                TempData["SameLocationError"] = ErrorMessages.SameLocationErrorMessage;
+                return new RedirectToRouteResult(RouteNames.EventNotificationSettings.NotificationLocations, new { submitModel.EmployerAccountId });
+            }
+
+            var result = await orchestrator.ApplySubmitModel<NotificationSettingsSessionModel>(submitModel, ModelState);
 
             switch (result)
             {
