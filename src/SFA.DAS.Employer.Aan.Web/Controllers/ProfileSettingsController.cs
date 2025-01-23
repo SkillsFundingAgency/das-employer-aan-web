@@ -17,7 +17,6 @@ public class ProfileSettingsController : Controller
         {
             YourAmbassadorProfileUrl = Url.RouteUrl(SharedRouteNames.YourAmbassadorProfile, new { employerAccountId })!,
             NetworkHubLink = Url.RouteUrl(RouteNames.NetworkHub, new { employerAccountId }),
-            UpcomingEventsNotificationsUrl = Url.RouteUrl(RouteNames.EventNotificationSettings.EmailNotificationSettings, new { employerAccountId })!,
             LeaveTheNetworkUrl = Url.RouteUrl(SharedRouteNames.LeaveTheNetwork, new { employerAccountId })!
         };
 
