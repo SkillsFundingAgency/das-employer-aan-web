@@ -6,6 +6,9 @@ using SFA.DAS.Employer.Aan.Web.Filters;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Validators;
 using SFA.DAS.Employer.Shared.UI;
+using SFA.DAS.Validation.Mvc.Extensions;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Enums;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 

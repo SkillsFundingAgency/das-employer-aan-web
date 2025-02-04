@@ -28,10 +28,25 @@ public static class RouteNames
         public const string PreviousEngagement = nameof(PreviousEngagement);
         public const string JoinTheNetwork = nameof(JoinTheNetwork);
         public const string CheckYourAnswers = nameof(CheckYourAnswers);
+        public const string ConfirmDetails = nameof(ConfirmDetails);
         public const string AreasToEngageLocally = nameof(AreasToEngageLocally);
         public const string PrimaryEngagementWithinNetwork = nameof(PrimaryEngagementWithinNetwork);
-
+        public const string NotificationsLocations = nameof(NotificationsLocations);
+        public const string NotificationLocationDisambiguation = nameof(NotificationLocationDisambiguation);
+        public const string RegionalNetwork = nameof(RegionalNetwork);
+        public const string ReceiveNotifications = nameof(ReceiveNotifications);
+        public const string SelectNotificationEvents = nameof(SelectNotificationEvents);
     }
+
+    public static class EventNotificationSettings
+    {
+        public const string SettingsNotificationLocationDisambiguation = nameof(SettingsNotificationLocationDisambiguation);
+        public const string EmailNotificationSettings = nameof(EmailNotificationSettings);
+        public const string NotificationLocations = nameof(NotificationLocations);
+        public const string MonthlyNotifications = nameof(MonthlyNotifications);
+        public const string EventTypes = nameof(EventTypes);
+    }
+
 
     public static class AttendanceConfirmations
     {

@@ -63,7 +63,7 @@ public class JoinTheNetworkController : Controller
 
         return sessionModel.HasSeenPreview
             ? RedirectToRoute(@RouteNames.Onboarding.CheckYourAnswers, new { submitModel.EmployerAccountId })!
-            : RedirectToRoute(RouteNames.Onboarding.PreviousEngagement, new { submitModel.EmployerAccountId });
+            : RedirectToRoute(RouteNames.Onboarding.ReceiveNotifications, new { submitModel.EmployerAccountId });
     }
 
     private JoinTheNetworkViewModel GetViewModel(string employerAccountId)
@@ -79,20 +79,6 @@ public class JoinTheNetworkController : Controller
 
     private string GetCorrectBackLink(OnboardingSessionModel sessionModel, string employerAccountId)
     {
-        var noOfRegionsSelected = sessionModel.Regions.Count(x => x.IsSelected);
-
-        if (noOfRegionsSelected == 1)
-        {
-            return sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId })! : Url.RouteUrl(@RouteNames.Onboarding.Regions, new { employerAccountId })!;
-        }
-        else if (noOfRegionsSelected >= 2 && noOfRegionsSelected <= 4)
-        {
-            return sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId })! : Url.RouteUrl(@RouteNames.Onboarding.AreasToEngageLocally, new { employerAccountId })!;
-        }
-        else if (noOfRegionsSelected >= 5 && !sessionModel.IsMultiRegionalOrganisation.GetValueOrDefault())
-        {
-            return sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId })! : Url.RouteUrl(@RouteNames.Onboarding.AreasToEngageLocally, new { employerAccountId })!;
-        }
-        return sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId })! : Url.RouteUrl(@RouteNames.Onboarding.PrimaryEngagementWithinNetwork, new { employerAccountId })!;
+        return sessionModel.HasSeenPreview ? Url.RouteUrl(@RouteNames.Onboarding.CheckYourAnswers, new { employerAccountId })! : Url.RouteUrl(@RouteNames.Onboarding.ConfirmDetails, new { employerAccountId })!;
     }
 }

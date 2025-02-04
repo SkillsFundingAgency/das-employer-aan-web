@@ -5,7 +5,7 @@ namespace SFA.DAS.Employer.Aan.Web.Validators;
 
 public class RegionsSubmitModelValidator : AbstractValidator<RegionsSubmitModel>
 {
-    public const string NoSelectionErrorMessage = "Select an area of the country your organisation works in";
+    public const string NoSelectionErrorMessage = "Select which areas your organisation works in";
 
     public RegionsSubmitModelValidator()
     {

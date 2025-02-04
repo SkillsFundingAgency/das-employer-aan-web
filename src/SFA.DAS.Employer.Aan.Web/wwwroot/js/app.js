@@ -110,3 +110,26 @@ if (locationInputs.length > 0) {
         }
     }
 }
+document.addEventListener("DOMContentLoaded", function () {
+    const pageIdentifier = document.getElementById('event-types-container');
+    if (!pageIdentifier) return;
+
+    const allCheckbox = document.getElementById("all-checkbox");
+    const otherCheckboxes = document.querySelectorAll(".other-checkbox");
+
+    allCheckbox.addEventListener("change", function () {
+        if (allCheckbox.checked) {
+            otherCheckboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        }
+    });
+
+    otherCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener("change", function () {
+            if (checkbox.checked) {
+                allCheckbox.checked = false;
+            }
+        });
+    });
+});
