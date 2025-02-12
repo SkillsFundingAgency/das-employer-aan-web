@@ -50,7 +50,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.Onboarding
         {
             var sessionModel = sessionService.Get<OnboardingSessionModel>();
 
-            if (sessionModel.NotificationLocations.Any(n => n.LocationName.Equals(submitModel.Location, StringComparison.OrdinalIgnoreCase)))
+            if (sessionModel.NotificationLocations.Any(n => n.LocationName.Equals(submitModel.Location, StringComparison.OrdinalIgnoreCase) && submitModel.SubmitButton.Equals("Add")))
             {
                 ModelState.AddModelError(nameof(submitModel.Location), ErrorMessages.SameLocationErrorMessage);
                 return new RedirectToRouteResult(RouteNames.Onboarding.NotificationsLocations, new { submitModel.EmployerAccountId });
