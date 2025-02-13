@@ -66,7 +66,7 @@ namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings
         {
             var sessionModel = sessionService.Get<NotificationSettingsSessionModel>();
 
-            if (sessionModel.NotificationLocations.Any(n => n.LocationName.Equals(submitModel.Location, StringComparison.OrdinalIgnoreCase)))
+            if (sessionModel.NotificationLocations.Any(n => n.LocationName.Equals(submitModel.Location, StringComparison.OrdinalIgnoreCase)) && submitModel.SubmitButton.Equals("Add"))
             {
                 ModelState.AddModelError(nameof(submitModel.Location), ErrorMessages.SameLocationErrorMessage);
                 return new RedirectToRouteResult(RouteNames.EventNotificationSettings.NotificationLocations, new { submitModel.EmployerAccountId });
