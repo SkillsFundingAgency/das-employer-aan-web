@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 using Newtonsoft.Json;
-using SFA.DAS.Employer.Aan.Domain.Models;
-using SFA.DAS.Employer.Aan.Web.Infrastructure;
+using SFA.DAS.GovUK.Auth.Employer;
+using EmployerClaims = SFA.DAS.Employer.Aan.Web.Infrastructure.EmployerClaims;
 
 namespace SFA.DAS.Employer.Aan.Web.Extensions;
 
@@ -16,10 +16,10 @@ public static class ClaimsPrincipalExtensions
         return hasParsed ? value : Guid.Empty;
     }
 
-    public static Dictionary<string, EmployerIdentifier> GetEmployerAccounts(this ClaimsPrincipal user)
-    => JsonConvert.DeserializeObject<Dictionary<string, EmployerIdentifier>>(user.FindFirstValue(EmployerClaims.AccountsClaimsTypeIdentifier)!)!;
+    public static Dictionary<string, EmployerUserAccountItem> GetEmployerAccounts(this ClaimsPrincipal user)
+    => JsonConvert.DeserializeObject<Dictionary<string, EmployerUserAccountItem>>(user.FindFirstValue(EmployerClaims.AccountsClaimsTypeIdentifier)!)!;
 
-    public static EmployerIdentifier GetEmployerAccount(this ClaimsPrincipal user, string employerAccountId)
+    public static EmployerUserAccountItem GetEmployerAccount(this ClaimsPrincipal user, string employerAccountId)
         => GetEmployerAccounts(user)[employerAccountId.ToUpper()];
 
     public static Guid GetUserId(this ClaimsPrincipal principal) => GetClaimValue(principal, EmployerClaims.UserIdClaimTypeIdentifier);

@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Moq;
 using Newtonsoft.Json;
-using SFA.DAS.Employer.Aan.Domain.Models;
-using SFA.DAS.Employer.Aan.Web.Infrastructure;
+using SFA.DAS.GovUK.Auth.Employer;
+using EmployerClaims = SFA.DAS.Employer.Aan.Web.Infrastructure.EmployerClaims;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 
@@ -31,12 +31,12 @@ public static class ControllerExtensions
     {
         Fixture fixture = new();
         var employerIdentifier = fixture
-            .Build<EmployerIdentifier>()
+            .Build<EmployerUserAccountItem>()
             .With(e => e.AccountId, TestConstants.DefaultAccountId)
             .With(e => e.EmployerName, TestConstants.DefaultAccountName)
             .Create();
 
-        var employerAccounts = new Dictionary<string, EmployerIdentifier> { { employerIdentifier.AccountId, employerIdentifier } };
+        var employerAccounts = new Dictionary<string, EmployerUserAccountItem> { { employerIdentifier.AccountId, employerIdentifier } };
         var accountClaim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, JsonConvert.SerializeObject(employerAccounts));
         var emailClaim = new Claim(ClaimTypes.Email, fixture.Create<string>());
         var nameClaim = new Claim(ClaimTypes.NameIdentifier, fixture.Create<string>());
