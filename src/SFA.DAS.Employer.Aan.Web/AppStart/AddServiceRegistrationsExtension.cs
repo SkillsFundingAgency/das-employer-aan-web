@@ -30,7 +30,6 @@ public static class AddServiceRegistrationsExtension
         services.AddTransient<ISessionService, SessionService>();
         services.AddTransient<IRegionService, RegionService>();
         services.AddTransient<IEncodingService, EncodingService>();
-        services.AddTransient<IEmployerAccountsService, EmployerAccountsService>();
         services.AddTransient<INotificationsLocationsOrchestrator, NotificationsLocationsOrchestrator>();
         services.AddTransient<IEventNotificationSettingsOrchestrator, EventNotificationSettingsOrchestrator>();
         services.AddTransient<INotificationLocationDisambiguationOrchestrator, NotificationLocationDisambiguationOrchestrator>();

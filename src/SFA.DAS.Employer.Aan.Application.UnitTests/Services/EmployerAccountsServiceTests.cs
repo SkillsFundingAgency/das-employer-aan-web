@@ -16,7 +16,7 @@ public class EmployerAccountsServiceTests
         apiClientMock.Setup(o => o.GetUserAccounts(userId, email, It.IsAny<CancellationToken>())).ReturnsAsync(response);
         EmployerAccountsService sut = new(apiClientMock.Object);
 
-        await sut.GetEmployerUserAccounts(userId, email);
+        await sut.GetUserAccounts(userId, email);
 
         apiClientMock.Verify(o => o.GetUserAccounts(userId, email, It.IsAny<CancellationToken>()));
     }
@@ -28,10 +28,10 @@ public class EmployerAccountsServiceTests
         apiClientMock.Setup(o => o.GetUserAccounts(userId, email, It.IsAny<CancellationToken>())).ReturnsAsync(response);
         EmployerAccountsService sut = new(apiClientMock.Object);
 
-        var actual = await sut.GetEmployerUserAccounts(userId, email);
+        var actual = await sut.GetUserAccounts(userId, email);
 
         actual.Should().BeEquivalentTo(response, options => options.Excluding(s => s.UserAccountResponse));
-        actual.UserAccounts.Should().BeEquivalentTo(
+        actual.EmployerAccounts.Should().BeEquivalentTo(
             response.UserAccountResponse,
             config => config.WithMapping("EncodedAccountId", "AccountId").WithMapping("DasAccountName", "EmployerName"));
     }

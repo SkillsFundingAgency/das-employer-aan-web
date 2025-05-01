@@ -1,9 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Authorization;
+using SFA.DAS.Employer.Aan.Application.Services;
 using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.GovUK.Auth.AppStart;
 using SFA.DAS.GovUK.Auth.Authentication;
+using SFA.DAS.GovUK.Auth.Models;
 using SFA.DAS.GovUK.Auth.Services;
 
 namespace SFA.DAS.Employer.Aan.Web.AppStart;
@@ -14,7 +16,6 @@ public static class AddAuthenticationServicesExtension
     public static IServiceCollection AddAuthenticationServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddHttpContextAccessor();
-        services.AddTransient<ICustomClaims, EmployerAccountPostAuthenticationClaimsHandler>();
         services.AddSingleton<IAuthorizationHandler, EmployerAccountAuthorizationHandler>();
 
         services.Configure<IISServerOptions>(options => options.AutomaticAuthentication = false);
@@ -38,9 +39,14 @@ public static class AddAuthenticationServicesExtension
 
         services.AddAndConfigureGovUkAuthentication(
             configuration,
-            typeof(EmployerAccountPostAuthenticationClaimsHandler),
-            string.Empty,
-            "/service/account-details");
+            new AuthRedirects
+            {
+                LocalStubLoginPath ="/service/account-details",
+                SignedOutRedirectUrl = string.Empty
+            },
+            null,
+            typeof(EmployerAccountsService)
+            );
         return services;
     }
 }
