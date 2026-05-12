@@ -1,19 +1,15 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Authentication;
 using SFA.DAS.Employer.Aan.Web.Constant;
-using SFA.DAS.Employer.Aan.Web.Infrastructure;
-using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
-using SFA.DAS.Employer.Aan.Web.Models;
 using SFA.DAS.Employer.Aan.Web.Extensions;
-using FluentValidation;
-using FluentValidation.Results;
+using SFA.DAS.Employer.Aan.Web.Infrastructure;
+using SFA.DAS.Employer.Aan.Web.Models;
+using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Web.Models.Settings;
-using FluentValidation.AspNetCore;
-using SFA.DAS.Employer.Aan.Domain.OuterApi.Requests.Settings;
-using static SFA.DAS.Employer.Aan.Domain.OuterApi.Requests.Settings.NotificationsSettingsApiRequest;
-using SFA.DAS.Employer.Aan.Web.Infrastructure.Services;
 using SFA.DAS.Employer.Aan.Web.Orchestrators;
 
 namespace SFA.DAS.Employer.Aan.Web.Controllers.EventNotificationSettings;
@@ -89,7 +85,7 @@ public class EventTypesController : Controller
 
         _sessionService.Set(sessionModel);
 
-        if(isEndOfJourney)
+        if (isEndOfJourney)
         {
             await _settingsOrchestrator.SaveSettings(memberId, sessionModel);
         }
