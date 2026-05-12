@@ -6,7 +6,7 @@ using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.GovUK.Auth.AppStart;
 using SFA.DAS.GovUK.Auth.Authentication;
 using SFA.DAS.GovUK.Auth.Models;
-using SFA.DAS.GovUK.Auth.Services;
+using PolicyNames = SFA.DAS.Employer.Aan.Web.Authentication.PolicyNames;
 
 namespace SFA.DAS.Employer.Aan.Web.AppStart;
 
@@ -41,7 +41,7 @@ public static class AddAuthenticationServicesExtension
             configuration,
             new AuthRedirects
             {
-                LocalStubLoginPath ="/service/account-details",
+                LocalStubLoginPath = "/service/account-details",
                 SignedOutRedirectUrl = string.Empty
             },
             null,
