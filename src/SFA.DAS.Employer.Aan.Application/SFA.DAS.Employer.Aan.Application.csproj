@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -11,9 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SFA.DAS.Aan.SharedUi" Version="0.1.114" />
     <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.190" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.18.0" />
   </ItemGroup>
 
 </Project>

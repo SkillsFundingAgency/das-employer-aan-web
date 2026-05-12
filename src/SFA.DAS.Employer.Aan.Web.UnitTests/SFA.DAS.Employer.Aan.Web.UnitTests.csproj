@@ -15,7 +15,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="FluentAssertions" Version="7.2.2" />
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.23.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.5.1" />
     <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="NUnit" Version="4.6.0" />
@@ -24,18 +23,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="SFA.DAS.Aan.SharedUi" Version="0.1.114" />
-    <PackageReference Include="SFA.DAS.Configuration.AzureTableStorage" Version="17.1.165" />
-    <PackageReference Include="SFA.DAS.Employer.Shared.UI" Version="17.1.165" />
     <PackageReference Include="SFA.DAS.Encoding" Version="1.1.94" />
-    <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.190" />
     <PackageReference Include="SFA.DAS.Testing.AutoFixture" Version="17.1.165" />
     <PackageReference Include="coverlet.collector" Version="10.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="SFA.DAS.Validation.Mvc" Version="6.0.31" />
-    <PackageReference Include="SharpGrip.FluentValidation.AutoValidation.Mvc" Version="2.0.0" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.7" />
   </ItemGroup>
 
