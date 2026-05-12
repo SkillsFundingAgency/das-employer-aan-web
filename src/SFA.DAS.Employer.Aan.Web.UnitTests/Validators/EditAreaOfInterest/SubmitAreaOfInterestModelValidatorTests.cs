@@ -1,4 +1,4 @@
-﻿using AutoFixture.NUnit3;
+﻿using AutoFixture.NUnit4;
 using FluentValidation.TestHelper;
 using SFA.DAS.Aan.SharedUi.Models.EditAreaOfInterest;
 using SFA.DAS.Employer.Aan.Web.Validators.EditAreaOfInterest;

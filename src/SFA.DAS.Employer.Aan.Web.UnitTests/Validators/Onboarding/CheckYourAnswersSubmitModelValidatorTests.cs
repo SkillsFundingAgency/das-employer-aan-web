@@ -1,4 +1,4 @@
-﻿using AutoFixture.NUnit3;
+﻿using AutoFixture.NUnit4;
 using FluentValidation.TestHelper;
 using Microsoft.AspNetCore.Mvc;
 using Moq;

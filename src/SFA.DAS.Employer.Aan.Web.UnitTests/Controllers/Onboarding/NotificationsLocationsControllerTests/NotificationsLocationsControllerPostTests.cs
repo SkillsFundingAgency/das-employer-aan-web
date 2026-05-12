@@ -8,7 +8,7 @@ using SFA.DAS.Employer.Aan.Web.Models.Onboarding;
 using SFA.DAS.Employer.Aan.Domain.Interfaces;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Onboarding;
-using AutoFixture.NUnit3;
+using AutoFixture.NUnit4;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Shared;
 using SFA.DAS.Employer.Aan.Web.Models.Shared;
 using SFA.DAS.Employer.Aan.Web.Orchestrators.Shared;

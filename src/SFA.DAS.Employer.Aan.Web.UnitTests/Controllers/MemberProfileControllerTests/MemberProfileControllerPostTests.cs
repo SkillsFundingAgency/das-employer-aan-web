@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using AutoFixture.NUnit3;
+using AutoFixture.NUnit4;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;

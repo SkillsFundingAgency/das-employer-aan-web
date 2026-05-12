@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoFixture.NUnit3" Version="4.18.1" />
+    <PackageReference Include="AutoFixture.NUnit4" Version="4.19.0" />
     <PackageReference Include="coverlet.msbuild" Version="10.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -30,8 +30,6 @@
     <PackageReference Include="SFA.DAS.Aan.SharedUi" Version="0.1.114" />
     <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.190" />
     <PackageReference Include="SFA.DAS.Testing.AutoFixture" Version="17.1.165" />
-    <PackageReference Include="System.ComponentModel.TypeConverter" Version="4.3.0" />
-    <PackageReference Include="System.Formats.Asn1" Version="10.0.7" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.7" />
   </ItemGroup>
 

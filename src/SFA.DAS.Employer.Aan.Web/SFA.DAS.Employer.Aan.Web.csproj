@@ -25,8 +25,6 @@
     <PackageReference Include="SFA.DAS.Validation.Mvc" Version="6.0.31" />
     <PackageReference Include="SharpGrip.FluentValidation.AutoValidation.Mvc" Version="2.0.0" />
     <PackageReference Include="SharpGrip.FluentValidation.AutoValidation.Shared" Version="2.0.0" />
-    <PackageReference Include="System.Formats.Asn1" Version="10.0.7" />
-    <PackageReference Include="System.Text.Json" Version="10.0.7" />
     <PackageReference Include="WebEssentials.AspNetCore.CdnTagHelpers" Version="1.0.21" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="10.0.7" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.18.0" />
