@@ -52,7 +52,7 @@ public class EditApprenticeshipInformationControllerPostTests
         await sut.Post(employerId, submitApprenticeshipInformationModel, CancellationToken.None);
 
         // Assert
-        Assert.That(sut.TempData.ContainsKey(TempDataKeys.YourAmbassadorProfileSuccessMessage), Is.EqualTo(true));
+        Assert.That(sut.TempData.ContainsKey(TempDataKeys.YourAmbassadorProfileSuccessMessage), Is.True);
     }
 
     [Test, AutoData]

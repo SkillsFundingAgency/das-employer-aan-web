@@ -58,7 +58,7 @@ public class EditContactDetailControllerPostTests
         await sut.Post(employerAccountId, submitContactDetailModel, CancellationToken.None);
 
         // Assert
-        Assert.That(sut.TempData.ContainsKey(TempDataKeys.YourAmbassadorProfileSuccessMessage), Is.EqualTo(true));
+        Assert.That(sut.TempData.ContainsKey(TempDataKeys.YourAmbassadorProfileSuccessMessage), Is.True);
     }
 
     [Test]
