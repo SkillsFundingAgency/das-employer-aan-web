@@ -90,12 +90,12 @@ public class NetworkEventDetailsControllerTests
         sut.AddUrlHelperMock().AddUrlForRoute(SharedRouteNames.NetworkEvents, AllNetworksUrl);
         var result = sut.SignUpConfirmation(accountId);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result, Is.TypeOf<ViewResult>());
             var viewResult = result as ViewResult;
             Assert.That(viewResult!.ViewName, Is.EqualTo(NetworkEventDetailsController.SignUpConfirmationViewPath));
-        });
+        }
     }
 
     [Test, MoqAutoData]
@@ -108,12 +108,12 @@ public class NetworkEventDetailsControllerTests
         sut.AddUrlHelperMock().AddUrlForRoute(SharedRouteNames.NetworkEvents, AllNetworksUrl);
         var result = sut.CancellationConfirmation(accountId);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result, Is.TypeOf<ViewResult>());
             var viewResult = result as ViewResult;
             Assert.That(viewResult!.ViewName, Is.EqualTo(NetworkEventDetailsController.CancellationConfirmationViewPath));
-        });
+        }
     }
 
     [Test, MoqAutoData]

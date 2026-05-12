@@ -1,6 +1,5 @@
 ﻿using AutoFixture.NUnit4;
 using FluentAssertions;
-using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Aan.SharedUi.Models;
 using SFA.DAS.Employer.Aan.Web.Configuration;
@@ -10,6 +9,7 @@ using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers;
+
 public class ContactUsControllerTests
 {
     [Test, MoqAutoData]
@@ -26,22 +26,19 @@ public class ContactUsControllerTests
         var actualResult = sut.Index(employerAccountId) as ViewResult;
         var result = actualResult!.Model as ContactUsViewModel;
 
-        using (new AssertionScope())
+        using (Assert.EnterMultipleScope())
         {
-            Assert.Multiple(() =>
-            {
-                result.Should().NotBeNull();
-                result!.EastOfEnglandEmailAddress.Should().Be(contactUsEmails.EastOfEngland);
-                result!.EastMidlandsEmailAddress.Should().Be(contactUsEmails.EastMidlands);
-                result!.LondonEmailAddress.Should().Be(contactUsEmails.London);
-                result!.NorthEastEmailAddress.Should().Be(contactUsEmails.NorthEast);
-                result!.NorthWestEmailAddress.Should().Be(contactUsEmails.NorthWest);
-                result!.SouthEastEmailAddress.Should().Be(contactUsEmails.SouthEast);
-                result!.SouthWestEmailAddress.Should().Be(contactUsEmails.SouthWest);
-                result!.WestMidlandsEmailAddress.Should().Be(contactUsEmails.WestMidlands);
-                result!.YorkshireAndTheHumberEmailAddress.Should().Be(contactUsEmails.YorkshireAndTheHumber);
-                result!.NetworkHubLink.Should().Be(networkHubLink);
-            });
+            result.Should().NotBeNull();
+            result!.EastOfEnglandEmailAddress.Should().Be(contactUsEmails.EastOfEngland);
+            result!.EastMidlandsEmailAddress.Should().Be(contactUsEmails.EastMidlands);
+            result!.LondonEmailAddress.Should().Be(contactUsEmails.London);
+            result!.NorthEastEmailAddress.Should().Be(contactUsEmails.NorthEast);
+            result!.NorthWestEmailAddress.Should().Be(contactUsEmails.NorthWest);
+            result!.SouthEastEmailAddress.Should().Be(contactUsEmails.SouthEast);
+            result!.SouthWestEmailAddress.Should().Be(contactUsEmails.SouthWest);
+            result!.WestMidlandsEmailAddress.Should().Be(contactUsEmails.WestMidlands);
+            result!.YorkshireAndTheHumberEmailAddress.Should().Be(contactUsEmails.YorkshireAndTheHumber);
+            result!.NetworkHubLink.Should().Be(networkHubLink);
         }
     }
 }

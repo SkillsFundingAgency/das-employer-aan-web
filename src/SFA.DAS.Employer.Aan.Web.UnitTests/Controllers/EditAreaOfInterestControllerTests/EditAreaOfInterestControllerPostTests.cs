@@ -17,6 +17,7 @@ using SFA.DAS.Employer.Aan.Web.Controllers;
 using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.EditAreaOfInterestControllerTests;
+
 public class EditAreaOfInterestControllerPostTests
 {
     private readonly Guid memberId = Guid.NewGuid();
@@ -80,11 +81,11 @@ public class EditAreaOfInterestControllerPostTests
         var redirectToAction = (RedirectToRouteResult)response;
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(response, Is.TypeOf<RedirectToRouteResult>());
             Assert.That(redirectToAction.RouteName, Does.Contain(SharedRouteNames.YourAmbassadorProfile));
-        });
+        }
     }
 
     [Test]

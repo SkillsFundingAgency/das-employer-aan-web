@@ -16,6 +16,7 @@ using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 using Region = SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Region;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.EditPersonalInformationControllerTests;
+
 public class EditPersonalInformationControllerGetTests
 {
     private static readonly string YourAmbassadorProfileUrl = Guid.NewGuid().ToString();
@@ -138,7 +139,7 @@ public class EditPersonalInformationControllerGetTests
         var _sut = viewResult!.Model as EditPersonalInformationViewModel;
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(_sut!.Regions, Has.Count.EqualTo(getRegionsResult.Regions.Count));
             Assert.That(_sut!.Regions, Is.InstanceOf<List<RegionViewModel>>());
@@ -146,7 +147,7 @@ public class EditPersonalInformationControllerGetTests
             Assert.That(_sut!.Regions[1].Id, Is.EqualTo(2));
             Assert.That(_sut!.Regions[2].Id, Is.EqualTo(3));
             Assert.That(_sut!.Regions[3].Id, Is.EqualTo(5));
-        });
+        }
     }
 
     private void SetUpControllerWithContext()

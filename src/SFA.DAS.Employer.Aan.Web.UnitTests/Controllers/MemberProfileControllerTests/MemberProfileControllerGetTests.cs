@@ -69,7 +69,7 @@ public class MemberProfileControllerGetTests
     [Test]
     [MoqInlineAutoData(MemberUserType.Apprentice)]
     [MoqInlineAutoData(MemberUserType.Employer)]
-    public void Get_ReturnsProfileView(
+    public async Task Get_ReturnsProfileView(
         MemberUserType memberUserType,
         [Frozen] Mock<IOuterApiClient> outerApiMock,
         GetMemberProfileResponse getMemberProfileResponse,
@@ -97,10 +97,10 @@ public class MemberProfileControllerGetTests
         var result = sut.Get(employerId, memberId, cancellationToken);
 
         //Assert
-        Assert.Multiple(async () =>
+        using (Assert.EnterMultipleScope())
         {
             var viewResult = await result as ViewResult;
             Assert.That(viewResult!.ViewName, Does.Contain("Profile"));
-        });
+        }
     }
 }

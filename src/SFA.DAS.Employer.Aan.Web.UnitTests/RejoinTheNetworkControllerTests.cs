@@ -7,6 +7,7 @@ using SFA.DAS.Employer.Aan.Web.Controllers;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests;
+
 public class RejoinTheNetworkControllerTests
 {
     private readonly string _accountId = Guid.NewGuid().ToString();
@@ -35,11 +36,11 @@ public class RejoinTheNetworkControllerTests
         outerApiClientMock.Verify(x => x.PostMemberReinstate(memberId, cancellationToken), Times.Once);
         sessionServiceMock.Verify(x => x.Clear(), Times.Once);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(response, Is.TypeOf<RedirectToRouteResult>());
             var redirectToAction = (RedirectToRouteResult)response;
             Assert.That(redirectToAction.RouteName, Does.Contain(SharedRouteNames.Home));
-        });
+        }
     }
 }

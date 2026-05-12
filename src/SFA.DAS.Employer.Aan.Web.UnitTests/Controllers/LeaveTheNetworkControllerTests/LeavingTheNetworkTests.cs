@@ -11,6 +11,7 @@ using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.LeaveTheNetworkControllerTests;
+
 public class LeavingTheNetworkTests
 {
     static readonly string ProfileSettingsUrl = Guid.NewGuid().ToString();
@@ -48,7 +49,7 @@ public class LeavingTheNetworkTests
         var viewResult = result as ViewResult;
         var model = viewResult!.Model as LeaveTheNetworkViewModel;
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(model!.LeavingReasonsTitle, Is.EqualTo(leavingCategoryReasons.Category));
             Assert.That(model!.LeavingReasons, Is.EqualTo(leavingCategoryReasons.LeavingReasons));
@@ -57,7 +58,7 @@ public class LeavingTheNetworkTests
             Assert.That(model!.LeavingExperienceTitle, Is.EqualTo(leavingCategoryExperience.Category));
             Assert.That(model!.LeavingExperience, Is.EqualTo(leavingCategoryExperience.LeavingReasons));
             Assert.That(model!.ProfileSettingsLink, Is.EqualTo(ProfileSettingsUrl));
-        });
+        }
     }
 
     [Test]

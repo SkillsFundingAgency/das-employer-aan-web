@@ -7,6 +7,7 @@ using SFA.DAS.Aan.SharedUi.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Web.Models.AmbassadorProfile;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Models.AmbassadorProfile;
+
 public class ApprenticeshipDetailsViewModelTests
 {
     private ApprenticeshipDetailsViewModel sut = null!;
@@ -48,11 +49,11 @@ public class ApprenticeshipDetailsViewModelTests
             sut.EmployerName.Should().Be(memberProfileResponse!.OrganisationName);
 
             // Assert
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(sut.ApprenticeshipSectors, Has.Count.EqualTo(apprenticeshipDetails?.Sectors!.Count));
                 Assert.That(sut.ApprenticeshipActiveApprenticesCount, Is.EqualTo(apprenticeshipDetails?.ActiveApprenticesCount));
-            });
+            }
         }
     }
 

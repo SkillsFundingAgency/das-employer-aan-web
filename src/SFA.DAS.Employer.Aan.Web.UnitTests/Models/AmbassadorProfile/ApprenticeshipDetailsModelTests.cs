@@ -2,6 +2,7 @@
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Models.AmbassadorProfile;
+
 public class ApprenticeshipDetailsModelTests
 {
     [Test, MoqAutoData]
@@ -11,11 +12,11 @@ public class ApprenticeshipDetailsModelTests
         var sut = new ApprenticeshipDetailsModel(sectors, activeApprenticesCount);
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(sut, Is.Not.Null);
             Assert.That(sut.Sectors, Is.EqualTo(sectors));
             Assert.That(sut.ActiveApprenticesCount, Is.EqualTo(activeApprenticesCount));
-        });
+        }
     }
 }

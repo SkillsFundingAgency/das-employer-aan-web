@@ -54,12 +54,12 @@ public class MemberProfileControllerPostTests
         var result = await sut.Post(employerId, memberId, command, cancellationToken);
 
         //Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result, Is.InstanceOf<ViewResult>());
             var viewResult = result as ViewResult;
             Assert.That(viewResult!.ViewName, Does.Contain("Profile"));
-        });
+        }
     }
 
     [Test]
@@ -101,12 +101,12 @@ public class MemberProfileControllerPostTests
         var result = await sut.Post(employerId, memberId, command, cancellationToken);
 
         //Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result, Is.TypeOf<RedirectToRouteResult>());
             var redirectToAction = (RedirectToRouteResult)result;
             Assert.That(redirectToAction.RouteName, Is.EqualTo(nameof(SharedRouteNames.NotificationSentConfirmation)));
-        });
+        }
     }
 
     [Test, MoqAutoData]
@@ -125,12 +125,12 @@ public class MemberProfileControllerPostTests
         IActionResult result = sut.NotificationSentConfirmation(employerId);
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result, Is.InstanceOf<ViewResult>());
             var viewResult = result as ViewResult;
             Assert.That(viewResult!.ViewName, Does.Contain(nameof(SharedRouteNames.NotificationSentConfirmation)));
-        });
+        }
     }
 
     [Test, MoqAutoData]

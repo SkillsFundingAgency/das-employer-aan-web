@@ -15,6 +15,7 @@ using SFA.DAS.Employer.Aan.Web.Controllers;
 using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.EditPersonalInformationControllerTests;
+
 public class EditPersonalInformationControllerPostTests
 {
     private Mock<IOuterApiClient> _outerApiMock = null!;
@@ -53,12 +54,12 @@ public class EditPersonalInformationControllerPostTests
         var response = await _sut.Post(employerId, new(), CancellationToken.None);
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(response, Is.TypeOf<RedirectToRouteResult>());
             var redirectToAction = (RedirectToRouteResult)response;
             Assert.That(redirectToAction.RouteName, Does.Contain(SharedRouteNames.YourAmbassadorProfile));
-        });
+        }
     }
 
     [Test]
