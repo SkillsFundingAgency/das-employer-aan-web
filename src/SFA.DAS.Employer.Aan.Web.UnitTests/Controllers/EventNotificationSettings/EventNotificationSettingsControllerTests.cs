@@ -33,6 +33,6 @@ public class EventNotificationSettingsControllerTests
         result.Should().NotBeNull();
         var viewModel = result.Model as EventNotificationSettingsViewModel;
         viewModel.Should().NotBeNull();
-        viewModel!.EventNotificationLocations.Count().Should().Be(vm.EventNotificationLocations.Count());
+        viewModel!.EventNotificationLocations.Should().HaveCount(vm.EventNotificationLocations.Count);
     }
 }

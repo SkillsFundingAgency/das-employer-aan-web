@@ -9,14 +9,14 @@ namespace SFA.DAS.Employer.Aan.Domain.OuterApi.Requests.Settings
 
         public class NotificationEventType
         {
-            public string EventType { get; set; }
+            public string EventType { get; set; } = string.Empty;
             public int Ordering { get; set; }
             public bool ReceiveNotifications { get; set; }
         }
 
         public class Location
         {
-            public string Name { get; set; }
+            public string Name { get; set; } = string.Empty;
             public int Radius { get; set; }
             public double Latitude { get; set; }
             public double Longitude { get; set; }
