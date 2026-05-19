@@ -7,16 +7,16 @@
 
         public class NotificationEventType
         {
-            public string EventFormat { get; set; }
+            public string EventFormat { get; set; } = string.Empty;
             public int Ordering { get; set; }
             public bool ReceiveNotifications { get; set; }
         }
 
         public class AddedLocation
         {
-            public string Name { get; set; }
+            public string Name { get; set; } = string.Empty;
             public int Radius { get; set; }
-            public double[] Coordinates { get; set; }
+            public double[] Coordinates { get; set; } = [];
         }
     }
 }

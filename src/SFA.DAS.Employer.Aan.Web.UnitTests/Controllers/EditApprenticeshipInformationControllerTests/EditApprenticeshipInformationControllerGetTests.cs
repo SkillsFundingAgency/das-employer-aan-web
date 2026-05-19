@@ -1,4 +1,4 @@
-﻿using AutoFixture.NUnit3;
+﻿using AutoFixture.NUnit4;
 using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +14,7 @@ using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 using static SFA.DAS.Aan.SharedUi.Constants.PreferenceConstants;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.EditApprenticeshipInformationControllerTests;
+
 public class EditApprenticeshipInformationControllerGetTests
 {
     EditApprenticeshipInformationController sut = null!;
@@ -36,13 +37,10 @@ public class EditApprenticeshipInformationControllerGetTests
         var viewResult = result as ViewResult;
 
         // Assert
-        using (new AssertionScope())
+        using (Assert.EnterMultipleScope())
         {
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.InstanceOf<ViewResult>());
-                Assert.That(viewResult!.ViewName, Does.Contain(SharedRouteNames.EditApprenticeshipInformation));
-            });
+            Assert.That(result, Is.InstanceOf<ViewResult>());
+            Assert.That(viewResult!.ViewName, Does.Contain(SharedRouteNames.EditApprenticeshipInformation));
         }
     }
 
@@ -146,13 +144,10 @@ public class EditApprenticeshipInformationControllerGetTests
         var viewModel = viewResult!.Model as EditApprenticeshipDetailViewModel;
 
         // Assert
-        using (new AssertionScope())
+        using (Assert.EnterMultipleScope())
         {
-            Assert.Multiple(() =>
-            {
-                Assert.That(viewModel!.Sectors, Has.Count.EqualTo(sectors.Count));
-                Assert.That(viewModel!.Sectors!.First(), Is.EqualTo(sectors.First()));
-            });
+            Assert.That(viewModel!.Sectors, Has.Count.EqualTo(sectors.Count));
+            Assert.That(viewModel!.Sectors!.First(), Is.EqualTo(sectors.First()));
         }
     }
 

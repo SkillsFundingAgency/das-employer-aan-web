@@ -1,6 +1,7 @@
 ﻿using SFA.DAS.Employer.Aan.Web.Models.AmbassadorProfile;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Models.AmbassadorProfile;
+
 public class AmbassadorProfileViewModelTests
 {
     [Test]
@@ -10,7 +11,7 @@ public class AmbassadorProfileViewModelTests
         AmbassadorProfileViewModel _sut = new();
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(_sut, Is.Not.Null);
             Assert.That(_sut.PersonalDetails, Is.Null);
@@ -19,6 +20,6 @@ public class AmbassadorProfileViewModelTests
             Assert.That(_sut.ContactDetails, Is.Null);
             Assert.That(_sut.ShowApprenticeshipDetails, Is.False);
             Assert.That(_sut.MemberProfileUrl, Is.Null);
-        });
+        }
     }
 }

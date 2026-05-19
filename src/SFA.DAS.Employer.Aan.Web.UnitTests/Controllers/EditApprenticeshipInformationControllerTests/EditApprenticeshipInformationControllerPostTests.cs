@@ -1,4 +1,4 @@
-﻿using AutoFixture.NUnit3;
+﻿using AutoFixture.NUnit4;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -13,6 +13,7 @@ using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 using static SFA.DAS.Employer.Aan.Web.Constants;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.EditApprenticeshipInformationControllerTests;
+
 public class EditApprenticeshipInformationControllerPostTests
 {
     EditApprenticeshipInformationController sut = null!;
@@ -33,12 +34,12 @@ public class EditApprenticeshipInformationControllerPostTests
         var response = await sut.Post(employerId, submitApprenticeshipInformationModel, CancellationToken.None);
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(response, Is.TypeOf<RedirectToRouteResult>());
             var redirectToAction = (RedirectToRouteResult)response;
             Assert.That(redirectToAction.RouteName, Does.Contain(SharedRouteNames.YourAmbassadorProfile));
-        });
+        }
     }
 
     [Test, AutoData]
@@ -51,7 +52,7 @@ public class EditApprenticeshipInformationControllerPostTests
         await sut.Post(employerId, submitApprenticeshipInformationModel, CancellationToken.None);
 
         // Assert
-        Assert.That(sut.TempData.ContainsKey(TempDataKeys.YourAmbassadorProfileSuccessMessage), Is.EqualTo(true));
+        Assert.That(sut.TempData.ContainsKey(TempDataKeys.YourAmbassadorProfileSuccessMessage), Is.True);
     }
 
     [Test, AutoData]

@@ -12,7 +12,7 @@ public class RequiredSessionModelAttribute : ApplicationFilterAttribute
 {
     private static readonly string[] controllersToByPass = new[] { nameof(BeforeYouStartController), nameof(TermsAndConditionsController) };
 
-    public string[] ControllersToByPass { get => controllersToByPass; }
+    public static string[] ControllersToByPass { get => controllersToByPass; }
 
     public override void OnActionExecuting(ActionExecutingContext context)
     {

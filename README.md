@@ -5,8 +5,7 @@
 <img src="https://avatars.githubusercontent.com/u/9841374?s=200&v=4" align="right" alt="UK Government logo">
 
 [![Build Status](https://dev.azure.com/sfa-gov-uk/Digital%20Apprenticeship%20Service/_apis/build/status/das-employer-aan-web?branchName=main)](https://dev.azure.com/sfa-gov-uk/Digital%20Apprenticeship%20Service/_build/latest?definitionId=3244&branchName=main)
-[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=SkillsFundingAgency_das-employer-aan-web)](https://sonarcloud.io/summary/new_code?id=SkillsFundingAgency_das-employer-aan-web)
-[![Confluence Page](https://img.shields.io/badge/Confluence-Project-blue)](https://skillsfundingagency.atlassian.net/wiki/spaces/NDL/pages/3867705345/AAN+Employer+Solution+Architecture)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=SkillsFundingAgency_das-employer-aan-web&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=SkillsFundingAgency_das-employer-aan-web)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg?longCache=true&style=flat-square)](https://en.wikipedia.org/wiki/MIT_License)
 
 This web solution is part of Apprentice Ambassador Network (AAN) project. Here the employer users can onboard to become ambassadors, find and sign-up for network events, find and collaborate with other ambassadors.
@@ -20,6 +19,8 @@ When running this locally, with stub sign-in enabled, the launch url should be `
 ### Pre-Requisites
 * A clone of this repository
 * Optionally an Azure Active Directory account with the appropriate roles.
+
+### Dependencies
 * The Outer API [das-apim-endpoints](https://github.com/SkillsFundingAgency/das-apim-endpoints/tree/master/src/EmployerAan) should be available either running locally or accessible in an Azure tenancy.
 
 ### Config
@@ -49,10 +50,8 @@ In the web project, if not exist already, add `AppSettings.Development.json` fil
 ```
 
 ## Technologies
-* .NetCore 8.0
+* .Net 10.0
 * NUnit
 * Moq
 * FluentAssertions
 * RestEase
-* MediatR
-  

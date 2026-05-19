@@ -8,6 +8,7 @@ using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Onboarding;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Settings;
 using SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.Shared;
+using GetMemberNotificationSettingsResponse = SFA.DAS.Employer.Aan.Domain.OuterApi.Responses.GetMemberNotificationSettingsResponse;
 
 namespace SFA.DAS.Employer.Aan.Domain.Interfaces;
 

@@ -16,6 +16,7 @@ using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 using static SFA.DAS.Employer.Aan.Web.Constants;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.EditContactDetailControllerTests;
+
 public class EditContactDetailControllerPostTests
 {
     private EditContactDetailController sut = null!;
@@ -39,12 +40,12 @@ public class EditContactDetailControllerPostTests
         var response = await sut.Post(employerAccountId, submitContactDetailModel, CancellationToken.None);
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(response, Is.TypeOf<RedirectToRouteResult>());
             var redirectToAction = (RedirectToRouteResult)response;
             Assert.That(redirectToAction.RouteName, Does.Contain(SharedRouteNames.YourAmbassadorProfile));
-        });
+        }
     }
 
     [Test]
@@ -57,7 +58,7 @@ public class EditContactDetailControllerPostTests
         await sut.Post(employerAccountId, submitContactDetailModel, CancellationToken.None);
 
         // Assert
-        Assert.That(sut.TempData.ContainsKey(TempDataKeys.YourAmbassadorProfileSuccessMessage), Is.EqualTo(true));
+        Assert.That(sut.TempData.ContainsKey(TempDataKeys.YourAmbassadorProfileSuccessMessage), Is.True);
     }
 
     [Test]
@@ -134,12 +135,12 @@ public class EditContactDetailControllerPostTests
         var result = await sut.Post(employerAccountId, submitContactDetailModel, CancellationToken.None);
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result, Is.InstanceOf<ViewResult>());
             var viewResult = result as ViewResult;
             Assert.That(viewResult!.ViewName, Does.Contain(SharedRouteNames.EditContactDetail));
-        });
+        }
     }
 
     [Test]

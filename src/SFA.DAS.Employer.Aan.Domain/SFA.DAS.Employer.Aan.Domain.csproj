@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="RestEase" Version="1.6.4" />
-    <PackageReference Include="SFA.DAS.Aan.SharedUi" Version="0.1.111" />
-    <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.141" />
+    <PackageReference Include="SFA.DAS.Aan.SharedUi" Version="0.1.114" />
+    <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.190" />
   </ItemGroup>
 
   <ItemGroup>

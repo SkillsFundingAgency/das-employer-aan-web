@@ -1,4 +1,4 @@
-﻿using AutoFixture.NUnit3;
+﻿using AutoFixture.NUnit4;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
@@ -17,6 +17,7 @@ using static SFA.DAS.Aan.SharedUi.Constants.PreferenceConstants;
 using static SFA.DAS.Aan.SharedUi.Constants.ProfileConstants;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.EditContactDetailControllerTests;
+
 public class EditContactDetailControllerGetTests
 {
     private EditContactDetailController sut = null!;
@@ -40,12 +41,12 @@ public class EditContactDetailControllerGetTests
         var result = sut.Index(employerAccountId, CancellationToken.None);
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result, Is.InstanceOf<ViewResult>());
             var viewResult = result as ViewResult;
             Assert.That(viewResult!.ViewName, Does.Contain(SharedRouteNames.EditContactDetail));
-        });
+        }
     }
 
     [Test, AutoData]
@@ -87,11 +88,11 @@ public class EditContactDetailControllerGetTests
         var viewModel = viewResult!.Model as EditContactDetailViewModel;
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(viewModel!.Email, Is.EqualTo(email));
             Assert.That(viewModel!.LinkedinUrl, Is.EqualTo(linkedinUrl));
-        });
+        }
     }
 
     [Test]

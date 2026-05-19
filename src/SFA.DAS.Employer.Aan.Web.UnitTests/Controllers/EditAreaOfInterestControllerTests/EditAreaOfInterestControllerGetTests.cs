@@ -17,6 +17,7 @@ using SFA.DAS.Employer.Aan.Web.UnitTests.TestHelpers;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Employer.Aan.Web.UnitTests.Controllers.EditAreaOfInterestControllerTests;
+
 public class EditAreaOfInterestControllerGetTests
 {
     private readonly string employerId = Guid.NewGuid().ToString();
@@ -105,7 +106,7 @@ public class EditAreaOfInterestControllerGetTests
         var _sut = EditAreaOfInterestController.SelectProfileViewModelMapping(profiles, memberProfiles);
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(_sut, Is.InstanceOf(selectProfileViewModels.GetType()));
             Assert.That(_sut, Has.Count.EqualTo(1));
@@ -114,7 +115,7 @@ public class EditAreaOfInterestControllerGetTests
             Assert.That(_sut[0].Category, Is.EqualTo(profiles.ToArray()[0].Category));
             Assert.That(_sut[0].Ordering, Is.EqualTo(profiles.ToArray()[0].Ordering));
             Assert.That(_sut[0].IsSelected, Is.EqualTo(profileValue));
-        });
+        }
     }
 
     [TearDown]
