@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApprenticeAan.Web.Validators.MemberProfile;
@@ -100,6 +99,3 @@ app
     });
 
 await app.RunAsync();
-
-[ExcludeFromCodeCoverage]
-public static partial class Program { }
