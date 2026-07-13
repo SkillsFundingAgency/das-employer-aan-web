@@ -2,13 +2,11 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApprenticeAan.Web.Validators.MemberProfile;
 using SFA.DAS.Employer.Aan.Web.AppStart;
+using SFA.DAS.Employer.Aan.Web.Extensions;
 using SFA.DAS.Employer.Aan.Web.Filters;
 using SFA.DAS.Employer.Aan.Web.Infrastructure;
 using SFA.DAS.Employer.Aan.Web.Validators;
 using SFA.DAS.Employer.Shared.UI;
-using SFA.DAS.Validation.Mvc.Extensions;
-using SharpGrip.FluentValidation.AutoValidation.Mvc.Enums;
-using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +15,7 @@ var rootConfiguration = builder.Configuration.LoadConfiguration(builder.Services
 builder.Services
     .AddOptions()
     .AddLogging()
-    .AddApplicationInsightsTelemetry()
+    .AddTelemetryRegistration((IConfigurationRoot)builder.Configuration)
     .AddHttpContextAccessor()
     .AddServiceRegistrations(rootConfiguration)
     .AddAuthenticationServices(rootConfiguration)
