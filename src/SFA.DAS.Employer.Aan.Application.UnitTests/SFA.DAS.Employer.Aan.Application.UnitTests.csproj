@@ -26,7 +26,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="SFA.DAS.Testing.AutoFixture" Version="17.1.165" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.7" />
   </ItemGroup>
 
   <ItemGroup>
