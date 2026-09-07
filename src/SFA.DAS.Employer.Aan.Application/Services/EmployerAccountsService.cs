@@ -27,7 +27,7 @@ public class EmployerAccountsService : IGovAuthEmployerAccountService
             FirstName = response.FirstName,
             LastName = response.LastName,
             EmployerUserId = response.EmployerUserId,
-            EmployerAccounts = response.UserAccountResponse.Select(u => new EmployerUserAccountItem
+            EmployerAccounts = response.UserAccounts.Select(u => new EmployerUserAccountItem
             {
                 ApprenticeshipEmployerType =
                     Enum.Parse<ApprenticeshipEmployerType>(u.ApprenticeshipEmployerType.ToString()),

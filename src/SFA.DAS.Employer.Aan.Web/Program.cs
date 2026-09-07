@@ -54,7 +54,7 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    /// app.UseStatusCodePagesWithReExecute("/error/{0}"); 
+    app.UseStatusCodePagesWithReExecute("/error/{0}");
     app.UseExceptionHandler("/error");
     app.UseHsts();
 }

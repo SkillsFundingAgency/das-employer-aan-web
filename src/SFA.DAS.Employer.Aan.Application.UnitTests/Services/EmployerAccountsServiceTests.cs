@@ -30,9 +30,9 @@ public class EmployerAccountsServiceTests
 
         var actual = await sut.GetUserAccounts(userId, email);
 
-        actual.Should().BeEquivalentTo(response, options => options.Excluding(s => s.UserAccountResponse));
+        actual.Should().BeEquivalentTo(response, options => options.Excluding(s => s.UserAccounts));
         actual.EmployerAccounts.Should().BeEquivalentTo(
-            response.UserAccountResponse,
+            response.UserAccounts,
             config => config.WithMapping("EncodedAccountId", "AccountId").WithMapping("DasAccountName", "EmployerName"));
     }
 }
